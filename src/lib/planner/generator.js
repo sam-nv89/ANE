@@ -91,29 +91,25 @@ function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType) {
 
   const shuffled = shuffle(pool);
 
-  // Уровень 1: ±30% + монотонность (широкое окно для лучшего покрытия базы)
+  // Уровень 1: Адекватный скейлинг (к-т от 0.4 до 3.0) + контроль монотонности
   const lvl1 = shuffled.filter((r) => {
-    const cal = r.nutrition.calories;
-    return cal >= targetCal * 0.70 && cal <= targetCal * 1.30 &&
-           canAddWithoutMonotony(r.id, selectedSoFar, allowRepeat, mealType);
+    const mult = targetCal / r.nutrition.calories;
+    return mult >= 0.4 && mult <= 3.0 && canAddWithoutMonotony(r.id, selectedSoFar, allowRepeat, mealType);
   });
   if (lvl1.length > 0) return toRef(lvl1[0], targetCal);
 
-  // Уровень 2: ±30% без ограничения монотонности
+  // Уровень 2: Закрываем глаза на монотонность, но держим скейлинг в рамках
   const lvl2 = shuffled.filter((r) => {
-    const cal = r.nutrition.calories;
-    return cal >= targetCal * 0.70 && cal <= targetCal * 1.30;
+    const mult = targetCal / r.nutrition.calories;
+    return mult >= 0.3 && mult <= 4.0;
   });
   if (lvl2.length > 0) return toRef(lvl2[0], targetCal);
 
-  // Уровень 3: расширяем окно до ±45%
-  const lvl3 = shuffled.filter((r) => {
-    const cal = r.nutrition.calories;
-    return cal >= targetCal * 0.55 && cal <= targetCal * 1.45;
-  });
+  // Уровень 3: Если и это не помогло (например, гигантская калорийность), берем просто с контролем монотонности
+  const lvl3 = shuffled.filter((r) => canAddWithoutMonotony(r.id, selectedSoFar, allowRepeat, mealType));
   if (lvl3.length > 0) return toRef(lvl3[0], targetCal);
 
-  // Уровень 4 (аварийный): берём ближайший по калориям из всего пула
+  // Уровень 4 (аварийный): берём любой ближайший
   const closest = [...pool].sort((a, b) =>
     Math.abs(a.nutrition.calories - targetCal) - Math.abs(b.nutrition.calories - targetCal)
   );
@@ -133,6 +129,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
     allergens        = [],
     dietaryStyles    = [],
     dislikedIngredients = [],
+    dislikedFreeText = [],
     cookTimeWindows,
     cookFrequency,
     preferLazy,
@@ -145,9 +142,21 @@ export function generatePlan(allRecipes, profile, nutrition) {
   let safeRecipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
 
   // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
-  safeRecipes = safeRecipes.filter((recipe) =>
-    !recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))
-  );
+  safeRecipes = safeRecipes.filter((recipe) => {
+    // Жёсткие ID (старая логика)
+    if (recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
+    
+    // Свободный ввод (новая логика)
+    if (dislikedFreeText.length > 0) {
+      const texts = dislikedFreeText.map(t => t.toLowerCase());
+      const hasDislikedText = recipe.ingredients?.some(ing => 
+        texts.some(disliked => ing.name.toLowerCase().includes(disliked))
+      );
+      if (hasDislikedText) return false;
+    }
+    
+    return true;
+  });
 
   // ── Шаг 3: Времённой фильтр с fallback-расширением ──
   const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
