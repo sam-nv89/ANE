@@ -47,18 +47,31 @@ export default function TimeStep({ form, update, onNext, onBack }) {
       <div className="field">
         <div className="field__label">Временное окно на готовку</div>
         <div className="option-grid option-grid--2">
-          {TIME_OPTIONS.map(({ value, emoji, label, sub }) => (
-            <button
-              key={value}
-              className={`option-card ${form.cookTimeWindow === value ? 'option-card--selected' : ''}`}
-              onClick={() => update({ cookTimeWindow: value })}
-              type="button"
-            >
-              <span className="option-card__emoji">{emoji}</span>
-              <div className="option-card__label">{label}</div>
-              <div className="option-card__sub">{sub}</div>
-            </button>
-          ))}
+          {TIME_OPTIONS.map(({ value, emoji, label, sub }) => {
+            const isSelected = form.cookTimeWindows?.includes(value);
+            return (
+              <button
+                key={value}
+                className={`option-card ${isSelected ? 'option-card--selected' : ''}`}
+                onClick={() => {
+                  const current = form.cookTimeWindows || [];
+                  if (isSelected) {
+                    // Don't allow deselecting the last one
+                    if (current.length > 1) {
+                      update({ cookTimeWindows: current.filter(v => v !== value) });
+                    }
+                  } else {
+                    update({ cookTimeWindows: [...current, value] });
+                  }
+                }}
+                type="button"
+              >
+                <span className="option-card__emoji">{emoji}</span>
+                <div className="option-card__label">{label}</div>
+                <div className="option-card__sub">{sub}</div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

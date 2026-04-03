@@ -125,7 +125,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
     allergens        = [],
     dietaryStyles    = [],
     dislikedIngredients = [],
-    cookTimeWindow,
+    cookTimeWindows,
     cookFrequency,
     preferLazy,
     allowRepeatMeals,
@@ -141,10 +141,8 @@ export function generatePlan(allRecipes, profile, nutrition) {
     !recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))
   );
 
-  // ── Шаг 3: Временно́й фильтр с fallback-расширением ──
-  // Сначала пробуем жёсткое окно. Если хотя бы в одной категории пул пуст —
-  // расширяем окно до 1.5× (напр. window=30 → 45).
-  const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindow, preferLazy);
+  // ── Шаг 3: Времённой фильтр с fallback-расширением ──
+  const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
   const baseSorted   = sortByBatchPriority(baseFiltered, cookFrequency);
 
   // Разбиваем по категориям с fallback-расширением
@@ -154,7 +152,8 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
     // Fallback: если пул меньше 3 рецептов — ослабляем time-ограничение
     if (pool.length < 3) {
-      const fallbackWindow = Math.round((cookTimeWindow ?? 60) * 1.5);
+      const maxVal = Array.isArray(cookTimeWindows) ? Math.max(...cookTimeWindows) : (cookTimeWindows || 60);
+      const fallbackWindow = Math.round(maxVal * 1.5);
       pool = filterByTimeWindow(
         safeRecipes.filter((r) => r.category === mealType),
         fallbackWindow,

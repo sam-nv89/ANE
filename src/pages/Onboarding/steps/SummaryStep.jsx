@@ -29,10 +29,12 @@ export default function SummaryStep({ form, nutrition, onFinish, onBack }) {
   const goalMeta = GOAL_META[form.goal];
   const tags = [
     `${form.age} лет`, `${form.heightCm} см`, `${form.weightKg} кг`,
+    ...(form.targetWeightKg && form.goal !== 'maintain' ? [`Цель: ${form.targetWeightKg} кг`] : []),
     ACTIVITY_LABELS[form.activityLevel],
     goalMeta.label,
     FREQ_LABELS[form.cookFrequency],
-    `${form.cookTimeWindow} мин/блюдо`,
+    `${form.cookTimeWindows?.join(', ') || 30} мин/блюдо`,
+    ...(form.includeSugary ? ['С десертами'] : []),
     ...(form.allergens.length > 0 ? [`${form.allergens.length} аллерген(а)`] : []),
   ];
 

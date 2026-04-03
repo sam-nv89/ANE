@@ -35,11 +35,16 @@ const INITIAL = {
   name: '', age: 28, gender: 'female', heightCm: 165, weightKg: 65,
   activityLevel: 'moderate',
   // Step 2 — Goal
-  goal: 'lose', goalRate: -0.5,
+  goal: 'lose', goalRate: -0.5, targetWeightKg: null,
   // Step 3 — Time
-  cookTimeWindow: 30, cookFrequency: 'daily', preferLazy: false,
+  cookTimeWindows: [30], cookFrequency: 'daily', preferLazy: false,
   // Step 4 — Taste
-  tasteCategories: ['meat'], dislikedIngredients: [], allowRepeatMeals: false,
+  tasteCategories: ['meat', 'poultry', 'dairy', 'grains', 'vegetables'],
+  dislikedIngredients: [],   // legacy ID-based (for generator filter)
+  dislikedFreeText: [],      // free-text input from user
+  includeSugary: false,      // include sweets/desserts
+  sugaryFrequency: 'few',    // 'few' | 'often' | 'daily'
+  allowRepeatMeals: false,
   // Step 5 — Allergens
   allergens: [], medicalRestrictions: [], dietaryStyles: [],
 };

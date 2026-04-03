@@ -3,28 +3,24 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const TASTE_CATEGORIES = [
   { value: 'meat',        emoji: '🥩', label: 'Мясо' },
-  { value: 'fish',        emoji: '🐟', label: 'Рыба' },
   { value: 'poultry',     emoji: '🍗', label: 'Птица' },
-  { value: 'vegetarian',  emoji: '🥗', label: 'Вегетар.' },
+  { value: 'fish',        emoji: '🐟', label: 'Рыба' },
   { value: 'seafood',     emoji: '🦐', label: 'Морепрод.' },
+  { value: 'dairy',       emoji: '🥛', label: 'Молочное' },
+  { value: 'cheese',      emoji: '🧀', label: 'Сыры' },
+  { value: 'eggs',        emoji: '🥚', label: 'Яйца' },
+  { value: 'grains',      emoji: '🌾', label: 'Крупы' },
+  { value: 'pasta',       emoji: '🍝', label: 'Макароны' },
+  { value: 'bread',       emoji: '🍞', label: 'Выпечка' },
+  { value: 'vegetables',  emoji: '🥦', label: 'Овощи' },
+  { value: 'fruits',      emoji: '🍎', label: 'Фрукты' },
+  { value: 'vegetarian',  emoji: '🌱', label: 'Вегетар.' }
 ];
 
-const DISLIKED_OPTIONS = [
-  { id: 'onion',         label: 'Лук' },
-  { id: 'garlic',        label: 'Чеснок' },
-  { id: 'mushrooms',     label: 'Грибы' },
-  { id: 'spinach',       label: 'Шпинат' },
-  { id: 'broccoli',      label: 'Брокколи' },
-  { id: 'cottage-cheese','label': 'Творог' },
-  { id: 'tofu',          label: 'Тофу' },
-  { id: 'oats',          label: 'Овсянка' },
-  { id: 'avocado',       label: 'Авокадо' },
-  { id: 'asparagus',     label: 'Спаржа' },
-  { id: 'quinoa',        label: 'Киноа' },
-  { id: 'chickpea',      label: 'Нут' },
-  { id: 'red-lentil',    label: 'Чечевица' },
-  { id: 'tuna-canned',   label: 'Тунец' },
-  { id: 'shrimp',        label: 'Креветки' },
+const SUGARY_FREQ = [
+  { value: 'few',   label: '1–2 раза/нед' },
+  { value: 'often', label: '3–4 раза/нед' },
+  { value: 'daily', label: 'Каждый день' },
 ];
 
 function Toggle({ value, onChange, title, desc }) {
@@ -42,6 +38,8 @@ function Toggle({ value, onChange, title, desc }) {
 }
 
 export default function TasteStep({ form, update, onNext, onBack }) {
+  const [tagInput, setTagInput] = React.useState('');
+
   const toggleCategory = (val) => {
     const current = form.tasteCategories;
     const next = current.includes(val)
@@ -50,12 +48,19 @@ export default function TasteStep({ form, update, onNext, onBack }) {
     if (next.length > 0) update({ tasteCategories: next });
   };
 
-  const toggleDisliked = (id) => {
-    const current = form.dislikedIngredients;
-    const next = current.includes(id)
-      ? current.filter((c) => c !== id)
-      : [...current, id];
-    update({ dislikedIngredients: next });
+  const addDislikedFreeText = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = tagInput.trim();
+      if (val && !form.dislikedFreeText.includes(val)) {
+        update({ dislikedFreeText: [...form.dislikedFreeText, val] });
+      }
+      setTagInput('');
+    }
+  };
+
+  const removeDislikedFreeText = (val) => {
+    update({ dislikedFreeText: form.dislikedFreeText.filter(t => t !== val) });
   };
 
   return (
@@ -69,7 +74,7 @@ export default function TasteStep({ form, update, onNext, onBack }) {
       {/* Taste categories */}
       <div className="field">
         <div className="field__label">Что едите? (можно несколько)</div>
-        <div className="option-grid option-grid--5">
+        <div className="option-grid option-grid--4">
           {TASTE_CATEGORIES.map(({ value, emoji, label }) => (
             <button
               key={value}
@@ -84,24 +89,61 @@ export default function TasteStep({ form, update, onNext, onBack }) {
         </div>
       </div>
 
-      {/* Disliked ingredients */}
+      {/* Sweets section */}
       <div className="field">
-        <div className="field__label">Нелюбимые ингредиенты</div>
+        <Toggle
+          value={form.includeSugary}
+          onChange={(v) => update({ includeSugary: v })}
+          title="Включать сладкое / десерты"
+          desc="Добавляем сладости в рацион в рамках целевых калорий"
+        />
+        {form.includeSugary && (
+          <div className="option-grid option-grid--3" style={{ marginTop: 12 }}>
+            {SUGARY_FREQ.map((f) => (
+              <button
+                key={f.value}
+                type="button"
+                className={`tag ${form.sugaryFrequency === f.value ? 'tag--selected' : ''}`}
+                onClick={() => update({ sugaryFrequency: f.value })}
+                style={{ textAlign: 'center', justifyContent: 'center' }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Disliked ingredients free text */}
+      <div className="field">
+        <div className="field__label">Нелюбимые продукты</div>
         <p className="field__hint" style={{ marginBottom: 10 }}>
-          Блюда с выбранными ингредиентами будут исключены из рациона
+          Введите продукт и нажмите Enter
         </p>
-        <div className="tag-grid">
-          {DISLIKED_OPTIONS.map(({ id, label }) => (
-            <button
-              key={id}
-              className={`tag ${form.dislikedIngredients.includes(id) ? 'tag--selected' : ''}`}
-              onClick={() => toggleDisliked(id)}
-              type="button"
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <input
+          type="text"
+          className="field__input"
+          placeholder="Например: лук, укроп, творог"
+          value={tagInput}
+          onChange={(e) => setTagInput(e.target.value)}
+          onKeyDown={addDislikedFreeText}
+        />
+        {form.dislikedFreeText.length > 0 && (
+          <div className="tag-grid" style={{ marginTop: 12 }}>
+            {form.dislikedFreeText.map((val) => (
+              <span key={val} className="tag tag--selected" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                {val}
+                <button 
+                  type="button" 
+                  onClick={() => removeDislikedFreeText(val)}
+                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0 }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Monotony toggle */}

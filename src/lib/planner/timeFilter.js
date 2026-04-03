@@ -4,20 +4,24 @@
  */
 
 /**
- * Возвращает рецепты, исполнимые в заданное временно́е окно.
+ * Возвращает рецепты, исполнимые в заданное временно́е окно (или окна).
  * @param {object[]} recipes
- * @param {number}   maxCookTimeMin  — из профиля (15 | 30 | 60 | 120)
- * @param {boolean}  preferLazy      — предпочитает ли пользователь «ленивые» блюда
+ * @param {number|number[]} maxCookTimeMin  — из профиля (15 | 30 | 60 | 120)
+ * @param {boolean}  preferLazy            — предпочитает ли пользователь «ленивые» блюда
  * @returns {object[]}
  */
 export function filterByTimeWindow(recipes, maxCookTimeMin, preferLazy = false) {
-  return recipes.filter((recipe) => {
-    // Жёсткое ограничение по времени
-    if (recipe.cookTimeMin > maxCookTimeMin) return false;
+  const maxVal = Array.isArray(maxCookTimeMin) 
+    ? Math.max(...maxCookTimeMin) 
+    : maxCookTimeMin;
 
-    // Если пользователь предпочитает ленивые блюда —
-    // пропускаем сложные рецепты > 20 мин при малом окне
-    if (preferLazy && maxCookTimeMin <= 30 && !recipe.tags?.includes('lazy')) {
+  return recipes.filter((recipe) => {
+    // Жёсткое ограничение по времени (берём максимальное из выбранных окон)
+    if (recipe.cookTimeMin > maxVal) return false;
+
+    // Пользователь предпочитает «ленивое» — в малом окне (<=30) 
+    // отсеиваем не ленивые, если они требуют > 15 мин
+    if (preferLazy && (maxVal || 0) <= 30 && !recipe.tags?.includes('lazy')) {
       return recipe.cookTimeMin <= 15;
     }
 

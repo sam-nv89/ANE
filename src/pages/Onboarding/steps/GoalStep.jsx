@@ -58,9 +58,23 @@ export default function GoalStep({ form, update, onNext, onBack }) {
         </div>
       </div>
 
-      {/* Rate — only show if not maintain */}
+      {/* Rate and Target Weight — only show if not maintain */}
       {form.goal !== 'maintain' && (
-        <div className="field">
+        <>
+          <div className="field">
+            <label className="field__label" htmlFor="onb-target-weight">Целевой вес (кг)</label>
+            <input
+              id="onb-target-weight"
+              className="field__input"
+              type="number"
+              min={40} max={200} step={0.5}
+              value={form.targetWeightKg || ''}
+              onChange={(e) => update({ targetWeightKg: parseFloat(e.target.value) || null })}
+              placeholder={`Например: ${form.goal === 'lose' ? Math.max(40, (form.weightKg || 65) - 5) : (form.weightKg || 65) + 5}`}
+            />
+          </div>
+
+          <div className="field">
           <div className="field__label">Темп</div>
           <div className="option-grid option-grid--3">
             {rates.map((rate) => (
@@ -82,8 +96,14 @@ export default function GoalStep({ form, update, onNext, onBack }) {
           <div className="field__hint" style={{ marginTop: 12 }}>
             ⚠️ Темп более 1 кг/нед может привести к потере мышечной массы.
             Рекомендуем −0.5 или −1 кг/нед.
+            {form.targetWeightKg && Math.abs(form.targetWeightKg - form.weightKg) > 0 && form.goalRate && (
+              <div style={{ marginTop: 8, color: 'var(--clr-accent-2)' }}>
+                🗓 Примерное время до цели: ~{Math.ceil(Math.abs(form.targetWeightKg - form.weightKg) / Math.abs(form.goalRate))} нед.
+              </div>
+            )}
           </div>
         </div>
+        </>
       )}
 
       <div className="onboarding__nav">
