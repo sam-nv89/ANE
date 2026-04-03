@@ -93,11 +93,11 @@ function MealCard({ meal, mealType, dayIndex, navigate }) {
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate }) {
+function DayColumn({ day, navigate, isSelected, onSelect }) {
   const today = new Date().getDay();
   // Convert JS getDay (0=Sun) to our Mon-based (0=Mon)
   const todayIndex = (today + 6) % 7;
-  const isToday = day.dayIndex === todayIndex;
+  const isActualToday = day.dayIndex === todayIndex;
 
   // Get date for this day
   const date = new Date();
@@ -106,12 +106,15 @@ function DayColumn({ day, navigate }) {
 
   return (
     <div className="day-col">
-      <div className={`day-col__header ${isToday ? 'day-col__header--today' : ''}`}>
-        <div className={`day-col__name ${isToday ? 'gradient-text' : ''}`}>
+      <button 
+        className={`day-col__header ${isActualToday ? 'day-col__header--today' : ''} ${isSelected ? 'day-col__header--selected' : ''}`}
+        onClick={() => onSelect(day.dayIndex)}
+      >
+        <div className={`day-col__name ${isActualToday ? 'gradient-text' : ''}`}>
           {day.dayLabel}
         </div>
         <div className="day-col__date">{dateStr}</div>
-      </div>
+      </button>
 
       {MEAL_ORDER.map((mealType) => (
         <MealCard
@@ -127,14 +130,12 @@ function DayColumn({ day, navigate }) {
 }
 
 /* ── Today's nutrition summary ── */
-function TodaySummary({ plan, nutrition }) {
-  const today = new Date().getDay();
-  const todayIndex = (today + 6) % 7;
-  const todayPlan = plan?.[todayIndex];
+function TodaySummary({ plan, nutrition, selectedIndex }) {
+  const selectedPlan = plan?.[selectedIndex];
 
   const totals = useMemo(() => {
-    if (!todayPlan) return null;
-    return Object.values(todayPlan.meals).reduce(
+    if (!selectedPlan) return null;
+    return Object.values(selectedPlan.meals).reduce(
       (acc, m) => {
         if (!m) return acc;
         return {
@@ -146,7 +147,16 @@ function TodaySummary({ plan, nutrition }) {
       },
       { calories: 0, protein: 0, fat: 0, carbs: 0 }
     );
-  }, [todayPlan]);
+  }, [selectedPlan]);
+
+  const fullDate = useMemo(() => {
+    if (!selectedPlan) return '';
+    const today = new Date().getDay();
+    const todayIndex = (today + 6) % 7;
+    const date = new Date();
+    date.setDate(date.getDate() + (selectedIndex - todayIndex));
+    return date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  }, [selectedIndex, selectedPlan]);
 
   if (!totals || !nutrition) return null;
 
@@ -155,6 +165,10 @@ function TodaySummary({ plan, nutrition }) {
   return (
     <div className="day-summary">
       <div className="day-summary__info">
+        <div className="day-summary__label-row">
+          <span className="day-summary__day-name">{fullDate}</span>
+          <span className="day-summary__status">Расчет рациона</span>
+        </div>
         <div className="day-summary__row">
           <div className="day-summary__group">
             <span className="day-summary__sublabel">По плану</span>
@@ -172,13 +186,14 @@ function TodaySummary({ plan, nutrition }) {
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
+            key={selectedIndex}
           />
         </div>
       </div>
       <div className="macro-rings">
-        <MacroRing label="Белки"    value={totals.protein} max={nutrition.protein} color="#00d4ff" />
-        <MacroRing label="Жиры"     value={totals.fat}     max={nutrition.fat}     color="#f59e0b" />
-        <MacroRing label="Углеводы" value={totals.carbs}   max={nutrition.carbs}   color="#a78bfa" />
+        <MacroRing key={`p-${selectedIndex}`} label="Белки"    value={totals.protein} max={nutrition.protein} color="#00d4ff" />
+        <MacroRing key={`f-${selectedIndex}`} label="Жиры"     value={totals.fat}     max={nutrition.fat}     color="#f59e0b" />
+        <MacroRing key={`c-${selectedIndex}`} label="Углеводы" value={totals.carbs}   max={nutrition.carbs}   color="#a78bfa" />
       </div>
     </div>
   );
@@ -189,6 +204,10 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
   const { plan, setPlan } = usePlanStore();
+
+  const today = new Date().getDay();
+  const todayIdx = (today + 6) % 7;
+  const [selectedDayIndex, setSelectedDayIndex] = React.useState(todayIdx);
 
   const handleRegenerate = () => {
     const newPlan = generatePlan(recipes, profile, nutrition);
@@ -228,7 +247,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Today's summary */}
-      <TodaySummary plan={plan} nutrition={nutrition} />
+      <TodaySummary plan={plan} nutrition={nutrition} selectedIndex={selectedDayIndex} />
 
       {/* Weekly grid */}
       <motion.div
@@ -239,7 +258,13 @@ export default function DashboardPage() {
       >
         <TimeColumn />
         {plan.map((day) => (
-          <DayColumn key={day.dayIndex} day={day} navigate={navigate} />
+          <DayColumn 
+            key={day.dayIndex} 
+            day={day} 
+            navigate={navigate} 
+            isSelected={selectedDayIndex === day.dayIndex}
+            onSelect={setSelectedDayIndex}
+          />
         ))}
       </motion.div>
     </div>
