@@ -150,12 +150,29 @@ function TodaySummary({ plan, nutrition }) {
 
   if (!totals || !nutrition) return null;
 
+  const progress = Math.min((totals.calories / nutrition.targetCalories) * 100, 100);
+
   return (
     <div className="day-summary">
-      <div>
-        <div className="day-summary__label">Сегодня</div>
-        <div className="day-summary__title">
-          {totals.calories} / {nutrition.targetCalories} ккал
+      <div className="day-summary__info">
+        <div className="day-summary__row">
+          <div className="day-summary__group">
+            <span className="day-summary__sublabel">По плану</span>
+            <span className="day-summary__val day-summary__val--current">{totals.calories}</span>
+          </div>
+          <div className="day-summary__divider">/</div>
+          <div className="day-summary__group">
+            <span className="day-summary__sublabel">Цель на день</span>
+            <span className="day-summary__val day-summary__val--target">{nutrition.targetCalories} <small>ккал</small></span>
+          </div>
+        </div>
+        <div className="day-summary__progress-bg">
+          <motion.div 
+            className="day-summary__progress-fg"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          />
         </div>
       </div>
       <div className="macro-rings">
