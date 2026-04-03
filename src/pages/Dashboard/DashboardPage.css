@@ -142,7 +142,7 @@
 .day-col__header--selected::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
   left: 20%;
   right: 20%;
   height: 2px;
@@ -151,20 +151,11 @@
   opacity: 0.5;
 }
 
-.day-col__header--today::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 15%;
-  right: 15%;
-  height: 2px;
+/* Make today's line colorful ONLY if it is selected */
+.day-col__header--today.day-col__header--selected::after {
   background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2));
-  border-radius: 2px;
   box-shadow: 0 0 10px rgba(0, 245, 160, 0.4);
   opacity: 1;
-}
-
-.day-col__header--today.day-col__header--selected::after {
   height: 3px;
   left: 10%;
   right: 10%;
