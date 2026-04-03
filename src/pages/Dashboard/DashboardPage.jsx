@@ -13,7 +13,30 @@ import './DashboardPage.css';
 const MEAL_LABELS = {
   breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус',
 };
-const MEAL_ORDER = ['breakfast', 'lunch', 'dinner', 'snack'];
+const MEAL_ORDER = ['breakfast', 'lunch', 'snack', 'dinner'];
+const MEAL_TIMES = {
+  breakfast: '08:00 – 09:00',
+  lunch: '13:00 – 14:00',
+  dinner: '18:00 – 19:30',
+  snack: '16:00 – 16:30',
+};
+
+/* ── Time column ── */
+function TimeColumn() {
+  return (
+    <div className="time-col">
+      <div className="time-col__header" />
+      {MEAL_ORDER.map((mealType) => (
+        <div key={mealType} className="time-col__cell">
+          <div className="time-col__time">
+            {MEAL_TIMES[mealType].split(' – ')[0]}<br/>
+            <span style={{ opacity: 0.5 }}>{MEAL_TIMES[mealType].split(' – ')[1]}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* ── Macro progress ring ── */
 function MacroRing({ label, value, max, color }) {
@@ -84,7 +107,7 @@ function DayColumn({ day, navigate }) {
   return (
     <div className="day-col">
       <div className={`day-col__header ${isToday ? 'day-col__header--today' : ''}`}>
-        <div className="day-col__name gradient-text" style={!isToday ? { background: 'unset', color: 'var(--clr-text-primary)', WebkitBackgroundClip: 'unset' } : {}}>
+        <div className={`day-col__name ${isToday ? 'gradient-text' : ''}`}>
           {day.dayLabel}
         </div>
         <div className="day-col__date">{dateStr}</div>
@@ -197,6 +220,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
+        <TimeColumn />
         {plan.map((day) => (
           <DayColumn key={day.dayIndex} day={day} navigate={navigate} />
         ))}

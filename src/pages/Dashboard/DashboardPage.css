@@ -47,17 +47,60 @@
 /* ── Weekly plan ── */
 .week-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
+  grid-template-columns: 50px repeat(7, minmax(160px, 1fr));
+  grid-template-rows: auto repeat(4, 1fr);
+  gap: 8px 12px;
   overflow-x: auto;
   padding-bottom: 4px;
 }
 
-@media (max-width: 900px) { .week-grid { grid-template-columns: repeat(4, minmax(160px, 1fr)); } }
-@media (max-width: 600px) { .week-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); } }
+@media (max-width: 600px) { 
+  .week-grid { 
+    grid-template-columns: 46px repeat(7, minmax(130px, 1fr)); 
+  } 
+}
 
-/* Day column */
-.day-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+/* Day column & Time column */
+.day-col, .time-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+.time-col {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--clr-bg-base);
+}
+
+@supports (grid-template-rows: subgrid) {
+  .day-col, .time-col {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 5;
+  }
+}
+
+.time-col__header {
+  padding: 8px 4px;
+  min-height: 38px;
+}
+
+.time-col__cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  padding-bottom: 12px;
+  color: var(--clr-text-muted);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: right;
+  border-right: 1px dashed var(--clr-border);
+}
+
+@media (max-width: 600px) {
+  .time-col__cell { font-size: 10px; padding-right: 4px; }
+}
 
 .day-col__header {
   text-align: center;
@@ -77,6 +120,9 @@
 
 /* Meal card */
 .meal-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: 10px 12px;
   border-radius: var(--radius-md);
   background: var(--clr-bg-surface);
@@ -117,6 +163,7 @@
   margin-bottom: 6px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -126,6 +173,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 4px;
+  margin-top: auto;
 }
 
 .meal-card__cal { font-size: 11px; font-weight: 700; color: var(--clr-accent-1); }

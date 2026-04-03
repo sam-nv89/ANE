@@ -129,7 +129,7 @@ export default function MealDetailPage() {
 
         <div className="meal-detail__body">
           {/* Ingredients */}
-          <section className="meal-detail__section">
+          <div className="meal-detail__section">
             <h2 className="meal-detail__section-title">Ингредиенты</h2>
             <ul className="ingredient-list">
               {recipe.ingredients.map((ing) => (
@@ -141,10 +141,10 @@ export default function MealDetailPage() {
                 </li>
               ))}
             </ul>
-          </section>
+          </div>
 
           {/* Steps */}
-          <section className="meal-detail__section">
+          <div className="meal-detail__section">
             <h2 className="meal-detail__section-title">Приготовление</h2>
             <ol className="steps-list">
               {recipe.steps.map((step, i) => (
@@ -154,7 +154,7 @@ export default function MealDetailPage() {
                 </li>
               ))}
             </ol>
-          </section>
+          </div>
         </div>
 
         {/* CTA */}
