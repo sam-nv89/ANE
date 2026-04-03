@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart } from 'lucide-react';
 
@@ -21,6 +21,8 @@ const CATEGORY_LABELS = {
 export default function MealDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { multiplier = 1 } = location.state || {};
   const { plan } = usePlanStore();
   const { items, buildList } = useShoppingStore();
 
@@ -44,7 +46,7 @@ export default function MealDetailPage() {
     recipe.ingredients.forEach((ing) => {
       singleRecipeIngredients[ing.id] = {
         id: ing.id, name: ing.name,
-        totalAmount: ing.amount, unit: ing.unit,
+        totalAmount: ing.amount * multiplier, unit: ing.unit,
         category: ing.category ?? 'other', checked: false,
       };
     });
@@ -62,7 +64,10 @@ export default function MealDetailPage() {
     navigate('/app/shopping');
   };
 
-  const { calories, protein, fat, carbs } = recipe.nutrition;
+  const calories = Math.round(recipe.nutrition.calories * multiplier);
+  const protein = Math.round(recipe.nutrition.protein * multiplier);
+  const fat = Math.round(recipe.nutrition.fat * multiplier);
+  const carbs = Math.round(recipe.nutrition.carbs * multiplier);
 
   return (
     <div className="meal-detail">
@@ -136,7 +141,7 @@ export default function MealDetailPage() {
                 <li key={ing.id} className="ingredient-list__item">
                   <span className="ingredient-list__name">{ing.name}</span>
                   <span className="ingredient-list__amount">
-                    {ing.amount} {ing.unit}
+                    {Math.round(ing.amount * multiplier * 10) / 10} {ing.unit}
                   </span>
                 </li>
               ))}

@@ -77,7 +77,7 @@ function MealCard({ meal, mealType, dayIndex, navigate }) {
   return (
     <motion.button
       className="meal-card"
-      onClick={() => navigate(`/app/meal/${meal.id}`)}
+      onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.15 }}
     >

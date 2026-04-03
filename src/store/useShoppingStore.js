@@ -33,13 +33,15 @@ export const useShoppingStore = create(
             if (!recipe) return;
 
             recipe.ingredients.forEach((ing) => {
+              const mult = ref.multiplier || 1;
+              const scaledAmount = ing.amount * mult;
               if (aggregated[ing.id]) {
-                aggregated[ing.id].totalAmount += ing.amount;
+                aggregated[ing.id].totalAmount += scaledAmount;
               } else {
                 aggregated[ing.id] = {
                   id: ing.id,
                   name: ing.name,
-                  totalAmount: ing.amount,
+                  totalAmount: scaledAmount,
                   unit: ing.unit,
                   category: ing.category ?? 'other',
                   checked: false,

@@ -45,20 +45,26 @@ function shuffle(arr) {
 }
 
 /**
- * Преобразует рецепт в лёгкую ссылку для хранения в плане.
+ * Преобразует рецепт в лёгкую ссылку для хранения в плане,
+ * масштабируя БЖУ под целевые калории.
  */
-function toRef(recipe) {
+function toRef(recipe, targetCal) {
+  const baseCal = recipe.nutrition.calories;
+  const multiplier = targetCal / baseCal;
+  const safeMult = isNaN(multiplier) || !isFinite(multiplier) ? 1 : multiplier;
+
   return {
     id:          recipe.id,
     name:        recipe.name,
-    calories:    recipe.nutrition.calories,
-    protein:     recipe.nutrition.protein,
-    fat:         recipe.nutrition.fat,
-    carbs:       recipe.nutrition.carbs,
+    calories:    Math.round(recipe.nutrition.calories * safeMult),
+    protein:     Math.round(recipe.nutrition.protein * safeMult),
+    fat:         Math.round(recipe.nutrition.fat * safeMult),
+    carbs:       Math.round(recipe.nutrition.carbs * safeMult),
     cookTimeMin: recipe.cookTimeMin,
     imageEmoji:  recipe.imageEmoji ?? '🍽️',
     category:    recipe.category,
     tags:        recipe.tags ?? [],
+    multiplier:  safeMult,
   };
 }
 
@@ -89,27 +95,27 @@ function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType) {
     return cal >= targetCal * 0.70 && cal <= targetCal * 1.30 &&
            canAddWithoutMonotony(r.id, selectedSoFar, allowRepeat, mealType);
   });
-  if (lvl1.length > 0) return toRef(lvl1[0]);
+  if (lvl1.length > 0) return toRef(lvl1[0], targetCal);
 
   // Уровень 2: ±30% без ограничения монотонности
   const lvl2 = shuffled.filter((r) => {
     const cal = r.nutrition.calories;
     return cal >= targetCal * 0.70 && cal <= targetCal * 1.30;
   });
-  if (lvl2.length > 0) return toRef(lvl2[0]);
+  if (lvl2.length > 0) return toRef(lvl2[0], targetCal);
 
   // Уровень 3: расширяем окно до ±45%
   const lvl3 = shuffled.filter((r) => {
     const cal = r.nutrition.calories;
     return cal >= targetCal * 0.55 && cal <= targetCal * 1.45;
   });
-  if (lvl3.length > 0) return toRef(lvl3[0]);
+  if (lvl3.length > 0) return toRef(lvl3[0], targetCal);
 
   // Уровень 4 (аварийный): берём ближайший по калориям из всего пула
   const closest = [...pool].sort((a, b) =>
     Math.abs(a.nutrition.calories - targetCal) - Math.abs(b.nutrition.calories - targetCal)
   );
-  return toRef(closest[0]);
+  return toRef(closest[0], targetCal);
 }
 
 /**
