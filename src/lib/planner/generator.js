@@ -50,8 +50,10 @@ function shuffle(arr) {
  */
 function toRef(recipe, targetCal) {
   const baseCal = recipe.nutrition.calories;
-  const multiplier = targetCal / baseCal;
-  const safeMult = isNaN(multiplier) || !isFinite(multiplier) ? 1 : multiplier;
+  const exactMult = targetCal / baseCal;
+  // Округляем до ближайших 0.05 для создания естественной вариативности (чтобы не было одинаковых цифр)
+  const snappedMult = Math.round(exactMult * 20) / 20;
+  const safeMult = isNaN(snappedMult) || !isFinite(snappedMult) ? 1 : Math.max(0.05, snappedMult);
 
   return {
     id:          recipe.id,
