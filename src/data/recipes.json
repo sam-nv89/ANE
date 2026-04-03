@@ -1,0 +1,2543 @@
+[
+  {
+    "id": "overnight-oats-berries",
+    "name": "Овсянка ночная с ягодами",
+    "category": "breakfast",
+    "cookTimeMin": 5,
+    "imageEmoji": "🫐",
+    "tags": [
+      "lazy",
+      "vegetarian",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "gluten",
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "oats",
+        "name": "Овсяные хлопья",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "milk",
+        "name": "Молоко",
+        "amount": 150,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "berries-mix",
+        "name": "Ягодная смесь",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "honey",
+        "name": "Мёд",
+        "amount": 15,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 320,
+      "protein": 11,
+      "fat": 6,
+      "carbs": 56
+    },
+    "steps": [
+      "Смешайте овсяные хлопья с молоком в банке или контейнере.",
+      "Добавьте ягоды и мёд, перемешайте.",
+      "Уберите в холодильник на ночь (минимум 6 часов).",
+      "Утром достаньте и наслаждайтесь — никаких дополнительных действий."
+    ]
+  },
+  {
+    "id": "scrambled-eggs-veggies",
+    "name": "Яичница с овощами",
+    "category": "breakfast",
+    "cookTimeMin": 10,
+    "imageEmoji": "🍳",
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "allergens": [
+      "eggs"
+    ],
+    "ingredients": [
+      {
+        "id": "eggs",
+        "name": "Яйца",
+        "amount": 3,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "tomato",
+        "name": "Помидор",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 270,
+      "protein": 18,
+      "fat": 18,
+      "carbs": 8
+    },
+    "steps": [
+      "Нарежьте перец и помидор кубиками.",
+      "Обжарьте овощи на масле 3 минуты.",
+      "Взбейте яйца, влейте к овощам.",
+      "Готовьте на среднем огне до нужной консистенции, помешивая."
+    ]
+  },
+  {
+    "id": "greek-yogurt-bowl",
+    "name": "Греческий йогурт с гранолой",
+    "category": "breakfast",
+    "cookTimeMin": 5,
+    "imageEmoji": "🥣",
+    "tags": [
+      "lazy",
+      "vegetarian",
+      "no-cooking"
+    ],
+    "allergens": [
+      "dairy",
+      "gluten",
+      "nuts"
+    ],
+    "ingredients": [
+      {
+        "id": "greek-yogurt",
+        "name": "Греческий йогурт",
+        "amount": 200,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "granola",
+        "name": "Гранола",
+        "amount": 40,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "banana",
+        "name": "Банан",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      }
+    ],
+    "nutrition": {
+      "calories": 340,
+      "protein": 17,
+      "fat": 7,
+      "carbs": 52
+    },
+    "steps": [
+      "Выложите йогурт в миску.",
+      "Нарежьте банан кружочками, выложите сверху.",
+      "Посыпьте гранолой. Готово."
+    ]
+  },
+  {
+    "id": "avocado-toast",
+    "name": "Тост с авокадо и яйцом",
+    "category": "breakfast",
+    "cookTimeMin": 10,
+    "imageEmoji": "🥑",
+    "tags": [
+      "vegetarian"
+    ],
+    "allergens": [
+      "gluten",
+      "eggs"
+    ],
+    "ingredients": [
+      {
+        "id": "bread-rye",
+        "name": "Ржаной хлеб",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "avocado",
+        "name": "Авокадо",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "eggs",
+        "name": "Яйцо",
+        "amount": 1,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимонный сок",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 360,
+      "protein": 14,
+      "fat": 20,
+      "carbs": 32
+    },
+    "steps": [
+      "Поджарьте хлеб до хрустящей корочки.",
+      "Разомните авокадо с лимонным соком, посолите.",
+      "Пожарьте яйцо-пашот или глазунью.",
+      "Намажьте авокадо на тост, сверху яйцо."
+    ]
+  },
+  {
+    "id": "cottage-cheese-bowl",
+    "name": "Творог с фруктами и мёдом",
+    "category": "breakfast",
+    "cookTimeMin": 5,
+    "imageEmoji": "🧀",
+    "tags": [
+      "lazy",
+      "vegetarian",
+      "high-protein",
+      "no-cooking"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "cottage-cheese",
+        "name": "Творог 5%",
+        "amount": 200,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "peach",
+        "name": "Персик",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "honey",
+        "name": "Мёд",
+        "amount": 15,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 290,
+      "protein": 22,
+      "fat": 9,
+      "carbs": 30
+    },
+    "steps": [
+      "Выложите творог в миску.",
+      "Нарежьте персик дольками.",
+      "Полейте мёдом. Готово."
+    ]
+  },
+  {
+    "id": "protein-smoothie",
+    "name": "Протеиновый смузи с бананом",
+    "category": "breakfast",
+    "cookTimeMin": 5,
+    "imageEmoji": "🥤",
+    "tags": [
+      "lazy",
+      "no-cooking",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "banana",
+        "name": "Банан",
+        "amount": 120,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "milk",
+        "name": "Молоко",
+        "amount": 200,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "greek-yogurt",
+        "name": "Греческий йогурт",
+        "amount": 100,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "peanut-butter",
+        "name": "Арахисовая паста",
+        "amount": 20,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 350,
+      "protein": 18,
+      "fat": 10,
+      "carbs": 46
+    },
+    "steps": [
+      "Положите все ингредиенты в блендер.",
+      "Взбейте до однородной массы 30–60 секунд.",
+      "Перелейте в стакан. Готово."
+    ]
+  },
+  {
+    "id": "hot-oatmeal-banana",
+    "name": "Горячая овсянка с бананом",
+    "category": "breakfast",
+    "cookTimeMin": 10,
+    "imageEmoji": "🍌",
+    "tags": [
+      "vegetarian"
+    ],
+    "allergens": [
+      "gluten",
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "oats",
+        "name": "Овсяные хлопья",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "milk",
+        "name": "Молоко",
+        "amount": 250,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "banana",
+        "name": "Банан",
+        "amount": 120,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cinnamon",
+        "name": "Корица",
+        "amount": 2,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 380,
+      "protein": 13,
+      "fat": 7,
+      "carbs": 66
+    },
+    "steps": [
+      "Доведите молоко до кипения.",
+      "Всыпьте овсяные хлопья, уменьшите огонь.",
+      "Варите 5–7 минут, помешивая.",
+      "Нарежьте банан, добавьте сверху с корицей."
+    ]
+  },
+  {
+    "id": "veggie-omelette",
+    "name": "Омлет с овощами и сыром",
+    "category": "breakfast",
+    "cookTimeMin": 15,
+    "imageEmoji": "🧆",
+    "tags": [
+      "vegetarian",
+      "high-protein"
+    ],
+    "allergens": [
+      "eggs",
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "eggs",
+        "name": "Яйца",
+        "amount": 3,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "cheese",
+        "name": "Сыр твёрдый",
+        "amount": 30,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "spinach",
+        "name": "Шпинат",
+        "amount": 50,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "mushrooms",
+        "name": "Шампиньоны",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 310,
+      "protein": 22,
+      "fat": 22,
+      "carbs": 5
+    },
+    "steps": [
+      "Нарежьте грибы, обжарьте со шпинатом 3 минуты.",
+      "Взбейте яйца, вылейте на сковороду.",
+      "Посыпьте сыром, сложите пополам.",
+      "Держите под крышкой 2 минуты до готовности."
+    ]
+  },
+  {
+    "id": "chicken-rice-bowl",
+    "name": "Куриное филе с рисом и овощами",
+    "category": "lunch",
+    "cookTimeMin": 30,
+    "imageEmoji": "🍚",
+    "tags": [
+      "high-protein",
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "broccoli",
+        "name": "Брокколи",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 480,
+      "protein": 44,
+      "fat": 12,
+      "carbs": 48
+    },
+    "steps": [
+      "Отварите рис согласно инструкции (~20 мин).",
+      "Нарежьте куриное филе, обжарьте 8–10 минут.",
+      "Отварите брокколи на пару (5 мин) или обжарьте.",
+      "Сложите всё в миску, сбрызните маслом."
+    ]
+  },
+  {
+    "id": "lentil-soup",
+    "name": "Суп из красной чечевицы",
+    "category": "lunch",
+    "cookTimeMin": 35,
+    "imageEmoji": "🍲",
+    "tags": [
+      "vegetarian",
+      "vegan",
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "red-lentil",
+        "name": "Красная чечевица",
+        "amount": 150,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "carrot",
+        "name": "Морковь",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "tomato-paste",
+        "name": "Томатная паста",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 390,
+      "protein": 22,
+      "fat": 8,
+      "carbs": 58
+    },
+    "steps": [
+      "Обжарьте лук и морковь 5 минут в кастрюле.",
+      "Добавьте томатную пасту, обжарьте 2 минуты.",
+      "Промойте чечевицу, добавьте в кастрюлю.",
+      "Залейте 800 мл воды, варите 20–25 минут."
+    ]
+  },
+  {
+    "id": "tuna-pasta",
+    "name": "Паста с тунцом и помидорами",
+    "category": "lunch",
+    "cookTimeMin": 20,
+    "imageEmoji": "🐟",
+    "tags": [
+      "quick"
+    ],
+    "allergens": [
+      "gluten",
+      "fish"
+    ],
+    "ingredients": [
+      {
+        "id": "pasta",
+        "name": "Паста",
+        "amount": 100,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "tuna-canned",
+        "name": "Тунец консерв.",
+        "amount": 150,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "tomato",
+        "name": "Помидоры череш.",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 10,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 450,
+      "protein": 34,
+      "fat": 11,
+      "carbs": 52
+    },
+    "steps": [
+      "Отварите пасту до состояния аль денте.",
+      "Обжарьте чеснок, добавьте помидоры, тушите 5 мин.",
+      "Добавьте тунец, перемешайте.",
+      "Соедините с пастой."
+    ]
+  },
+  {
+    "id": "chicken-avocado-salad",
+    "name": "Куриный салат с авокадо",
+    "category": "lunch",
+    "cookTimeMin": 20,
+    "imageEmoji": "🥗",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "avocado",
+        "name": "Авокадо",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "mixed-greens",
+        "name": "Микс зелени",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cucumber",
+        "name": "Огурец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимонный сок",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 430,
+      "protein": 38,
+      "fat": 26,
+      "carbs": 10
+    },
+    "steps": [
+      "Отварите или запеките куриное филе, нарежьте.",
+      "Нарежьте авокадо и огурец.",
+      "Выложите зелень, курицу, авокадо, огурец.",
+      "Заправьте лимонным соком и маслом."
+    ]
+  },
+  {
+    "id": "beef-buckwheat",
+    "name": "Говядина с гречкой",
+    "category": "lunch",
+    "cookTimeMin": 40,
+    "imageEmoji": "🥩",
+    "tags": [
+      "batch-friendly",
+      "high-protein"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "beef",
+        "name": "Говяжья вырезка",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "buckwheat",
+        "name": "Гречка",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "carrot",
+        "name": "Морковь",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 510,
+      "protein": 40,
+      "fat": 18,
+      "carbs": 44
+    },
+    "steps": [
+      "Отварите гречку (15 мин).",
+      "Нарежьте говядину полосками, обжарьте 10 мин.",
+      "Добавьте лук и морковь, тушите 15 мин.",
+      "Подавайте с гречкой."
+    ]
+  },
+  {
+    "id": "salmon-veggies",
+    "name": "Лосось с овощами на пару",
+    "category": "lunch",
+    "cookTimeMin": 25,
+    "imageEmoji": "🐠",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [
+      "fish"
+    ],
+    "ingredients": [
+      {
+        "id": "salmon",
+        "name": "Лосось",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "asparagus",
+        "name": "Спаржа",
+        "amount": 120,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cherry-tomato",
+        "name": "Помидоры черри",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимон",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 420,
+      "protein": 40,
+      "fat": 24,
+      "carbs": 8
+    },
+    "steps": [
+      "Замаринуйте лосось в лимонном соке, соли (10 мин).",
+      "Обжарьте лосось по 4 минуты с каждой стороны.",
+      "Отварите спаржу на пару 5 минут.",
+      "Подавайте с помидорами."
+    ]
+  },
+  {
+    "id": "tofu-veggie-stir-fry",
+    "name": "Тофу с овощным воком",
+    "category": "lunch",
+    "cookTimeMin": 20,
+    "imageEmoji": "🥬",
+    "tags": [
+      "vegetarian",
+      "vegan",
+      "quick"
+    ],
+    "allergens": [
+      "soy"
+    ],
+    "ingredients": [
+      {
+        "id": "tofu",
+        "name": "Тофу",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "broccoli",
+        "name": "Брокколи",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "soy-sauce",
+        "name": "Соевый соус",
+        "amount": 20,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "sesame-oil",
+        "name": "Кунжутное масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 70,
+        "unit": "г",
+        "category": "grains"
+      }
+    ],
+    "nutrition": {
+      "calories": 410,
+      "protein": 22,
+      "fat": 12,
+      "carbs": 52
+    },
+    "steps": [
+      "Отварите рис.",
+      "Нарежьте тофу кубиками, обжарьте до золотистого цвета.",
+      "Добавьте овощи, обжаривайте 5–7 мин на сильном огне.",
+      "Влейте соевый соус, кунжутное масло, перемешайте."
+    ]
+  },
+  {
+    "id": "turkey-wrap",
+    "name": "Ролл с индейкой и овощами",
+    "category": "lunch",
+    "cookTimeMin": 10,
+    "imageEmoji": "🌯",
+    "tags": [
+      "quick",
+      "lazy"
+    ],
+    "allergens": [
+      "gluten"
+    ],
+    "ingredients": [
+      {
+        "id": "tortilla",
+        "name": "Лаваш тонкий",
+        "amount": 60,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "turkey-breast",
+        "name": "Индейка отварная",
+        "amount": 150,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "mixed-greens",
+        "name": "Микс зелени",
+        "amount": 50,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "tomato",
+        "name": "Помидор",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "greek-yogurt",
+        "name": "Йогуртовый соус",
+        "amount": 40,
+        "unit": "г",
+        "category": "dairy"
+      }
+    ],
+    "nutrition": {
+      "calories": 370,
+      "protein": 36,
+      "fat": 7,
+      "carbs": 40
+    },
+    "steps": [
+      "Намажьте лаваш йогуртовым соусом.",
+      "Выложите зелень, нарезанный помидор, индейку.",
+      "Скрутите плотно в ролл, разрежьте пополам."
+    ]
+  },
+  {
+    "id": "mushroom-cream-soup",
+    "name": "Суп-пюре из грибов",
+    "category": "lunch",
+    "cookTimeMin": 35,
+    "imageEmoji": "🍄",
+    "tags": [
+      "vegetarian",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "mushrooms",
+        "name": "Шампиньоны",
+        "amount": 400,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cream",
+        "name": "Сливки 10%",
+        "amount": 150,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 280,
+      "protein": 10,
+      "fat": 18,
+      "carbs": 18
+    },
+    "steps": [
+      "Обжарьте лук, добавьте нарезанные грибы.",
+      "Тушите 15 минут до мягкости.",
+      "Добавьте 500 мл воды, варите 10 минут.",
+      "Пробейте блендером, влейте сливки, прогрейте."
+    ]
+  },
+  {
+    "id": "shrimp-quinoa",
+    "name": "Креветки с киноа и авокадо",
+    "category": "lunch",
+    "cookTimeMin": 25,
+    "imageEmoji": "🦐",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [
+      "shellfish"
+    ],
+    "ingredients": [
+      {
+        "id": "shrimp",
+        "name": "Креветки",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "quinoa",
+        "name": "Киноа",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "avocado",
+        "name": "Авокадо",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимон",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 440,
+      "protein": 36,
+      "fat": 18,
+      "carbs": 34
+    },
+    "steps": [
+      "Отварите киноа согласно инструкции (15 мин).",
+      "Обжарьте креветки на масле по 2 мин с каждой стороны.",
+      "Нарежьте авокадо дольками.",
+      "Соберите в миске, сбрызните лимонным соком."
+    ]
+  },
+  {
+    "id": "baked-chicken-potato",
+    "name": "Запечённая курица с картофелем",
+    "category": "dinner",
+    "cookTimeMin": 60,
+    "imageEmoji": "🍗",
+    "tags": [
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "chicken-thigh",
+        "name": "Куриное бедро",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "potato",
+        "name": "Картофель",
+        "amount": 200,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 15,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 20,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "rosemary",
+        "name": "Розмарин",
+        "amount": 5,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 520,
+      "protein": 36,
+      "fat": 22,
+      "carbs": 44
+    },
+    "steps": [
+      "Нарежьте картофель дольками, смешайте с маслом и чесноком.",
+      "Выложите курицу и картофель на противень.",
+      "Посыпьте розмарином.",
+      "Запекайте при 200°C 50–55 минут."
+    ]
+  },
+  {
+    "id": "salmon-asparagus-dinner",
+    "name": "Лосось с аспарагусом и лимоном",
+    "category": "dinner",
+    "cookTimeMin": 25,
+    "imageEmoji": "🍋",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [
+      "fish"
+    ],
+    "ingredients": [
+      {
+        "id": "salmon",
+        "name": "Лосось",
+        "amount": 220,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "asparagus",
+        "name": "Спаржа",
+        "amount": 200,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимон",
+        "amount": 40,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 8,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 450,
+      "protein": 42,
+      "fat": 28,
+      "carbs": 8
+    },
+    "steps": [
+      "Замаринуйте лосось с лимоном и чесноком на 10 мин.",
+      "Разогрейте духовку до 180°C.",
+      "Выложите лосось и спаржу на противень, запекайте 18–20 мин.",
+      "Подавайте немедленно."
+    ]
+  },
+  {
+    "id": "beef-broccoli-stir-fry",
+    "name": "Говядина с брокколи в соусе терияки",
+    "category": "dinner",
+    "cookTimeMin": 30,
+    "imageEmoji": "🥦",
+    "tags": [
+      "high-protein"
+    ],
+    "allergens": [
+      "soy",
+      "gluten"
+    ],
+    "ingredients": [
+      {
+        "id": "beef",
+        "name": "Говяжья вырезка",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "broccoli",
+        "name": "Брокколи",
+        "amount": 200,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "soy-sauce",
+        "name": "Соевый соус",
+        "amount": 30,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "sesame-oil",
+        "name": "Кунжутное масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 530,
+      "protein": 42,
+      "fat": 16,
+      "carbs": 50
+    },
+    "steps": [
+      "Отварите рис.",
+      "Нарежьте говядину тонкими полосками, обжарьте 5 мин.",
+      "Добавьте брокколи, обжаривайте 5 мин.",
+      "Влейте соевый соус и масло, готовьте ещё 3 мин."
+    ]
+  },
+  {
+    "id": "chicken-stew",
+    "name": "Куриное рагу с овощами",
+    "category": "dinner",
+    "cookTimeMin": 45,
+    "imageEmoji": "🍛",
+    "tags": [
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 220,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "potato",
+        "name": "Картофель",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "carrot",
+        "name": "Морковь",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "tomato-paste",
+        "name": "Томатная паста",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 480,
+      "protein": 42,
+      "fat": 8,
+      "carbs": 56
+    },
+    "steps": [
+      "Нарежьте все ингредиенты кубиками.",
+      "Обжарьте лук и морковь 5 мин.",
+      "Добавьте курицу, тушите 10 мин.",
+      "Добавьте картофель, томатную пасту и 400 мл воды. Тушите 25 мин."
+    ]
+  },
+  {
+    "id": "pasta-bolognese",
+    "name": "Паста болоньезе с говяжьим фаршем",
+    "category": "dinner",
+    "cookTimeMin": 40,
+    "imageEmoji": "🍝",
+    "tags": [
+      "batch-friendly"
+    ],
+    "allergens": [
+      "gluten"
+    ],
+    "ingredients": [
+      {
+        "id": "pasta",
+        "name": "Паста",
+        "amount": 100,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "beef-mince",
+        "name": "Говяжий фарш",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "tomato-paste",
+        "name": "Томатная паста",
+        "amount": 40,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 10,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 560,
+      "protein": 38,
+      "fat": 20,
+      "carbs": 56
+    },
+    "steps": [
+      "Отварите пасту до аль денте.",
+      "Обжарьте лук, чеснок, добавьте фарш.",
+      "Готовьте фарш 10 мин, добавьте томатную пасту и 200 мл воды.",
+      "Тушите 15 мин. Соедините с пастой."
+    ]
+  },
+  {
+    "id": "turkey-meatballs",
+    "name": "Тефтели из индейки в томатном соусе",
+    "category": "dinner",
+    "cookTimeMin": 40,
+    "imageEmoji": "🫕",
+    "tags": [
+      "batch-friendly",
+      "high-protein"
+    ],
+    "allergens": [
+      "gluten",
+      "eggs"
+    ],
+    "ingredients": [
+      {
+        "id": "turkey-mince",
+        "name": "Фарш из индейки",
+        "amount": 250,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "eggs",
+        "name": "Яйцо",
+        "amount": 1,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "bread-rye",
+        "name": "Хлеб (для связки)",
+        "amount": 30,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "tomato-paste",
+        "name": "Томатная паста",
+        "amount": 50,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "onion",
+        "name": "Лук",
+        "amount": 60,
+        "unit": "г",
+        "category": "vegetables"
+      }
+    ],
+    "nutrition": {
+      "calories": 430,
+      "protein": 46,
+      "fat": 12,
+      "carbs": 26
+    },
+    "steps": [
+      "Смешайте фарш с яйцом, размоченным хлебом и луком.",
+      "Сформируйте тефтели (~12–14 шт).",
+      "Обжарьте по 2 мин с каждой стороны.",
+      "Залейте томатным соусом, тушите 20–25 мин."
+    ]
+  },
+  {
+    "id": "chickpea-veggie-curry",
+    "name": "Овощной карри с нутом",
+    "category": "dinner",
+    "cookTimeMin": 35,
+    "imageEmoji": "🍛",
+    "tags": [
+      "vegetarian",
+      "vegan",
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "chickpea",
+        "name": "Нут консервир.",
+        "amount": 240,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "coconut-milk",
+        "name": "Кокосовое молоко",
+        "amount": 200,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "spinach",
+        "name": "Шпинат",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "tomato-paste",
+        "name": "Томаты рублен.",
+        "amount": 200,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      }
+    ],
+    "nutrition": {
+      "calories": 490,
+      "protein": 18,
+      "fat": 16,
+      "carbs": 70
+    },
+    "steps": [
+      "Отварите рис.",
+      "Обжарьте специи (карри, куркума) 1 мин.",
+      "Добавьте томаты, нут, кокосовое молоко.",
+      "Тушите 20 мин, добавьте шпинат в конце."
+    ]
+  },
+  {
+    "id": "baked-fish-veggies",
+    "name": "Запечённая рыба с овощами",
+    "category": "dinner",
+    "cookTimeMin": 35,
+    "imageEmoji": "🐡",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [
+      "fish"
+    ],
+    "ingredients": [
+      {
+        "id": "white-fish",
+        "name": "Треска / Тиляпия",
+        "amount": 250,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "zucchini",
+        "name": "Цукини",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимон",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 340,
+      "protein": 44,
+      "fat": 14,
+      "carbs": 10
+    },
+    "steps": [
+      "Нарежьте овощи, выложите на противень.",
+      "Положите рыбу поверх овощей.",
+      "Полейте маслом и лимонным соком.",
+      "Запекайте при 180°C 25–30 мин."
+    ]
+  },
+  {
+    "id": "cottage-cheese-pancakes",
+    "name": "Сырники с ягодным соусом",
+    "category": "dinner",
+    "cookTimeMin": 25,
+    "imageEmoji": "🥞",
+    "tags": [
+      "vegetarian",
+      "high-protein"
+    ],
+    "allergens": [
+      "dairy",
+      "eggs",
+      "gluten"
+    ],
+    "ingredients": [
+      {
+        "id": "cottage-cheese",
+        "name": "Творог",
+        "amount": 300,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "eggs",
+        "name": "Яйцо",
+        "amount": 1,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "flour",
+        "name": "Мука",
+        "amount": 40,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "berries-mix",
+        "name": "Ягоды (соус)",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "honey",
+        "name": "Мёд",
+        "amount": 20,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 430,
+      "protein": 30,
+      "fat": 12,
+      "carbs": 46
+    },
+    "steps": [
+      "Смешайте творог, яйцо и муку до однородности.",
+      "Сформируйте сырники, обжарьте по 3–4 мин с каждой стороны.",
+      "Растопите ягоды с мёдом — ягодный соус готов.",
+      "Подавайте горячими."
+    ]
+  },
+  {
+    "id": "apple-peanut-butter",
+    "name": "Яблоко с арахисовой пастой",
+    "category": "snack",
+    "cookTimeMin": 2,
+    "imageEmoji": "🍎",
+    "tags": [
+      "lazy",
+      "vegan",
+      "no-cooking"
+    ],
+    "allergens": [
+      "nuts"
+    ],
+    "ingredients": [
+      {
+        "id": "apple",
+        "name": "Яблоко",
+        "amount": 180,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "peanut-butter",
+        "name": "Арахисовая паста",
+        "amount": 30,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 230,
+      "protein": 6,
+      "fat": 10,
+      "carbs": 30
+    },
+    "steps": [
+      "Нарежьте яблоко дольками.",
+      "Подавайте с арахисовой пастой для обмакивания."
+    ]
+  },
+  {
+    "id": "mixed-nuts",
+    "name": "Ореховая смесь",
+    "category": "snack",
+    "cookTimeMin": 1,
+    "imageEmoji": "🥜",
+    "tags": [
+      "lazy",
+      "vegan",
+      "no-cooking",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "nuts"
+    ],
+    "ingredients": [
+      {
+        "id": "mixed-nuts",
+        "name": "Орехи (смесь)",
+        "amount": 40,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 240,
+      "protein": 6,
+      "fat": 22,
+      "carbs": 6
+    },
+    "steps": [
+      "Отмерьте нужное количество орехов. Готово."
+    ]
+  },
+  {
+    "id": "rice-cakes-avocado",
+    "name": "Рисовые хлебцы с авокадо",
+    "category": "snack",
+    "cookTimeMin": 5,
+    "imageEmoji": "🫓",
+    "tags": [
+      "lazy",
+      "vegan",
+      "no-cooking"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "rice-cakes",
+        "name": "Рисовые хлебцы",
+        "amount": 30,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "avocado",
+        "name": "Авокадо",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимонный сок",
+        "amount": 5,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 200,
+      "protein": 3,
+      "fat": 10,
+      "carbs": 24
+    },
+    "steps": [
+      "Разомните авокадо с лимонным соком.",
+      "Намажьте на хлебцы."
+    ]
+  },
+  {
+    "id": "cottage-cheese-honey",
+    "name": "Творог с мёдом и грецким орехом",
+    "category": "snack",
+    "cookTimeMin": 3,
+    "imageEmoji": "🍯",
+    "tags": [
+      "lazy",
+      "vegetarian",
+      "high-protein",
+      "no-cooking"
+    ],
+    "allergens": [
+      "dairy",
+      "nuts"
+    ],
+    "ingredients": [
+      {
+        "id": "cottage-cheese",
+        "name": "Творог 5%",
+        "amount": 150,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "honey",
+        "name": "Мёд",
+        "amount": 15,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "walnuts",
+        "name": "Грецкий орех",
+        "amount": 20,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 270,
+      "protein": 17,
+      "fat": 13,
+      "carbs": 22
+    },
+    "steps": [
+      "Выложите творог в миску.",
+      "Добавьте мёд и орехи. Готово."
+    ]
+  },
+  {
+    "id": "veggies-hummus",
+    "name": "Овощи с хумусом",
+    "category": "snack",
+    "cookTimeMin": 5,
+    "imageEmoji": "🥕",
+    "tags": [
+      "lazy",
+      "vegan",
+      "no-cooking"
+    ],
+    "allergens": [
+      "sesame"
+    ],
+    "ingredients": [
+      {
+        "id": "hummus",
+        "name": "Хумус",
+        "amount": 80,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "carrot",
+        "name": "Морковь",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cucumber",
+        "name": "Огурец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      }
+    ],
+    "nutrition": {
+      "calories": 210,
+      "protein": 7,
+      "fat": 9,
+      "carbs": 24
+    },
+    "steps": [
+      "Нарежьте морковь, огурец и перец палочками.",
+      "Подавайте с хумусом."
+    ]
+  },
+  {
+    "id": "boiled-eggs-snack",
+    "name": "Варёные яйца с солью",
+    "category": "snack",
+    "cookTimeMin": 12,
+    "imageEmoji": "🥚",
+    "tags": [
+      "high-protein",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "eggs"
+    ],
+    "ingredients": [
+      {
+        "id": "eggs",
+        "name": "Яйца",
+        "amount": 2,
+        "unit": "шт",
+        "category": "protein"
+      }
+    ],
+    "nutrition": {
+      "calories": 155,
+      "protein": 12,
+      "fat": 11,
+      "carbs": 1
+    },
+    "steps": [
+      "Положите яйца в холодную воду.",
+      "Доведите до кипения, варите 9–11 минут.",
+      "Остудите, очистите."
+    ]
+  },
+  {
+    "id": "banana-almond",
+    "name": "Банан с миндальной пастой",
+    "category": "snack",
+    "cookTimeMin": 2,
+    "imageEmoji": "🍌",
+    "tags": [
+      "lazy",
+      "vegan",
+      "no-cooking"
+    ],
+    "allergens": [
+      "nuts"
+    ],
+    "ingredients": [
+      {
+        "id": "banana",
+        "name": "Банан",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "almond-butter",
+        "name": "Миндальная паста",
+        "amount": 20,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 245,
+      "protein": 5,
+      "fat": 10,
+      "carbs": 34
+    },
+    "steps": [
+      "Очистите банан, нарежьте кружочками.",
+      "Подавайте с миндальной пастой."
+    ]
+  },
+  {
+    "id": "pan-chicken-mushrooms",
+    "name": "Куриное филе с грибами на сковороде",
+    "category": "dinner",
+    "cookTimeMin": 25,
+    "imageEmoji": "🍄",
+    "tags": [
+      "high-protein",
+      "quick"
+    ],
+    "allergens": [
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "mushrooms",
+        "name": "Шампиньоны",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cream",
+        "name": "Сливки 10%",
+        "amount": 80,
+        "unit": "мл",
+        "category": "dairy"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 460,
+      "protein": 44,
+      "fat": 24,
+      "carbs": 10
+    },
+    "steps": [
+      "Нарежьте куриное филе полосками и обжарьте 8 минут.",
+      "Добавьте нарезанные грибы, обжаривайте ещё 7 минут.",
+      "Влейте сливки, тушите 5 минут до загустения.",
+      "Подавайте с гарниром по вкусу."
+    ]
+  },
+  {
+    "id": "turkey-buckwheat-quick",
+    "name": "Индейка с гречкой экспресс",
+    "category": "dinner",
+    "cookTimeMin": 25,
+    "imageEmoji": "🦃",
+    "tags": [
+      "high-protein",
+      "batch-friendly",
+      "quick"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "turkey-breast",
+        "name": "Филе индейки",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "buckwheat",
+        "name": "Гречка",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 470,
+      "protein": 48,
+      "fat": 14,
+      "carbs": 36
+    },
+    "steps": [
+      "Залейте гречку кипятком 1:2, накройте крышкой на 15 минут.",
+      "Нарежьте индейку кубиками, обжарьте 8 минут на масле.",
+      "Добавьте перец, обжаривайте ещё 5 минут.",
+      "Соедините с гречкой, перемешайте."
+    ]
+  },
+  {
+    "id": "shrimp-pasta-quick",
+    "name": "Паста с креветками и чесноком",
+    "category": "dinner",
+    "cookTimeMin": 20,
+    "imageEmoji": "🍤",
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "allergens": [
+      "gluten",
+      "shellfish"
+    ],
+    "ingredients": [
+      {
+        "id": "pasta",
+        "name": "Паста",
+        "amount": 100,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "shrimp",
+        "name": "Креветки",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 15,
+        "unit": "г",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 20,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "cherry-tomato",
+        "name": "Помидоры черри",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      }
+    ],
+    "nutrition": {
+      "calories": 490,
+      "protein": 36,
+      "fat": 16,
+      "carbs": 50
+    },
+    "steps": [
+      "Отварите пасту до аль денте (около 9 минут).",
+      "Обжарьте чеснок в масле 1 минуту.",
+      "Добавьте креветки, готовьте 3 минуты.",
+      "Добавьте помидоры и пасту, перемешайте."
+    ]
+  },
+  {
+    "id": "egg-rice-bowl",
+    "name": "Рисовая боул с яйцом и овощами",
+    "category": "dinner",
+    "cookTimeMin": 20,
+    "imageEmoji": "🍱",
+    "tags": [
+      "vegetarian",
+      "quick",
+      "batch-friendly"
+    ],
+    "allergens": [
+      "eggs",
+      "soy"
+    ],
+    "ingredients": [
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 100,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "eggs",
+        "name": "Яйца",
+        "amount": 2,
+        "unit": "шт",
+        "category": "protein"
+      },
+      {
+        "id": "cucumber",
+        "name": "Огурец",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "carrot",
+        "name": "Морковь",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "soy-sauce",
+        "name": "Соевый соус",
+        "amount": 20,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "sesame-oil",
+        "name": "Кунжутное масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 440,
+      "protein": 18,
+      "fat": 14,
+      "carbs": 60
+    },
+    "steps": [
+      "Отварите рис (15 минут).",
+      "Пожарьте яйца глазуньей.",
+      "Натрите морковь, нарежьте огурец.",
+      "Выложите рис, овощи, яйца, заправьте соусом и кунжутным маслом."
+    ]
+  },
+  {
+    "id": "chicken-teriyaki-quick",
+    "name": "Курица терияки с овощами",
+    "category": "dinner",
+    "cookTimeMin": 20,
+    "imageEmoji": "🥡",
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "allergens": [
+      "soy",
+      "gluten"
+    ],
+    "ingredients": [
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "broccoli",
+        "name": "Брокколи",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "bell-pepper",
+        "name": "Болгарский перец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "soy-sauce",
+        "name": "Соевый соус",
+        "amount": 30,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "sesame-oil",
+        "name": "Кунжутное масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 420,
+      "protein": 46,
+      "fat": 14,
+      "carbs": 22
+    },
+    "steps": [
+      "Нарежьте курицу полосками, обжарьте 7 минут.",
+      "Добавьте брокколи и перец, обжаривайте 5 минут.",
+      "Влейте соевый соус и кунжутное масло.",
+      "Готовьте ещё 3 минуты, подавайте горячим."
+    ]
+  },
+  {
+    "id": "tuna-rice-bowl",
+    "name": "Рисовая миска с тунцом",
+    "category": "dinner",
+    "cookTimeMin": 15,
+    "imageEmoji": "🐟",
+    "tags": [
+      "quick",
+      "lazy",
+      "batch-friendly",
+      "high-protein"
+    ],
+    "allergens": [
+      "fish"
+    ],
+    "ingredients": [
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 100,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "tuna-canned",
+        "name": "Тунец консерв.",
+        "amount": 160,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "cucumber",
+        "name": "Огурец",
+        "amount": 100,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "soy-sauce",
+        "name": "Соевый соус",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 10,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 430,
+      "protein": 38,
+      "fat": 10,
+      "carbs": 46
+    },
+    "steps": [
+      "Отварите рис (15 минут).",
+      "Нарежьте огурец, откройте тунец.",
+      "Выложите рис, тунец, огурец.",
+      "Заправьте соевым соусом и маслом."
+    ]
+  },
+  {
+    "id": "pork-potato-quick",
+    "name": "Свиная вырезка с картофельным пюре",
+    "category": "dinner",
+    "cookTimeMin": 30,
+    "imageEmoji": "🥩",
+    "tags": [
+      "high-protein",
+      "batch-friendly"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "pork-tenderloin",
+        "name": "Свиная вырезка",
+        "amount": 200,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "potato",
+        "name": "Картофель",
+        "amount": 200,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "garlic",
+        "name": "Чеснок",
+        "amount": 8,
+        "unit": "г",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 510,
+      "protein": 42,
+      "fat": 18,
+      "carbs": 40
+    },
+    "steps": [
+      "Нарежьте картофель, отварите 15 минут, разотрите в пюре.",
+      "Нарежьте вырезку медальонами, обжарьте по 4 минуты с каждой стороны.",
+      "Добавьте чеснок на последней минуте.",
+      "Подавайте с картофельным пюре."
+    ]
+  },
+  {
+    "id": "beef-rice-lunch",
+    "name": "Говяжья боул с рисом и брокколи",
+    "category": "lunch",
+    "cookTimeMin": 25,
+    "imageEmoji": "🥩",
+    "tags": [
+      "high-protein"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "beef",
+        "name": "Говяжья вырезка",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "rice",
+        "name": "Рис",
+        "amount": 90,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "broccoli",
+        "name": "Брокколи",
+        "amount": 150,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 520,
+      "protein": 46,
+      "fat": 16,
+      "carbs": 46
+    },
+    "steps": [
+      "Отварите рис (15 минут).",
+      "Нарежьте говядину тонкими полосками, обжарьте 6 минут.",
+      "Отварите брокколи на пару (5 минут).",
+      "Соберите боул: рис, говядина, брокколи."
+    ]
+  },
+  {
+    "id": "chicken-wrap-lunch",
+    "name": "Куриный ролл с греческим соусом",
+    "category": "lunch",
+    "cookTimeMin": 15,
+    "imageEmoji": "🌯",
+    "tags": [
+      "quick",
+      "high-protein"
+    ],
+    "allergens": [
+      "gluten",
+      "dairy"
+    ],
+    "ingredients": [
+      {
+        "id": "tortilla",
+        "name": "Лаваш тонкий",
+        "amount": 80,
+        "unit": "г",
+        "category": "grains"
+      },
+      {
+        "id": "chicken-breast",
+        "name": "Куриное филе",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "greek-yogurt",
+        "name": "Греческий йогурт",
+        "amount": 50,
+        "unit": "г",
+        "category": "dairy"
+      },
+      {
+        "id": "cucumber",
+        "name": "Огурец",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "mixed-greens",
+        "name": "Микс зелени",
+        "amount": 40,
+        "unit": "г",
+        "category": "vegetables"
+      }
+    ],
+    "nutrition": {
+      "calories": 480,
+      "protein": 48,
+      "fat": 10,
+      "carbs": 44
+    },
+    "steps": [
+      "Нарежьте и обжарьте куриное филе (8 минут).",
+      "Намажьте лаваш йогуртом.",
+      "Выложите зелень, огурец, курицу.",
+      "Плотно скрутите и разрежьте пополам."
+    ]
+  },
+  {
+    "id": "beef-arugula-salad",
+    "name": "Тёплый салат с говядиной и рукколой",
+    "category": "lunch",
+    "cookTimeMin": 20,
+    "imageEmoji": "🥗",
+    "tags": [
+      "high-protein",
+      "low-carb"
+    ],
+    "allergens": [],
+    "ingredients": [
+      {
+        "id": "beef",
+        "name": "Говядина",
+        "amount": 180,
+        "unit": "г",
+        "category": "protein"
+      },
+      {
+        "id": "mixed-greens",
+        "name": "Руккола и микс зелени",
+        "amount": 80,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "cherry-tomato",
+        "name": "Помидоры черри",
+        "amount": 120,
+        "unit": "г",
+        "category": "vegetables"
+      },
+      {
+        "id": "olive-oil",
+        "name": "Оливковое масло",
+        "amount": 20,
+        "unit": "мл",
+        "category": "other"
+      },
+      {
+        "id": "lemon",
+        "name": "Лимонный сок",
+        "amount": 15,
+        "unit": "мл",
+        "category": "other"
+      }
+    ],
+    "nutrition": {
+      "calories": 460,
+      "protein": 40,
+      "fat": 28,
+      "carbs": 10
+    },
+    "steps": [
+      "Обжарьте говядину целым куском по 3-4 минуты с каждой стороны.",
+      "Дайте отдохнуть 2 минуты, нарежьте тонкими слайсами.",
+      "Выложите зелень и помидоры на тарелку.",
+      "Положите говядину, заправьте маслом и лимонным соком."
+    ]
+  }
+]
