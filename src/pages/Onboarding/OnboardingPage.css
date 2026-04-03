@@ -206,10 +206,11 @@
 
 .option-grid--2 { grid-template-columns: 1fr 1fr; }
 .option-grid--3 { grid-template-columns: repeat(3, 1fr); }
+.option-grid--4 { grid-template-columns: repeat(4, 1fr); }
 .option-grid--5 { grid-template-columns: repeat(5, 1fr); }
 
 @media (max-width: 500px) {
-  .option-grid--3, .option-grid--5 { grid-template-columns: 1fr 1fr; }
+  .option-grid--3, .option-grid--4, .option-grid--5 { grid-template-columns: 1fr 1fr; }
 }
 
 .option-card {
