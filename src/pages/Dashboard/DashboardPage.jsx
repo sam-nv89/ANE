@@ -102,7 +102,8 @@ function DayColumn({ day, navigate, isSelected, onSelect }) {
   // Get date for this day
   const date = new Date();
   date.setDate(date.getDate() + (day.dayIndex - todayIndex));
-  const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+  const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })
+    .replace(/\s*г\.?\s*$/i, '');
 
   return (
     <div className="day-col">
@@ -156,7 +157,8 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
     const date = new Date();
     date.setDate(date.getDate() + (selectedIndex - todayIndex));
     const dateStr = date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    return dateStr.toLowerCase();
+    // Remove the trailing ' г.' (case-insensitive and handle potential trailing space)
+    return dateStr.replace(/\s*г\.?\s*$/i, '');
   }, [selectedIndex, selectedPlan]);
 
   if (!totals || !nutrition) return null;
