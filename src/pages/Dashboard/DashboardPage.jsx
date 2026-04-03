@@ -102,7 +102,7 @@ function DayColumn({ day, navigate, isSelected, onSelect }) {
   // Get date for this day
   const date = new Date();
   date.setDate(date.getDate() + (day.dayIndex - todayIndex));
-  const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
 
   return (
     <div className="day-col">
@@ -155,7 +155,8 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
     const todayIndex = (today + 6) % 7;
     const date = new Date();
     date.setDate(date.getDate() + (selectedIndex - todayIndex));
-    return date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const dateStr = date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    return dateStr.toLowerCase();
   }, [selectedIndex, selectedPlan]);
 
   if (!totals || !nutrition) return null;
