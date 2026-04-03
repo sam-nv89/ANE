@@ -155,7 +155,7 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
     const todayIndex = (today + 6) % 7;
     const date = new Date();
     date.setDate(date.getDate() + (selectedIndex - todayIndex));
-    return date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    return date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   }, [selectedIndex, selectedPlan]);
 
   if (!totals || !nutrition) return null;
