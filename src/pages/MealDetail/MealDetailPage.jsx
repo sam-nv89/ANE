@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart, Plus,
 
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
+import { useUserStore } from '../../store/useUserStore';
 import recipes from '../../data/recipes.json';
 
 import './MealDetailPage.css';
@@ -22,13 +23,27 @@ export default function MealDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { multiplier: planMultiplier = 1 } = location.state || {};
-  const [portions, setPortions] = React.useState(1);
-  const totalMultiplier = planMultiplier * portions;
-  const { plan } = usePlanStore();
-  const { items, buildList } = useShoppingStore();
-
+  const { nutrition } = useUserStore();
+  
   const recipe = useMemo(() => recipes.find((r) => r.id === id), [id]);
+
+  // Вычисляем рекомендуемый множитель, если перешли не из плана
+  const suggestedMultiplier = useMemo(() => {
+    if (location.state?.multiplier) return location.state.multiplier;
+    if (!recipe || !nutrition?.targetCalories) return 1;
+
+    const weights = { breakfast: 0.25, lunch: 0.35, dinner: 0.28, snack: 0.12 };
+    const categoryWeight = weights[recipe.category] || 0.1;
+    const targetCalForMeal = nutrition.targetCalories * categoryWeight;
+    
+    const mult = targetCalForMeal / recipe.nutrition.calories;
+    // Округляем до 0.05 как в генераторе
+    return Math.max(0.1, Math.round(mult * 20) / 20);
+  }, [location.state, recipe, nutrition]);
+
+  const [portions, setPortions] = React.useState(1);
+  const totalMultiplier = suggestedMultiplier * portions;
+  const { plan } = usePlanStore();
 
   if (!recipe) {
     return (
@@ -142,11 +157,12 @@ export default function MealDetailPage() {
                 <Users size={16} /> Количество порций
               </div>
               <div className="portion-control__multiplier">
-                {planMultiplier !== 1 && (
-                  <span className="badge-personal">
-                    🎯 Подстроено под ккал ({Math.round(planMultiplier * 100)}%)
-                  </span>
-                )}
+                <span className="badge-personal">
+                  {location.state?.multiplier 
+                    ? `🎯 Подстроено под план (${Math.round(suggestedMultiplier * 100)}%)`
+                    : `✨ Рекомендация по норме (${Math.round(suggestedMultiplier * 100)}%)`
+                  }
+                </span>
               </div>
             </div>
             <div className="portion-selector">

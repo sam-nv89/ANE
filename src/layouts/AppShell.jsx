@@ -3,13 +3,14 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import './AppShell.css';
 import {
   LayoutDashboard, ShoppingCart, TrendingUp, User,
-  ChevronRight, Zap, LogOut,
+  ChevronRight, Zap, LogOut, BookOpen,
 } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import './AppShell.css';
 
 const NAV_ITEMS = [
   { to: '/app/dashboard', icon: LayoutDashboard, label: 'Рацион' },
+  { to: '/app/recipes',   icon: BookOpen,        label: 'Рецепты' },
   { to: '/app/shopping',  icon: ShoppingCart,    label: 'Покупки' },
   { to: '/app/progress',  icon: TrendingUp,       label: 'Прогресс' },
   { to: '/app/profile',   icon: User,             label: 'Профиль' },

@@ -15,6 +15,7 @@ import MealDetailPage from './pages/MealDetail/MealDetailPage';
 import ShoppingListPage from './pages/ShoppingList/ShoppingListPage';
 import ProgressPage from './pages/Progress/ProgressPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import RecipesPage from './pages/Recipes/RecipesPage';
 
 // Guard — redirect to onboarding if no profile yet
 import AppGuard from './components/AppGuard';
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
       { path: 'shopping',   element: <ShoppingListPage /> },
       { path: 'progress',   element: <ProgressPage /> },
       { path: 'profile',    element: <ProfilePage /> },
+      { path: 'recipes',    element: <RecipesPage /> },
     ],
   },
 
