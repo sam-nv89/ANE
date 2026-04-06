@@ -52,7 +52,7 @@ const INITIAL = {
     'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 
     'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 
     'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant',
-    'walnuts', 'cashews', 'almonds', 'seeds', 'dried-fruits', 'pistachios', 'hazelnuts', 'chia', 'flax'
+    'walnuts', 'cashews', 'almonds', 'seeds', 'dried-fruits', 'pistachios', 'hazelnuts', 'chia', 'flax', 'quinoa-veg'
   ],
   likedDairy: ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'],
   likedGrains: [
