@@ -24,13 +24,23 @@ const DIETARY = [
   { id: 'vegetarian', label: '🥗 Вегетарианство' },
   { id: 'vegan',      label: '🌱 Веганство' },
   { id: 'keto',       label: '🥓 Кето' },
+  { id: 'fasting',    label: '⏰ Интерв. голодание' },
   { id: 'halal',      label: '☪️ Халяль' },
   { id: 'kosher',     label: '✡️ Кошер' },
 ];
 
+const FREQUENCIES = [3, 5, 7];
+
+const MEAL_PREFS = [
+  { id: 'no-breakfast',    label: 'Без завтрака' },
+  { id: 'heavy-breakfast', label: 'Плотный завтрак' },
+  { id: 'light-dinner',    label: 'Облегченный ужин' },
+  { id: 'no-dinner',       label: 'Без ужина' },
+];
+
 export default function AllergenStep({ form, update, onNext, onBack }) {
   const toggle = (field, id) => {
-    const current = form[field];
+    const current = form[field] || [];
     const next = current.includes(id)
       ? current.filter((x) => x !== id)
       : [...current, id];
@@ -39,15 +49,14 @@ export default function AllergenStep({ form, update, onNext, onBack }) {
 
   return (
     <>
-      <h2 className="step__title">Ограничения</h2>
+      <h2 className="step__title">Ограничения и режим</h2>
       <p className="step__subtitle">
-        Precision Bio модуль применяет жёсткий фильтр — ни один исключённый 
-        ингредиент не попадёт в рацион.
+        Precision Bio модуль учитывает любые ограничения и ваши личные предпочтения по режиму дня.
       </p>
 
       {/* Allergens */}
       <div className="field">
-        <div className="field__label">Аллергены</div>
+        <div className="field__label">Аллегрены и запрещённые продукты</div>
         <div className="option-grid option-grid--2">
           {ALLERGENS.map(({ id, label, emoji }) => (
             <button
@@ -61,6 +70,53 @@ export default function AllergenStep({ form, update, onNext, onBack }) {
               <div>
                 <div className="option-card__label">{label}</div>
               </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Additional exclusions */}
+      <div className="field">
+        <label className="field__label">Дополнительные исключения</label>
+        <textarea
+          className="field__input"
+          style={{ minHeight: 80, paddingTop: 12, resize: 'vertical' }}
+          placeholder="Например: кинза, сельдерей, оливки..."
+          value={form.excludedIngredientsFreeText || ''}
+          onChange={(e) => update({ excludedIngredientsFreeText: e.target.value })}
+        />
+        <div className="field__hint">Перечислите продукты, которые вы НЕ хотите видеть в меню</div>
+      </div>
+
+      {/* Meal Frequency */}
+      <div className="field">
+        <div className="field__label">Количество приёмов пищи</div>
+        <div className="tag-grid">
+          {FREQUENCIES.map((freq) => (
+            <button
+              key={freq}
+              className={`tag ${form.mealFrequency === freq ? 'tag--selected' : ''}`}
+              onClick={() => update({ mealFrequency: freq })}
+              type="button"
+            >
+              {freq} приёма
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Meal Specifics */}
+      <div className="field">
+        <div className="field__label">Особенности приёмов</div>
+        <div className="tag-grid">
+          {MEAL_PREFS.map(({ id, label }) => (
+            <button
+              key={id}
+              className={`tag ${form.mealSpecifics.includes(id) ? 'tag--selected' : ''}`}
+              onClick={() => toggle('mealSpecifics', id)}
+              type="button"
+            >
+              {label}
             </button>
           ))}
         </div>

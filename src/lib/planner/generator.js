@@ -188,6 +188,19 @@ const INGREDIENT_KEYWORDS = {
   raspberry: ['малин'],
   blueberry: ['черник', 'голубик'],
   currant: ['смородин'],
+
+  // Nuts, Seeds & Superfoods
+  walnuts:     ['грецк', 'орех'],
+  cashews:     ['кешью'],
+  almonds:     ['миндаль'],
+  seeds:       ['семена', 'семечки'],
+  'dried-fruits': ['курага', 'изюм', 'чернослив', 'сухофрукт', 'финик'],
+  pistachios:  ['фисташки'],
+  hazelnuts:   ['фундук'],
+  chia:        ['чиа'],
+  flax:        ['льн', 'льнян'],
+  'quinoa-veg': ['киноа', 'кеноа'],
+
   // Dairy & Eggs
   cheese: ['сыр'],
   'cottage-cheese': ['творог'],
@@ -241,8 +254,42 @@ export function generatePlan(allRecipes, profile, nutrition) {
     likedProteins,
     likedVeg,
     likedDairy,
-    likedGrains
+    likedGrains,
+    excludedIngredientsFreeText,
+    mealFrequency = 3,
+    mealSpecifics = [],
   } = profile;
+
+  // 1. Определение списка приёмов пищи и распределения калорий
+  let currentMealTypes = ['breakfast', 'lunch', 'dinner'];
+  if (mealFrequency >= 5) currentMealTypes.push('snack', 'snack2');
+  if (mealFrequency >= 7) currentMealTypes.push('snack3', 'snack4');
+
+  // Убираем завтрак/ужин если выбрано
+  if (mealSpecifics.includes('no-breakfast')) {
+    currentMealTypes = currentMealTypes.filter(m => m !== 'breakfast');
+  }
+  if (mealSpecifics.includes('no-dinner')) {
+    currentMealTypes = currentMealTypes.filter(m => m !== 'dinner');
+  }
+
+  // Расчёт весов калорий
+  const weights = {
+    breakfast: mealSpecifics.includes('heavy-breakfast') ? 0.35 : 0.25,
+    lunch:     0.35,
+    dinner:    mealSpecifics.includes('light-dinner') ? 0.15 : 0.28,
+    snack:     0.12,
+    snack2:    0.10,
+    snack3:    0.10,
+    snack4:    0.10,
+  };
+
+  // Нормализация весов под активные приёмы
+  let totalWeight = currentMealTypes.reduce((sum, m) => sum + (weights[m] || 0.1), 0);
+  const CALORIE_DISTRIBUTION = {};
+  currentMealTypes.forEach(m => {
+    CALORIE_DISTRIBUTION[m] = (weights[m] || 0.1) / totalWeight;
+  });
 
   const { targetCalories } = nutrition;
 
@@ -251,7 +298,14 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
   const PROTEIN_KEYS = ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'];
-  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant'];
+  const VEG_KEYS     = [
+    'tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 
+    'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 
+    'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 
+    'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 
+    'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant',
+    'walnuts', 'cashews', 'almonds', 'seeds', 'dried-fruits', 'pistachios', 'hazelnuts', 'chia', 'flax', 'quinoa-veg'
+  ];
   const DAIRY_KEYS   = ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'];
   const GRAIN_KEYS   = ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'];
 
@@ -266,13 +320,14 @@ export function generatePlan(allRecipes, profile, nutrition) {
     // Жёсткие ID (старая логика)
     if (recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
     
-    // Свободный ввод (новая логика)
-    if (dislikedFreeText.length > 0) {
-      const texts = dislikedFreeText.map(t => t.toLowerCase());
-      const hasDislikedText = recipe.ingredients?.some(ing => 
-        texts.some(disliked => ing.name.toLowerCase().includes(disliked))
-      );
-      if (hasDislikedText) return false;
+    // Свободный ввод (новая логика для textarea)
+    if (excludedIngredientsFreeText?.trim().length > 0) {
+      const texts = excludedIngredientsFreeText.toLowerCase().split(/[,\n]/).map(t => t.trim()).filter(Boolean);
+      const hasExcludedText = recipe.ingredients?.some(ing => {
+        const ingName = ing.name.toLowerCase();
+        return texts.some(excluded => ingName.includes(excluded));
+      });
+      if (hasExcludedText) return false;
     }
 
     // Новая логика: отсеиваем жестко по невыбранным макро-категориям
@@ -293,15 +348,22 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // Разбиваем по категориям с fallback-расширением
   const pools = {};
-  for (const mealType of MEAL_TYPES) {
-    let pool = baseSorted.filter((r) => r.category === mealType);
+  for (const mealType of currentMealTypes) {
+    let pool = baseSorted.filter((r) => {
+      // Поддержка разных видов перекусов (snack, snack2, snack3...)
+      const cat = r.category || 'snack';
+      if (mealType.startsWith('snack')) return cat === 'snack';
+      return cat === mealType;
+    });
 
     // Fallback: если пул меньше 3 рецептов — ослабляем time-ограничение
     if (pool.length < 3) {
       const maxVal = Array.isArray(cookTimeWindows) ? Math.max(...cookTimeWindows) : (cookTimeWindows || 60);
       const fallbackWindow = Math.round(maxVal * 1.5);
+      
+      const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
       pool = filterByTimeWindow(
-        safeRecipes.filter((r) => r.category === mealType),
+        safeRecipes.filter((r) => r.category === rawCategory),
         fallbackWindow,
         false // не применяем lazy-фильтр в fallback
       );
@@ -309,7 +371,8 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
     // Аварийный fallback: берём все безопасные рецепты этой категории
     if (pool.length === 0) {
-      pool = safeRecipes.filter((r) => r.category === mealType);
+      const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
+      pool = safeRecipes.filter((r) => r.category === rawCategory);
     }
 
     pools[mealType] = sortByBatchPriority(pool, cookFrequency);
@@ -317,18 +380,13 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // ── Шаг 4: Генерация по дням ──
   const plan = [];
-  // Ведём счётчик per-mealType раздельно для корректного контроля монотонности
-  const selectedPerType = {
-    breakfast: [],
-    lunch:     [],
-    dinner:    [],
-    snack:     [],
-  };
+  const selectedPerType = {};
+  currentMealTypes.forEach(m => selectedPerType[m] = []);
 
   for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
     const meals = {};
 
-    for (const mealType of MEAL_TYPES) {
+    for (const mealType of currentMealTypes) {
       const calorieTarget = Math.round(targetCalories * CALORIE_DISTRIBUTION[mealType]);
 
       const picked = pickRecipe(

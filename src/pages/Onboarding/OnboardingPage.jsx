@@ -46,17 +46,33 @@ const INITIAL = {
   cookTimeWindows: [30], cookFrequency: 'daily', preferLazy: false,
   // Steps 4-7 — Ingredients
   likedProteins: ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'],
-  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant'],
+  likedVeg: [
+    'tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 
+    'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 
+    'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 
+    'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 
+    'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant',
+    'walnuts', 'cashews', 'almonds', 'seeds', 'dried-fruits', 'pistachios', 'hazelnuts', 'chia', 'flax'
+  ],
   likedDairy: ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'],
-  likedGrains: ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'],
+  likedGrains: [
+    'pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 
+    'bread', 'lentil', 'pea', 'chickpea', 'beans'
+  ],
   
   dislikedIngredients: [],   // legacy ID-based (for generator filter)
-  dislikedFreeText: [],      // free-text input from user
-  includeSugary: false,      // include sweets/desserts
-  sugaryFrequency: 'few',    // 'few' | 'often' | 'daily'
-  allowRepeatMeals: false,
+  dislikedFreeText: [],      // array of keywords for generator
+  excludedIngredientsFreeText: '', // raw string from UI text area
+  
   // Step 8 — Allergens
   allergens: [], medicalRestrictions: [], dietaryStyles: [],
+  
+  // New features
+  mealFrequency: 3,
+  mealSpecifics: [], // ['no-breakfast', 'heavy-breakfast', 'light-dinner', 'no-dinner']
+  includeSugary: false,
+  sugaryFrequency: 'few',
+  allowRepeatMeals: false,
 };
 
 /* ── Animation variants ── */
