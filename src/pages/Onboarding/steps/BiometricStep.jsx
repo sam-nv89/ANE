@@ -3,9 +3,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const ACTIVITY_OPTIONS = [
   { value: 'sedentary',  emoji: '🪑', label: 'Сидячий',      sub: 'Нет спорта, офис' },
-  { value: 'light',      emoji: '🚶', label: 'Низкий',       sub: '1–3 раза в неделю' },
-  { value: 'moderate',   emoji: '🏃', label: 'Средний',      sub: '3–5 раз в неделю' },
-  { value: 'active',     emoji: '🏋️', label: 'Высокий',      sub: '6–7 раз в неделю' },
+  { value: 'light',      emoji: '🚶', label: 'Низкий',       sub: '1 раз в неделю' },
+  { value: 'moderate',   emoji: '🏃', label: 'Средний',      sub: '2–3 раза в неделю' },
+  { value: 'active',     emoji: '🏋️', label: 'Высокий',      sub: '4–7 раз в неделю' },
   { value: 'veryActive', emoji: '⚡',  label: 'Экстремальный', sub: 'Спорт 2 раза/день' },
 ];
 
