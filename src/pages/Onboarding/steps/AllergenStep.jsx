@@ -29,7 +29,7 @@ const DIETARY = [
   { id: 'kosher',     label: '✡️ Кошер' },
 ];
 
-const FREQUENCIES = [3, 4, 5, 7];
+const FREQUENCIES = [3, 4, 5, 6, 7];
 
 const MEAL_PREFS = [
   { id: 'no-breakfast',    label: 'Без завтрака' },
