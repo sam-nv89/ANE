@@ -11,26 +11,37 @@ import recipes from '../../data/recipes.json';
 import './DashboardPage.css';
 
 const MEAL_LABELS = {
-  breakfast: 'Завтрак', lunch: 'Обед', dinner: 'Ужин', snack: 'Перекус',
-};
-const MEAL_ORDER = ['breakfast', 'lunch', 'snack', 'dinner'];
-const MEAL_TIMES = {
-  breakfast: '08:00 – 09:00',
-  lunch: '13:00 – 14:00',
-  dinner: '18:00 – 19:30',
-  snack: '16:00 – 16:30',
+  breakfast: 'Завтрак',
+  lunch: 'Обед',
+  dinner: 'Ужин',
+  snack: 'Перекус 1',
+  snack2: 'Перекус 2',
+  snack3: 'Перекус 3',
+  snack4: 'Перекус 4',
 };
 
+const MEAL_TIMES = {
+  breakfast: '08:00 – 09:00',
+  snack:     '11:00 – 11:30',
+  lunch:     '13:00 – 14:00',
+  snack2:    '15:30 – 16:00',
+  snack3:    '17:00 – 17:30',
+  dinner:    '19:00 – 20:00',
+  snack4:    '21:00 – 21:30',
+};
+
+const DEFAULT_ORDER = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
+
 /* ── Time column ── */
-function TimeColumn() {
+function TimeColumn({ order }) {
   return (
     <div className="time-col">
       <div className="time-col__header" />
-      {MEAL_ORDER.map((mealType) => (
+      {order.map((mealType) => (
         <div key={mealType} className="time-col__cell">
           <div className="time-col__time">
-            {MEAL_TIMES[mealType].split(' – ')[0]}<br/>
-            <span style={{ opacity: 0.5 }}>{MEAL_TIMES[mealType].split(' – ')[1]}</span>
+            {(MEAL_TIMES[mealType] || '—').split(' – ')[0]}<br/>
+            <span style={{ opacity: 0.5 }}>{(MEAL_TIMES[mealType] || '').split(' – ')[1]}</span>
           </div>
         </div>
       ))}
@@ -93,7 +104,7 @@ function MealCard({ meal, mealType, dayIndex, navigate }) {
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order }) {
   const today = new Date().getDay();
   // Convert JS getDay (0=Sun) to our Mon-based (0=Mon)
   const todayIndex = (today + 6) % 7;
@@ -117,7 +128,7 @@ function DayColumn({ day, navigate, isSelected, onSelect }) {
         <div className="day-col__date">{dateStr}</div>
       </button>
 
-      {MEAL_ORDER.map((mealType) => (
+      {order.map((mealType) => (
         <MealCard
           key={mealType}
           meal={day.meals[mealType]}
@@ -212,6 +223,13 @@ export default function DashboardPage() {
   const todayIdx = (today + 6) % 7;
   const [selectedDayIndex, setSelectedDayIndex] = React.useState(todayIdx);
 
+  const mealOrder = useMemo(() => {
+    if (!plan || plan.length === 0) return [];
+    // Get keys from the first day and sort by our DEFAULT_ORDER priority
+    const keys = Object.keys(plan[0].meals);
+    return DEFAULT_ORDER.filter(k => keys.includes(k));
+  }, [plan]);
+
   const handleRegenerate = () => {
     const newPlan = generatePlan(recipes, profile, nutrition);
     setPlan(newPlan);
@@ -258,8 +276,9 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{ '--meal-count': mealOrder.length }}
       >
-        <TimeColumn />
+        <TimeColumn order={mealOrder} />
         {plan.map((day) => (
           <DayColumn 
             key={day.dayIndex} 
@@ -267,6 +286,7 @@ export default function DashboardPage() {
             navigate={navigate} 
             isSelected={selectedDayIndex === day.dayIndex}
             onSelect={setSelectedDayIndex}
+            order={mealOrder}
           />
         ))}
       </motion.div>

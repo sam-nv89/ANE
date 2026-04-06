@@ -72,7 +72,7 @@
 .week-grid {
   display: grid;
   grid-template-columns: 50px repeat(7, minmax(160px, 1fr));
-  grid-template-rows: auto repeat(4, 1fr);
+  grid-template-rows: auto repeat(var(--meal-count, 4), 1fr);
   gap: 8px 12px;
   overflow-x: auto;
   padding-bottom: 4px;
@@ -98,7 +98,7 @@
   .day-col, .time-col {
     display: grid;
     grid-template-rows: subgrid;
-    grid-row: span 5;
+    grid-row: span calc(var(--meal-count, 4) + 1);
   }
 }
 
