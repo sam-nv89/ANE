@@ -224,6 +224,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  padding-right: 36px; /* Резервируем место под сердечко */
 }
 
 .recipe-card-alt__cat {
