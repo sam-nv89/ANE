@@ -407,3 +407,41 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   return plan;
 }
+
+/**
+ * Генерирует замену для ОДНОГО приёма пищи.
+ */
+export function generateSingleMeal(allRecipes, profile, nutrition, mealType, selectedSoFar = [], currentMealId = null) {
+  // 1. Аллергены
+  const { allergens = [], dietaryStyles = [], dislikedIngredients = [], excludedIngredientsFreeText = [], cookTimeWindows, preferLazy } = profile;
+  let safeRecipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
+
+  // 2. Нелюбимые
+  safeRecipes = safeRecipes.filter((r) => {
+    if (currentMealId && r.id === currentMealId) return false; // Исключаем текущее
+    if (r.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
+    if (excludedIngredientsFreeText?.trim().length > 0) {
+      const texts = excludedIngredientsFreeText.toLowerCase().split(/[,\n]/).map(t => t.trim()).filter(Boolean);
+      const hasExt = r.ingredients?.some(ing => texts.some(ex => ing.name.toLowerCase().includes(ex)));
+      if (hasExt) return false;
+    }
+    return true;
+  });
+
+  // 3. Time + Category
+  const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
+  const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
+  let pool = baseFiltered.filter((r) => r.category === rawCategory);
+
+  // Fallback
+  if (pool.length === 0) {
+    pool = safeRecipes.filter((r) => r.category === rawCategory);
+  }
+
+  // 4. Calorie target
+  // Нам нужно знать распределение калорий. Мы можем примерно его повторить.
+  const weights = { breakfast: 0.25, lunch: 0.35, dinner: 0.28, snack: 0.12, snack2: 0.10, snack3: 0.10, snack4: 0.10 };
+  const calorieTarget = Math.round(nutrition.targetCalories * (weights[mealType] || 0.1));
+
+  return pickRecipe(pool, selectedSoFar, calorieTarget, profile.allowRepeatMeals, mealType);
+}

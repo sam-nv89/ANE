@@ -5,7 +5,7 @@ import { Zap, RefreshCw } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
-import { generatePlan } from '../../lib/planner/generator';
+import { generatePlan, generateSingleMeal } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
 
 import Skeleton from '../../components/Common/Skeleton';
@@ -32,6 +32,7 @@ const MEAL_TIMES = {
 };
 
 const DEFAULT_ORDER = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
+const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 /* ── Time column ── */
 function TimeColumn({ order }) {
@@ -76,7 +77,7 @@ function MacroRing({ label, value, max, color }) {
 }
 
 /* ── Meal card ── */
-function MealCard({ meal, mealType, dayIndex, navigate, isLoading }) {
+function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap }) {
   if (isLoading) {
     return (
       <div className="meal-card meal-card--skeleton">
@@ -98,25 +99,40 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading }) {
   }
 
   return (
-    <motion.button
+    <motion.div
       className="meal-card"
-      onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.15 }}
     >
-      <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
-      <span className="meal-card__emoji">{meal.imageEmoji}</span>
-      <div className="meal-card__name">{meal.name}</div>
-      <div className="meal-card__meta">
-        <span className="meal-card__cal">{meal.calories} ккал</span>
-        <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
-      </div>
-    </motion.button>
+      <button 
+        className="meal-card__main-btn"
+        onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
+      >
+        <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
+        <span className="meal-card__emoji">{meal.imageEmoji}</span>
+        <div className="meal-card__name">{meal.name}</div>
+        <div className="meal-card__meta">
+          <span className="meal-card__cal">{meal.calories} ккал</span>
+          <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
+        </div>
+      </button>
+
+      <button 
+        className="meal-card__swap-btn" 
+        onClick={(e) => {
+          e.stopPropagation();
+          onSwap(dayIndex, mealType);
+        }}
+        title="Заменить это блюдо"
+      >
+        <RefreshCw size={14} />
+      </button>
+    </motion.div>
   );
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap }) {
   const today = new Date().getDay();
   const todayIndex = (today + 6) % 7;
   const isActualToday = day.dayIndex === todayIndex;
@@ -151,6 +167,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading }) {
           dayIndex={day.dayIndex}
           navigate={navigate}
           isLoading={isLoading}
+          onSwap={onSwap}
         />
       ))}
     </div>
@@ -252,7 +269,18 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
-  const { plan, setPlan, isLoading, setLoading } = usePlanStore();
+  const { plan, setPlan, isLoading, setLoading, replaceMeal } = usePlanStore();
+
+  const handleSwapMeal = (dayIndex, mealType) => {
+    const dayMeals = plan[dayIndex].meals;
+    const currentMealId = dayMeals[mealType]?.id;
+    const selectedSoFar = Object.values(dayMeals).filter(Boolean).map((m) => ({ id: m.id }));
+
+    const newMeal = generateSingleMeal(recipes, profile, nutrition, mealType, selectedSoFar, currentMealId);
+    if (newMeal) {
+      replaceMeal(dayIndex, mealType, newMeal);
+    }
+  };
 
   const today = new Date().getDay();
   const todayIdx = (today + 6) % 7;
@@ -260,14 +288,12 @@ export default function DashboardPage() {
 
   const mealOrder = useMemo(() => {
     if (!plan || plan.length === 0) return [];
-    // Get keys from the first day and sort by our DEFAULT_ORDER priority
     const keys = Object.keys(plan[0].meals);
     return DEFAULT_ORDER.filter(k => keys.includes(k));
   }, [plan]);
 
   const handleRegenerate = () => {
     setLoading(true);
-    // Искусственная задержка для демонстрации "Wow"-эффекта скелетонов
     setTimeout(() => {
       const newPlan = generatePlan(recipes, profile, nutrition);
       setPlan(newPlan);
@@ -291,7 +317,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Fallback order for skeletons when plan is not yet generated
   const displayOrder = mealOrder.length > 0 ? mealOrder : DEFAULT_ORDER.slice(0, 4);
   const displayPlan = plan || Array.from({ length: 7 }, (_, i) => ({ dayIndex: i, dayLabel: DAY_LABELS[i], meals: {} }));
 
@@ -331,6 +356,7 @@ export default function DashboardPage() {
             onSelect={setSelectedDayIndex}
             order={displayOrder}
             isLoading={isLoading}
+            onSwap={handleSwapMeal}
           />
         ))}
       </motion.div>
