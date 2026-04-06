@@ -108,6 +108,55 @@
   line-height: 1.6;
 }
 
+/* ── Group headers with Select All ── */
+.step__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+.step__header .step__title {
+  margin-bottom: 0;
+}
+
+.step__header--small {
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+
+.step__select-all {
+  background: none;
+  border: none;
+  color: var(--clr-accent-1);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  transition: all var(--dur-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.step__select-all:hover {
+  background: rgba(0, 245, 160, 0.08);
+  color: var(--clr-accent-1);
+}
+
+.step__select-all--active {
+  color: var(--clr-text-muted);
+}
+
+.step__select-all--active:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--clr-text-primary);
+}
+
 /* ── Form fields ── */
 .field {
   margin-bottom: 24px;
@@ -299,8 +348,6 @@
 .toggle-row:hover {
   background: rgba(255,255,255,0.04);
 }
-
-.toggle-row__text { }
 
 .toggle-row__title {
   font-size: 14px;

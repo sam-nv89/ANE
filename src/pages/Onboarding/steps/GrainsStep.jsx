@@ -49,6 +49,16 @@ export default function GrainsStep({ form, update, onNext, onBack }) {
     update({ likedGrains: next });
   };
 
+  const isAllSelected = GRAINS_OPTIONS.every(opt => (form.likedGrains || []).includes(opt.value));
+
+  const toggleAll = () => {
+    if (isAllSelected) {
+      update({ likedGrains: [] });
+    } else {
+      update({ likedGrains: GRAINS_OPTIONS.map(opt => opt.value) });
+    }
+  };
+
   const addDislikedFreeText = (e) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
@@ -67,7 +77,16 @@ export default function GrainsStep({ form, update, onNext, onBack }) {
 
   return (
     <>
-      <h2 className="step__title">Макароны и крупы</h2>
+      <div className="step__header">
+        <h2 className="step__title">Макароны и крупы</h2>
+        <button 
+          type="button" 
+          className={`step__select-all ${isAllSelected ? 'step__select-all--active' : ''}`}
+          onClick={toggleAll}
+        >
+          {isAllSelected ? 'Снять всё' : 'Выбрать всё'}
+        </button>
+      </div>
       <p className="step__subtitle">
         Последний этап вкусовых предпочтений. Отметьте то, что любите есть в качестве гарнира.
       </p>

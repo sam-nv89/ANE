@@ -85,6 +85,21 @@ export default function VegStep({ form, update, onNext, onBack }) {
     update({ likedVeg: next });
   };
 
+  const toggleGroup = (groupItems) => {
+    const groupValues = groupItems.map(i => i.value);
+    const current = form.likedVeg || [];
+    const allSelected = groupValues.every(v => current.includes(v));
+
+    if (allSelected) {
+      // Remove all items of this group
+      update({ likedVeg: current.filter(v => !groupValues.includes(v)) });
+    } else {
+      // Add missing items
+      const next = [...new Set([...current, ...groupValues])];
+      update({ likedVeg: next });
+    }
+  };
+
   return (
     <>
       <h2 className="step__title">Овощи, фрукты и ягоды</h2>
@@ -92,27 +107,41 @@ export default function VegStep({ form, update, onNext, onBack }) {
         Выбирайте любимые! Если отметить только помидоры и огурцы — меню будет состоять в основном из них.
       </p>
 
-      {VEG_FRUIT_GROUPS.map((group) => (
-        <div key={group.title} className="field" style={{ marginTop: 24 }}>
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '12px', color: 'var(--text-1)' }}>{group.title}</h3>
-          <div className="option-grid option-grid--4">
-            {group.items.map(({ value, emoji, label }) => {
-              const isSelected = (form.likedVeg || []).includes(value);
-              return (
-                <button
-                  key={value}
-                  className={`option-card ${isSelected ? 'option-card--selected' : ''}`}
-                  onClick={() => toggleItem(value)}
-                  type="button"
-                >
-                  <span className="option-card__emoji">{emoji}</span>
-                  <div className="option-card__label">{label}</div>
-                </button>
-              );
-            })}
+      {VEG_FRUIT_GROUPS.map((group) => {
+        const groupValues = group.items.map(i => i.value);
+        const allInGroupSelected = groupValues.every(v => (form.likedVeg || []).includes(v));
+
+        return (
+          <div key={group.title} className="field" style={{ marginTop: 24 }}>
+            <div className="step__header step__header--small">
+              <h3 style={{ fontSize: '1.2rem', marginBottom: 0, color: 'var(--text-1)' }}>{group.title}</h3>
+              <button 
+                type="button" 
+                className={`step__select-all ${allInGroupSelected ? 'step__select-all--active' : ''}`}
+                onClick={() => toggleGroup(group.items)}
+              >
+                {allInGroupSelected ? 'Снять всё' : 'Выбрать всё'}
+              </button>
+            </div>
+            <div className="option-grid option-grid--4">
+              {group.items.map(({ value, emoji, label }) => {
+                const isSelected = (form.likedVeg || []).includes(value);
+                return (
+                  <button
+                    key={value}
+                    className={`option-card ${isSelected ? 'option-card--selected' : ''}`}
+                    onClick={() => toggleItem(value)}
+                    type="button"
+                  >
+                    <span className="option-card__emoji">{emoji}</span>
+                    <div className="option-card__label">{label}</div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <div className="onboarding__nav">
         <button className="onboarding__back" onClick={onBack} type="button">

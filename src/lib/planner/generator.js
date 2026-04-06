@@ -20,6 +20,7 @@
 import { filterSafeRecipes } from '../nutrition/allergens';
 import { filterByTimeWindow, sortByBatchPriority } from './timeFilter';
 import { canAddWithoutMonotony } from './monotonyIndex';
+import { getCalorieDistribution } from '../nutrition/distribution';
 
 const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -254,40 +255,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
   } = profile;
 
   // 1. Определение списка приёмов пищи и распределения калорий
-  let currentMealTypes = ['breakfast', 'lunch', 'dinner'];
-  if (mealFrequency >= 4) currentMealTypes.push('snack2');
-  if (mealFrequency >= 5) currentMealTypes.push('snack');
-  if (mealFrequency >= 6) currentMealTypes.push('snack3');
-  if (mealFrequency >= 7) currentMealTypes.push('snack4');
-
-  // Сортировка по времени (DEFAULT_ORDER из Dashboard)
-  const order = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
-  currentMealTypes.sort((a, b) => order.indexOf(a) - order.indexOf(b));
-  // Убираем завтрак/ужин если выбрано
-  if (mealSpecifics.includes('no-breakfast')) {
-    currentMealTypes = currentMealTypes.filter(m => m !== 'breakfast');
-  }
-  if (mealSpecifics.includes('no-dinner')) {
-    currentMealTypes = currentMealTypes.filter(m => m !== 'dinner');
-  }
-
-  // Расчёт весов калорий
-  const weights = {
-    breakfast: mealSpecifics.includes('heavy-breakfast') ? 0.35 : 0.25,
-    lunch:     0.35,
-    dinner:    mealSpecifics.includes('light-dinner') ? 0.15 : 0.28,
-    snack:     0.12,
-    snack2:    0.10,
-    snack3:    0.10,
-    snack4:    0.10,
-  };
-
-  // Нормализация весов под активные приёмы
-  let totalWeight = currentMealTypes.reduce((sum, m) => sum + (weights[m] || 0.1), 0);
-  const CALORIE_DISTRIBUTION = {};
-  currentMealTypes.forEach(m => {
-    CALORIE_DISTRIBUTION[m] = (weights[m] || 0.1) / totalWeight;
-  });
+  const { distribution: CALORIE_DISTRIBUTION, types: currentMealTypes } = getCalorieDistribution(mealFrequency, mealSpecifics);
 
   const { targetCalories } = nutrition;
 
@@ -440,9 +408,8 @@ export function generateSingleMeal(allRecipes, profile, nutrition, mealType, sel
   }
 
   // 4. Calorie target
-  // Нам нужно знать распределение калорий. Мы можем примерно его повторить.
-  const weights = { breakfast: 0.25, lunch: 0.35, dinner: 0.28, snack: 0.12, snack2: 0.10, snack3: 0.10, snack4: 0.10 };
-  const calorieTarget = Math.round(nutrition.targetCalories * (weights[mealType] || 0.1));
+  const { distribution } = getCalorieDistribution(profile.mealFrequency, profile.mealSpecifics);
+  const calorieTarget = Math.round(nutrition.targetCalories * (distribution[mealType] || 0.1));
 
   return pickRecipe(pool, selectedSoFar, calorieTarget, profile.allowRepeatMeals, mealType);
 }

@@ -19,9 +19,28 @@ export default function DairyStep({ form, update, onNext, onBack }) {
     update({ likedDairy: next });
   };
 
+  const isAllSelected = DAIRY_OPTIONS.every(opt => (form.likedDairy || []).includes(opt.value));
+
+  const toggleAll = () => {
+    if (isAllSelected) {
+      update({ likedDairy: [] });
+    } else {
+      update({ likedDairy: DAIRY_OPTIONS.map(opt => opt.value) });
+    }
+  };
+
   return (
     <>
-      <h2 className="step__title">Молочные продукты и яйца</h2>
+      <div className="step__header">
+        <h2 className="step__title">Молочные продукты и яйца</h2>
+        <button 
+          type="button" 
+          className={`step__select-all ${isAllSelected ? 'step__select-all--active' : ''}`}
+          onClick={toggleAll}
+        >
+          {isAllSelected ? 'Снять всё' : 'Выбрать всё'}
+        </button>
+      </div>
       <p className="step__subtitle">
         Оставьте отмеченными те молочные продукты, которые вы с удовольствием съедите на завтрак или перекус.
       </p>

@@ -21,9 +21,28 @@ export default function MeatStep({ form, update, onNext, onBack }) {
     update({ likedProteins: next });
   };
 
+  const isAllSelected = MEAT_OPTIONS.every(opt => (form.likedProteins || []).includes(opt.value));
+
+  const toggleAll = () => {
+    if (isAllSelected) {
+      update({ likedProteins: [] });
+    } else {
+      update({ likedProteins: MEAT_OPTIONS.map(opt => opt.value) });
+    }
+  };
+
   return (
     <>
-      <h2 className="step__title">Мясо, птица, рыба</h2>
+      <div className="step__header">
+        <h2 className="step__title">Мясо, птица, рыба</h2>
+        <button 
+          type="button" 
+          className={`step__select-all ${isAllSelected ? 'step__select-all--active' : ''}`}
+          onClick={toggleAll}
+        >
+          {isAllSelected ? 'Снять всё' : 'Выбрать всё'}
+        </button>
+      </div>
       <p className="step__subtitle">
         Укажите ваши любимые источники белка. Из выбранных продуктов будет составлено меню.
         Если вы не любите свинину, просто снимите галочку, и она не попадется вам в рационе.

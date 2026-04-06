@@ -7,6 +7,7 @@ import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
 import { useUserStore } from '../../store/useUserStore';
 import { useFavoritesStore } from '../../store/useFavoritesStore';
+import { getCalorieDistribution } from '../../lib/nutrition/distribution';
 import recipes from '../../data/recipes.json';
 
 import './MealDetailPage.css';
@@ -23,7 +24,8 @@ const CATEGORY_LABELS = {
 export default function MealDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { nutrition } = useUserStore();
+  const location = useLocation();
+  const { profile, nutrition } = useUserStore();
   const { favorites, toggleFavorite } = useFavoritesStore();
   
   const recipe = useMemo(() => recipes.find((r) => r.id === id), [id]);
@@ -35,14 +37,14 @@ export default function MealDetailPage() {
     if (location.state?.multiplier) return location.state.multiplier;
     if (!recipe || !nutrition?.targetCalories) return 1;
 
-    const weights = { breakfast: 0.25, lunch: 0.35, dinner: 0.28, snack: 0.12 };
-    const categoryWeight = weights[recipe.category] || 0.1;
+    const { distribution } = getCalorieDistribution(profile?.mealFrequency || 3, profile?.mealSpecifics || []);
+    const categoryWeight = distribution[recipe.category] || 0.1;
     const targetCalForMeal = nutrition.targetCalories * categoryWeight;
     
     const mult = targetCalForMeal / recipe.nutrition.calories;
     // Округляем до 0.05 как в генераторе
     return Math.max(0.1, Math.round(mult * 20) / 20);
-  }, [location.state, recipe, nutrition]);
+  }, [location.state, recipe, nutrition, profile]);
 
   const [portions, setPortions] = React.useState(1);
   const totalMultiplier = suggestedMultiplier * portions;
