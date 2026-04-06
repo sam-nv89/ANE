@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart, Plus, Minus, Users } from 'lucide-react';
 
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
@@ -22,7 +22,9 @@ export default function MealDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { multiplier = 1 } = location.state || {};
+  const { multiplier: planMultiplier = 1 } = location.state || {};
+  const [portions, setPortions] = React.useState(1);
+  const totalMultiplier = planMultiplier * portions;
   const { plan } = usePlanStore();
   const { items, buildList } = useShoppingStore();
 
@@ -46,7 +48,7 @@ export default function MealDetailPage() {
     recipe.ingredients.forEach((ing) => {
       singleRecipeIngredients[ing.id] = {
         id: ing.id, name: ing.name,
-        totalAmount: ing.amount * multiplier, unit: ing.unit,
+        totalAmount: ing.amount * totalMultiplier, unit: ing.unit,
         category: ing.category ?? 'other', checked: false,
       };
     });
@@ -64,10 +66,10 @@ export default function MealDetailPage() {
     navigate('/app/shopping');
   };
 
-  const calories = Math.round(recipe.nutrition.calories * multiplier);
-  const protein = Math.round(recipe.nutrition.protein * multiplier);
-  const fat = Math.round(recipe.nutrition.fat * multiplier);
-  const carbs = Math.round(recipe.nutrition.carbs * multiplier);
+  const calories = Math.round(recipe.nutrition.calories * totalMultiplier);
+  const protein = Math.round(recipe.nutrition.protein * totalMultiplier);
+  const fat = Math.round(recipe.nutrition.fat * totalMultiplier);
+  const carbs = Math.round(recipe.nutrition.carbs * totalMultiplier);
 
   return (
     <div className="meal-detail">
@@ -133,6 +135,38 @@ export default function MealDetailPage() {
         </div>
 
         <div className="meal-detail__body">
+          {/* Portions & Personalization */}
+          <div className="portion-control">
+            <div className="portion-control__info">
+              <div className="portion-control__label">
+                <Users size={16} /> Количество порций
+              </div>
+              <div className="portion-control__multiplier">
+                {planMultiplier !== 1 && (
+                  <span className="badge-personal">
+                    🎯 Подстроено под ккал ({Math.round(planMultiplier * 100)}%)
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="portion-selector">
+              <button 
+                className="portion-btn" 
+                onClick={() => setPortions(Math.max(1, portions - 1))}
+                disabled={portions <= 1}
+              >
+                <Minus size={16} />
+              </button>
+              <span className="portion-value">{portions}</span>
+              <button 
+                className="portion-btn" 
+                onClick={() => setPortions(portions + 1)}
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+          </div>
+
           {/* Ingredients */}
           <div className="meal-detail__section">
             <h2 className="meal-detail__section-title">Ингредиенты</h2>
@@ -141,7 +175,7 @@ export default function MealDetailPage() {
                 <li key={ing.id} className="ingredient-list__item">
                   <span className="ingredient-list__name">{ing.name}</span>
                   <span className="ingredient-list__amount">
-                    {Math.round(ing.amount * multiplier * 10) / 10} {ing.unit}
+                    {Math.round(ing.amount * totalMultiplier * 10) / 10} {ing.unit}
                   </span>
                 </li>
               ))}
