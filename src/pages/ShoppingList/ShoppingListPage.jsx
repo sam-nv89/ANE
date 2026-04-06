@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Check, Trash2, RefreshCw, Printer, Download, FileText } from 'lucide-react';
+import { ShoppingCart, Check, Trash2, RefreshCw, Printer, Download, FileText, ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
@@ -23,6 +23,7 @@ export default function ShoppingListPage() {
   const { items, buildList, toggleItem, clearList } = useShoppingStore();
   const listRef = React.useRef(null);
   const [isExporting, setIsExporting] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   // Auto-build from plan if items empty
   useEffect(() => {
@@ -143,18 +144,35 @@ export default function ShoppingListPage() {
           </p>
         </div>
         <div className="shopping__actions">
-          <button 
-            className="btn-secondary" 
-            onClick={handleExportPDF} 
-            disabled={isExporting} 
-            title="Экспорт в PDF"
-            style={{ position: 'relative' }}
-          >
-            <FileText size={14} /> {isExporting ? '...' : 'PDF'}
-          </button>
-          <button className="btn-secondary" onClick={handleDownload} title="Скачать список">
-            <Download size={14} /> Скачать
-          </button>
+          <div className="download-dropdown">
+            <button 
+              className={`btn-secondary ${isMenuOpen ? 'btn-secondary--active' : ''}`} 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              disabled={isExporting}
+              title="Выбрать формат скачивания"
+            >
+              <Download size={14} /> {isExporting ? '...' : 'Скачать'} <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+            </button>
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div 
+                  className="download-dropdown__menu"
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.1, ease: 'easeOut' }}
+                >
+                  <button className="download-dropdown__item" onClick={() => { handleExportPDF(); setIsMenuOpen(false); }}>
+                    <FileText size={14} /> PDF-документ (.pdf)
+                  </button>
+                  <button className="download-dropdown__item" onClick={() => { handleDownload(); setIsMenuOpen(false); }}>
+                    <FileText size={14} /> Текстовый файл (.txt)
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
           <button className="btn-secondary" onClick={handlePrint} title="Печать">
             <Printer size={14} /> Печать
           </button>

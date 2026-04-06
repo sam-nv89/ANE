@@ -1,13 +1,15 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, ChevronDown, Download } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
-import { Download } from 'lucide-react';
 import { generatePlan, generateSingleMeal } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
+
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 import Skeleton from '../../components/Common/Skeleton';
 import './DashboardPage.css';
@@ -385,6 +387,9 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
   const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted, addCustomMeal, removeCustomMeal } = usePlanStore();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isExporting, setIsExporting] = React.useState(false);
+  const dashboardRef = React.useRef(null);
 
   const handleSwapMeal = (dayIndex, mealType) => {
     const dayMeals = plan[dayIndex].meals;
@@ -416,6 +421,43 @@ export default function DashboardPage() {
     a.href = url;
     a.download = 'weekly-menu.txt';
     a.click();
+  };
+
+  const handleExportPDF = async () => {
+    if (!dashboardRef.current) return;
+    setIsExporting(true);
+    document.body.setAttribute('data-print-mode', 'true');
+    
+    try {
+      // Capture the week-grid primarily
+      const element = document.querySelector('.week-grid');
+      const canvas = await html2canvas(element || dashboardRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        onclone: (clonedDoc) => {
+          const sidebar = clonedDoc.querySelector('.app__sidebar');
+          if (sidebar) sidebar.style.display = 'none';
+          // Fix colors
+          clonedDoc.querySelectorAll('.meal-card__name').forEach(el => el.style.color = '#000');
+          clonedDoc.querySelectorAll('.day-col__name').forEach(el => el.style.color = '#000');
+          clonedDoc.querySelectorAll('.dashboard__title').forEach(el => el.style.color = '#000');
+        }
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape for weekly grid
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('weekly-menu.pdf');
+    } catch (err) {
+      console.error('PDF Export Error:', err);
+    } finally {
+      document.body.removeAttribute('data-print-mode');
+      setIsExporting(false);
+    }
   };
 
   const today = new Date().getDay();
@@ -467,14 +509,35 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="dashboard__actions" style={{ display: 'flex', gap: 12 }}>
-          <button 
-            className="btn-secondary" 
-            onClick={handleDownloadMenu}
-            disabled={!plan}
-            style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}
-          >
-            <Download size={14} /> Скачать меню
-          </button>
+          <div className="download-dropdown">
+            <button 
+              className={`btn-secondary ${isMenuOpen ? 'btn-secondary--active' : ''}`} 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              disabled={!plan || isExporting}
+              style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}
+            >
+              <Download size={14} /> {isExporting ? '...' : 'Скачать'} <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+            </button>
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div 
+                  className="download-dropdown__menu"
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.1, ease: 'easeOut' }}
+                >
+                  <button className="download-dropdown__item" onClick={() => { handleExportPDF(); setIsMenuOpen(false); }}>
+                    <FileText size={14} /> PDF-документ (.pdf)
+                  </button>
+                  <button className="download-dropdown__item" onClick={() => { handleDownloadMenu(); setIsMenuOpen(false); }}>
+                    <FileText size={14} /> Текстовый файл (.txt)
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <button 
             className="btn-primary" 
             onClick={() => navigate('/app/onboarding')}
