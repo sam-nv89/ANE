@@ -229,10 +229,11 @@
 }
 
 .meal-card__swap-btn:hover {
-  background: var(--clr-accent-1); /* Электрический зеленый */
-  color: var(--clr-bg-surface);   /* Темный контрастный текст вместо черного */
+  background: rgba(0, 245, 160, 0.2); /* Мягкое зеленое свечение вместо плотной заливки */
+  color: #fff;                     /* Белые стрелочки вместо черных */
   border-color: var(--clr-accent-1);
-  transform: scale(1.1) rotate(45deg);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 0 12px rgba(0, 245, 160, 0.3);
 }
 
 .meal-card__swap-btn:active {
