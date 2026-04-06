@@ -66,6 +66,38 @@
   letter-spacing: -0.02em;
   margin-bottom: 12px;
   line-height: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.meal-detail__fav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text-muted);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.meal-detail__fav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.meal-detail__fav-btn--active {
+  color: #ff4b2b;
+  background: rgba(255, 75, 43, 0.1);
+  border-color: rgba(255, 75, 43, 0.3);
+  box-shadow: 0 0 15px rgba(255, 75, 43, 0.15);
 }
 
 .meal-detail__tags {

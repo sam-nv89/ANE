@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart, Plus, Minus, Users } from 'lucide-react';
+import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart, Plus, Minus, Users, Heart } from 'lucide-react';
 
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
 import { useUserStore } from '../../store/useUserStore';
+import { useFavoritesStore } from '../../store/useFavoritesStore';
 import recipes from '../../data/recipes.json';
 
 import './MealDetailPage.css';
@@ -22,10 +23,12 @@ const CATEGORY_LABELS = {
 export default function MealDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { nutrition } = useUserStore();
+  const { favorites, toggleFavorite } = useFavoritesStore();
   
   const recipe = useMemo(() => recipes.find((r) => r.id === id), [id]);
+
+  const isFav = favorites.includes(id);
 
   // Вычисляем рекомендуемый множитель, если перешли не из плана
   const suggestedMultiplier = useMemo(() => {
@@ -106,7 +109,17 @@ export default function MealDetailPage() {
             <div className="meal-detail__category">
               {CATEGORY_LABELS[recipe.category]}
             </div>
-            <h1 className="meal-detail__title">{recipe.name}</h1>
+            <h1 className="meal-detail__title">
+              {recipe.name}
+              <motion.button
+                className={`meal-detail__fav-btn ${isFav ? 'meal-detail__fav-btn--active' : ''}`}
+                onClick={() => toggleFavorite(id)}
+                whileTap={{ scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <Heart size={24} fill={isFav ? 'currentColor' : 'none'} />
+              </motion.button>
+            </h1>
 
             {/* Tags */}
             <div className="meal-detail__tags">

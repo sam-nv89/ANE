@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart } from 'lucide-react';
+
+import { useFavoritesStore } from '../../store/useFavoritesStore';
 
 import recipes from '../../data/recipes.json';
 import './RecipesPage.css';
 
 const CATEGORIES = [
   { id: 'all', label: 'Все' },
+  { id: 'favs', label: '❤️ Избранное' },
   { id: 'breakfast', label: 'Завтраки' },
   { id: 'lunch', label: 'Обеды' },
   { id: 'dinner', label: 'Ужины' },
@@ -34,6 +37,7 @@ export default function RecipesPage() {
   const [limitTime, setLimitTime] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const { favorites, toggleFavorite } = useFavoritesStore();
 
   const handleSortChange = (key) => {
     if (sortBy === key) {
@@ -50,7 +54,9 @@ export default function RecipesPage() {
         r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.ingredients.some(ing => ing.name.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      const matchCategory = activeCategory === 'all' || r.category === activeCategory;
+      const matchCategory = activeCategory === 'all' || 
+                           (activeCategory === 'favs' ? favorites.includes(r.id) : r.category === activeCategory);
+      
       const matchTime = limitTime === 0 || r.cookTimeMin <= limitTime;
 
       return matchQuery && matchCategory && matchTime;
@@ -173,6 +179,16 @@ export default function RecipesPage() {
               transition={{ duration: 0.2, delay: idx * 0.02 }}
               onClick={() => navigate(`/app/meal/${recipe.id}`)}
             >
+              <button 
+                className={`recipe-card-alt__fav ${favorites.includes(recipe.id) ? 'recipe-card-alt__fav--active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(recipe.id);
+                }}
+              >
+                <Heart size={16} fill={favorites.includes(recipe.id) ? 'currentColor' : 'none'} />
+              </button>
+
               <div className="recipe-card-alt__emoji">{recipe.imageEmoji}</div>
               <div className="recipe-card-alt__content">
                 <div className="recipe-card-alt__cat">{CATEGORIES.find(c => c.id === recipe.category)?.label}</div>
