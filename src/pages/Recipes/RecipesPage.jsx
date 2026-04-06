@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, Flame, ChevronRight, Filter, X } from 'lucide-react';
+import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 import recipes from '../../data/recipes.json';
 import './RecipesPage.css';
@@ -21,14 +21,31 @@ const TIME_FILTERS = [
   { id: 60, label: 'До 60 мин' },
 ];
 
+const SORT_OPTIONS = [
+  { id: 'name', label: 'По названию' },
+  { id: 'calories', label: 'По калориям' },
+  { id: 'time', label: 'По времени' },
+];
+
 export default function RecipesPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [limitTime, setLimitTime] = useState(0);
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+
+  const handleSortChange = (key) => {
+    if (sortBy === key) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(key);
+      setSortOrder('asc');
+    }
+  };
 
   const filteredRecipes = useMemo(() => {
-    return recipes.filter((r) => {
+    let result = recipes.filter((r) => {
       const matchQuery = 
         r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.ingredients.some(ing => ing.name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -38,7 +55,27 @@ export default function RecipesPage() {
 
       return matchQuery && matchCategory && matchTime;
     });
-  }, [searchQuery, activeCategory, limitTime]);
+
+    // Применяем сортировку
+    return result.sort((a, b) => {
+      let valA, valB;
+      
+      if (sortBy === 'name') {
+        valA = a.name.toLowerCase();
+        valB = b.name.toLowerCase();
+      } else if (sortBy === 'calories') {
+        valA = a.nutrition.calories;
+        valB = b.nutrition.calories;
+      } else if (sortBy === 'time') {
+        valA = a.cookTimeMin;
+        valB = b.cookTimeMin;
+      }
+
+      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [searchQuery, activeCategory, limitTime, sortBy, sortOrder]);
 
   return (
     <div className="recipes-page">
@@ -95,6 +132,26 @@ export default function RecipesPage() {
                   onClick={() => setLimitTime(tf.id)}
                 >
                   {tf.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <span className="filter-group__label">Сортировка:</span>
+            <div className="filter-tags">
+              {SORT_OPTIONS.map(opt => (
+                <button 
+                  key={opt.id}
+                  className={`filter-tag ${sortBy === opt.id ? 'filter-tag--active' : ''}`}
+                  onClick={() => handleSortChange(opt.id)}
+                >
+                  {opt.label}
+                  {sortBy === opt.id && (
+                    <span className="sort-icon-inline">
+                      {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
