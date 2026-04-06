@@ -2,11 +2,11 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const ACTIVITY_OPTIONS = [
-  { value: 'sedentary',  emoji: '🪑', label: 'Сидячий',      sub: 'Офис, нет спорта' },
-  { value: 'light',      emoji: '🚶', label: 'Лёгкий',       sub: '1–3 трен./нед' },
-  { value: 'moderate',   emoji: '🏃', label: 'Умеренный',    sub: '3–5 трен./нед' },
-  { value: 'active',     emoji: '🏋️', label: 'Активный',     sub: '6–7 трен./нед' },
-  { value: 'veryActive', emoji: '⚡',  label: 'Очень актив.', sub: 'Физ. труд + спорт' },
+  { value: 'sedentary',  emoji: '🪑', label: 'Сидячий',      sub: 'Нет спорта, офис' },
+  { value: 'light',      emoji: '🚶', label: 'Низкий',       sub: '1–3 раза в неделю' },
+  { value: 'moderate',   emoji: '🏃', label: 'Средний',      sub: '3–5 раз в неделю' },
+  { value: 'active',     emoji: '🏋️', label: 'Высокий',      sub: '6–7 раз в неделю' },
+  { value: 'veryActive', emoji: '⚡',  label: 'Экстремальный', sub: 'Спорт 2 раза/день' },
 ];
 
 export default function BiometricStep({ form, update, onNext, onBack }) {
