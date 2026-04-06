@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Check, Trash2, RefreshCw, Printer, Download } from 'lucide-react';
+import { ShoppingCart, Check, Trash2, RefreshCw, Printer, Download, FileText } from 'lucide-react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
@@ -19,6 +21,8 @@ const CATEGORY_CONFIG = {
 export default function ShoppingListPage() {
   const { plan } = usePlanStore();
   const { items, buildList, toggleItem, clearList } = useShoppingStore();
+  const listRef = React.useRef(null);
+  const [isExporting, setIsExporting] = React.useState(false);
 
   // Auto-build from plan if items empty
   useEffect(() => {
@@ -70,6 +74,47 @@ export default function ShoppingListPage() {
     a.click();
   };
 
+  const handleExportPDF = async () => {
+    if (!listRef.current) return;
+    setIsExporting(true);
+    
+    // Give a small delay for CSS to apply light-mode if needed
+    // (We'll use a data-attribute on body to force light print styles in html2canvas)
+    document.body.setAttribute('data-print-mode', 'true');
+    
+    try {
+      const canvas = await html2canvas(listRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff', // Force white bg in PDF
+        logging: false,
+        onclone: (clonedDoc) => {
+          // Hide buttons and controls in the clone before capturing
+          const actions = clonedDoc.querySelector('.shopping__actions');
+          const checkboxes = clonedDoc.querySelectorAll('.shopping__checkbox');
+          if (actions) actions.style.display = 'none';
+          // Make text black and clear
+          clonedDoc.querySelectorAll('.shopping__item-name').forEach(el => el.style.color = '#000');
+          clonedDoc.querySelectorAll('.shopping__group-header').forEach(el => el.style.color = '#000');
+          clonedDoc.querySelectorAll('.shopping__title').forEach(el => el.style.color = '#000');
+        }
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('shopping-list.pdf');
+    } catch (err) {
+      console.error('PDF Export Error:', err);
+    } finally {
+      document.body.removeAttribute('data-print-mode');
+      setIsExporting(false);
+    }
+  };
+
   if (totalCount === 0) {
     return (
       <div className="shopping">
@@ -88,7 +133,7 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <div className="shopping">
+    <div className="shopping" ref={listRef} data-is-exporting={isExporting}>
       {/* Header */}
       <div className="shopping__header">
         <div>
@@ -98,6 +143,15 @@ export default function ShoppingListPage() {
           </p>
         </div>
         <div className="shopping__actions">
+          <button 
+            className="btn-secondary" 
+            onClick={handleExportPDF} 
+            disabled={isExporting} 
+            title="Экспорт в PDF"
+            style={{ position: 'relative' }}
+          >
+            <FileText size={14} /> {isExporting ? '...' : 'PDF'}
+          </button>
           <button className="btn-secondary" onClick={handleDownload} title="Скачать список">
             <Download size={14} /> Скачать
           </button>
