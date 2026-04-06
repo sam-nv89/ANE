@@ -24,14 +24,6 @@ import { canAddWithoutMonotony } from './monotonyIndex';
 const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
 
-/** Распределение калорий по приёмам пищи (% от дневной нормы) */
-const CALORIE_DISTRIBUTION = {
-  breakfast: 0.25,
-  lunch:     0.35,
-  dinner:    0.28,
-  snack:     0.12,
-};
-
 /**
  * Fisher-Yates shuffle для случайного перемешивания массива.
  */
@@ -262,9 +254,14 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // 1. Определение списка приёмов пищи и распределения калорий
   let currentMealTypes = ['breakfast', 'lunch', 'dinner'];
-  if (mealFrequency >= 5) currentMealTypes.push('snack', 'snack2');
-  if (mealFrequency >= 7) currentMealTypes.push('snack3', 'snack4');
+  if (mealFrequency >= 4) currentMealTypes.push('snack2');
+  if (mealFrequency >= 5) currentMealTypes.push('snack');
+  if (mealFrequency >= 6) currentMealTypes.push('snack3');
+  if (mealFrequency >= 7) currentMealTypes.push('snack4');
 
+  // Сортировка по времени (DEFAULT_ORDER из Dashboard)
+  const order = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
+  currentMealTypes.sort((a, b) => order.indexOf(a) - order.indexOf(b));
   // Убираем завтрак/ужин если выбрано
   if (mealSpecifics.includes('no-breakfast')) {
     currentMealTypes = currentMealTypes.filter(m => m !== 'breakfast');
