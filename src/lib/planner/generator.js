@@ -59,6 +59,7 @@ function toRef(recipe, targetCal) {
     category:    recipe.category,
     tags:        recipe.tags ?? [],
     multiplier:  safeMult,
+    targetCal:   Math.round(targetCal),
   };
 }
 

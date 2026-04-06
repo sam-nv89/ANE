@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, RefreshCw } from 'lucide-react';
+import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
@@ -112,7 +112,14 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap }) {
         <span className="meal-card__emoji">{meal.imageEmoji}</span>
         <div className="meal-card__name">{meal.name}</div>
         <div className="meal-card__meta">
-          <span className="meal-card__cal">{meal.calories} ккал</span>
+          <div className="meal-card__cal-row">
+            <span className="meal-card__cal">{meal.calories} ккал</span>
+            {meal.targetCal && (
+              <span className={`meal-card__precision ${Math.abs(meal.calories - meal.targetCal) <= 5 ? 'meal-card__precision--perfect' : ''}`}>
+                {meal.calories - meal.targetCal === 0 ? '✓' : (meal.calories - meal.targetCal > 0 ? `+${meal.calories - meal.targetCal}` : `${meal.calories - meal.targetCal}`)}
+              </span>
+            )}
+          </div>
           <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
         </div>
       </button>
