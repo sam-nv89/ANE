@@ -208,15 +208,16 @@
 }
 
 .recipe-card-alt__emoji {
-  font-size: 44px;
-  line-height: 1;
+  font-size: 38px; /* Немного увеличим для акцента */
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
-  transition: transform 0.2s ease;
-  align-self: flex-start; /* Выравниваем по верху */
-  margin-top: -2px;      /* Смещаем чуть выше первой строки */
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
+  background: transparent;
+  border: none;
 }
 
 .recipe-card-alt__content {
