@@ -27,10 +27,10 @@ const STEPS = [
   { id: 'biometric', label: 'Данные',      component: BiometricStep },
   { id: 'goal',      label: 'Цель',         component: GoalStep },
   { id: 'time',      label: 'Время',        component: TimeStep },
-  { id: 'meat',      label: 'Мясо',         component: MeatStep },
-  { id: 'veg',       label: 'Овощи',        component: VegStep },
+  { id: 'meat',      label: 'Мясо/Птица',   component: MeatStep },
+  { id: 'veg',       label: 'Овощи/Фрукты', component: VegStep },
   { id: 'dairy',     label: 'Молочное',     component: DairyStep },
-  { id: 'grains',    label: 'Гарниры',      component: GrainsStep },
+  { id: 'grains',    label: 'Крупы/Бобовые',component: GrainsStep },
   { id: 'allergen',  label: 'Ограничения',  component: AllergenStep },
   { id: 'summary',   label: 'Итог',         component: SummaryStep },
 ];
@@ -46,9 +46,9 @@ const INITIAL = {
   cookTimeWindows: [30], cookFrequency: 'daily', preferLazy: false,
   // Steps 4-7 — Ingredients
   likedProteins: ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'],
-  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin'],
+  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach'],
   likedDairy: ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'],
-  likedGrains: ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'bread'],
+  likedGrains: ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'],
   
   dislikedIngredients: [],   // legacy ID-based (for generator filter)
   dislikedFreeText: [],      // free-text input from user

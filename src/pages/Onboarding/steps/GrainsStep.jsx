@@ -2,12 +2,27 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const GRAINS_OPTIONS = [
-  { value: 'pasta',     emoji: '🍝', label: 'Макароны' },
-  { value: 'buckwheat', emoji: '🤎', label: 'Гречка' },
-  { value: 'rice',      emoji: '🍚', label: 'Рис' },
-  { value: 'oats',      emoji: '🥣', label: 'Овсянка' },
-  { value: 'quinoa',    emoji: '🌾', label: 'Киноа' },
+  // Пшеница / Паста
+  { value: 'pasta',     emoji: '🍝', label: 'Макароны/Паста' },
+  { value: 'wheat',     emoji: '🌾', label: 'Манка/Булгур/Кускус' },
   { value: 'bread',     emoji: '🍞', label: 'Хлеб/Лаваш' },
+  
+  // Популярные крупы
+  { value: 'rice',      emoji: '🍚', label: 'Рис (белый, бурый)' },
+  { value: 'buckwheat', emoji: '🤎', label: 'Гречневая крупа' },
+  { value: 'oats',      emoji: '🥣', label: 'Овсянка/Геркулес' },
+  { value: 'barley',    emoji: '🌾', label: 'Перловка/Ячневая' },
+  { value: 'millet',    emoji: '🟡', label: 'Пшенная крупа' },
+  { value: 'corn',      emoji: '🌽', label: 'Кукурузная' },
+  
+  // Цельнозерновые
+  { value: 'quinoa',    emoji: '🌿', label: 'Киноа/Амарант' },
+  
+  // Бобовые
+  { value: 'lentil',    emoji: '🧆', label: 'Чечевица' },
+  { value: 'pea',       emoji: '🟢', label: 'Горох' },
+  { value: 'chickpea',  emoji: '🟤', label: 'Нут' },
+  { value: 'beans',     emoji: '🫘', label: 'Фасоль' },
 ];
 
 const SUGARY_FREQ = [

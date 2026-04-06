@@ -117,14 +117,14 @@ function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType) {
 }
 
 const INGREDIENT_KEYWORDS = {
-  // Proteins
+  // Proteins (Meat, Poultry, Fish)
   beef: ['говяж', 'говядин'],
   pork: ['свин'],
   lamb: ['баран'],
   chicken: ['кури', 'цыплен'],
   turkey: ['индейк'],
-  fish: ['тун', 'лосось', 'треск', 'тиляпи', 'рыб'],
-  seafood: ['креветк', 'кальмар', 'морепродукт'],
+  fish: ['тун', 'лосось', 'треск', 'тиляпи', 'рыб', 'минтай'],
+  seafood: ['креветк', 'кальмар', 'морепродукт', 'миди'],
   
   // Veggies
   tomato: ['помидор', 'томат'],
@@ -134,24 +134,46 @@ const INGREDIENT_KEYWORDS = {
   carrot: ['морков'],
   onion: ['лук'],
   potato: ['картоф', 'батат'],
-  spinach: ['шпинат', 'зелен', 'салат'],
+  spinach: ['шпинат', 'зелен', 'салат', 'руккол'],
   pumpkin: ['тыкв'],
+  cabbage: ['капуст'],
+  'bell-pepper': ['перец болг', 'паприк'],
+  eggplant: ['баклажан'],
+  garlic: ['чеснок'],
+  mushrooms: ['гриб', 'шампиньон', 'вешенк'],
+
+  // Fruits & Berries
+  apple: ['яблок'],
+  banana: ['банан'],
+  citrus: ['апельсин', 'лимон', 'мандарин', 'грейпфрут'],
+  berries: ['ягод', 'клубник', 'малин', 'черник', 'вишн'],
+  peach: ['персик', 'абрикос', 'нектарин'],
   
   // Dairy & Eggs
   cheese: ['сыр'],
   'cottage-cheese': ['творог'],
   yogurt: ['йогурт'],
-  kefir: ['кефир'],
-  milk: ['молоко'],
+  kefir: ['кефир', 'ряженк'],
+  milk: ['молоко', 'сливк'],
   eggs: ['яйц', 'яйцо'],
   
-  // Grains
+  // Grains & Pasta
   pasta: ['паста', 'макарон', 'лапша', 'удон', 'соба'],
   buckwheat: ['гречк'],
   rice: ['рис'],
-  oats: ['овсян'],
-  quinoa: ['киноа', 'кеноа', 'булгур', 'кускус'],
-  bread: ['хлеб', 'лаваш']
+  oats: ['овсян', 'геркулес'],
+  quinoa: ['киноа', 'кеноа'],
+  wheat: ['булгур', 'кускус', 'манка', 'пшеничн'],
+  barley: ['перлов', 'ячнев'],
+  corn: ['кукуруз'],
+  millet: ['пшен'],
+  bread: ['хлеб', 'лаваш', 'булочк', 'батон'],
+
+  // Legumes
+  lentil: ['чечевиц'],
+  pea: ['горох', 'горошек'],
+  chickpea: ['нут'],
+  beans: ['фасол']
 };
 
 function getUnselectedKeywords(selectedKeys, allKeys) {
@@ -190,9 +212,9 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
   const PROTEIN_KEYS = ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'];
-  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin'];
+  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach'];
   const DAIRY_KEYS   = ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'];
-  const GRAIN_KEYS   = ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'bread'];
+  const GRAIN_KEYS   = ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'];
 
   const rejectedKeywords = [
     ...getUnselectedKeywords(likedProteins || PROTEIN_KEYS, PROTEIN_KEYS),

@@ -2,15 +2,27 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const VEG_OPTIONS = [
-  { value: 'tomato',   emoji: '🍅', label: 'Помидоры' },
-  { value: 'cucumber', emoji: '🥒', label: 'Огурцы' },
-  { value: 'zucchini', emoji: '💡', label: 'Кабачок' }, // У эмодзи кабачка нет стабильного кроссплатформенного аналога, кроме лупы или лампочки, используем просто нейтральный или зелень
-  { value: 'broccoli', emoji: '🥦', label: 'Брокколи' },
-  { value: 'carrot',   emoji: '🥕', label: 'Морковь' },
-  { value: 'onion',    emoji: '🧅', label: 'Лук' },
-  { value: 'potato',   emoji: '🥔', label: 'Картофель' },
-  { value: 'spinach',  emoji: '🥬', label: 'Зелень' },
-  { value: 'pumpkin',  emoji: '🎃', label: 'Тыква' },
+  // Овощи
+  { value: 'tomato',      emoji: '🍅', label: 'Помидоры' },
+  { value: 'cucumber',    emoji: '🥒', label: 'Огурцы' },
+  { value: 'zucchini',    emoji: '💡', label: 'Кабачок' }, 
+  { value: 'broccoli',    emoji: '🥦', label: 'Брокколи/Цветная' },
+  { value: 'carrot',      emoji: '🥕', label: 'Морковь' },
+  { value: 'onion',       emoji: '🧅', label: 'Лук' },
+  { value: 'potato',      emoji: '🥔', label: 'Картофель/Батат' },
+  { value: 'spinach',     emoji: '🥬', label: 'Зелень/Шпинат' },
+  { value: 'pumpkin',     emoji: '🎃', label: 'Тыква' },
+  { value: 'cabbage',     emoji: '🥬', label: 'Капуста' },
+  { value: 'bell-pepper', emoji: '🫑', label: 'Сладкий перец' },
+  { value: 'eggplant',    emoji: '🍆', label: 'Баклажан' },
+  { value: 'garlic',      emoji: '🧄', label: 'Чеснок' },
+  { value: 'mushrooms',   emoji: '🍄', label: 'Грибы' },
+  // Фрукты и Ягоды
+  { value: 'apple',       emoji: '🍎', label: 'Яблоки' },
+  { value: 'banana',      emoji: '🍌', label: 'Бананы' },
+  { value: 'citrus',      emoji: '🍊', label: 'Цитрусовые' },
+  { value: 'berries',     emoji: '🍓', label: 'Ягоды' },
+  { value: 'peach',       emoji: '🍑', label: 'Персики/Абрикосы' },
 ];
 
 export default function VegStep({ form, update, onNext, onBack }) {
@@ -24,7 +36,7 @@ export default function VegStep({ form, update, onNext, onBack }) {
 
   return (
     <>
-      <h2 className="step__title">Море овощей</h2>
+      <h2 className="step__title">Овощи, фрукты и грибы</h2>
       <p className="step__subtitle">
         Выбирайте любимые! Если отметить только помидоры и огурцы — меню будет состоять в основном из них.
       </p>
