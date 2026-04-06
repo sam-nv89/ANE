@@ -337,9 +337,6 @@ export default function DashboardPage() {
             Персонализировано для {profile?.name} · {nutrition?.targetCalories} ккал/день
           </p>
         </div>
-        <button className="btn-secondary" onClick={handleRegenerate} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
-          <RefreshCw size={14} /> Пересчитать
-        </button>
       </div>
 
       {/* Today's summary */}

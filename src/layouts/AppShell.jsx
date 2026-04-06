@@ -3,9 +3,12 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import './AppShell.css';
 import {
   LayoutDashboard, ShoppingCart, TrendingUp, User,
-  ChevronRight, Zap, LogOut, BookOpen,
+  ChevronRight, Zap, LogOut, BookOpen, RefreshCw
 } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
+import { usePlanStore } from '../store/usePlanStore';
+import { generatePlan } from '../lib/planner/generator';
+import recipes from '../data/recipes.json';
 import './AppShell.css';
 
 const NAV_ITEMS = [
@@ -18,15 +21,28 @@ const NAV_ITEMS = [
 
 export default function AppShell() {
   const navigate = useNavigate();
-  const { profile, resetProfile } = useUserStore();
+  const { profile, nutrition, resetProfile } = useUserStore();
+  const { setPlan, setLoading } = usePlanStore();
 
   const handleLogout = () => {
     resetProfile();
     navigate('/');
   };
 
+  const handleRegenerate = () => {
+    setLoading(true);
+    navigate('/app/dashboard');
+    
+    // Эмуляция расчета для плавности UI
+    setTimeout(() => {
+      const newPlan = generatePlan(recipes, profile, nutrition);
+      setPlan(newPlan);
+    }, 1000);
+  };
+
   return (
     <div className="shell">
+      {/* ... (sidebar part unchanged) ... */}
       {/* ── Sidebar ── */}
       <aside className="shell__sidebar" aria-label="Боковое меню">
         {/* Logo */}
@@ -104,8 +120,9 @@ export default function AppShell() {
           </div>
           <button
             className="shell__topbar-cta btn-primary"
-            onClick={() => navigate('/app/dashboard')}
+            onClick={handleRegenerate}
           >
+            <RefreshCw size={14} style={{ marginRight: 8 }} />
             Пересчитать рацион
           </button>
         </header>
