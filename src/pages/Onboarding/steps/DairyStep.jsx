@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const DAIRY_OPTIONS = [
-  { value: 'yogurt',         emoji: '🍦', label: 'Йогурт' },
+  { value: 'yogurt',         emoji: '🍶', label: 'Йогурт' },
   { value: 'kefir',          emoji: '🥛', label: 'Кефир' },
   { value: 'milk',           emoji: '🥛', label: 'Молоко' },
   { value: 'cheese',         emoji: '🧀', label: 'Сыр' },
