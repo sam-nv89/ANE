@@ -225,7 +225,7 @@
     "name": "Творог с фруктами и мёдом",
     "category": "breakfast",
     "cookTimeMin": 5,
-    "imageEmoji": "🧀",
+    "imageEmoji": "🥣",
     "tags": [
       "lazy",
       "vegetarian",
@@ -331,7 +331,7 @@
     "name": "Горячая овсянка с бананом",
     "category": "breakfast",
     "cookTimeMin": 10,
-    "imageEmoji": "🍌",
+    "imageEmoji": "🥣",
     "tags": [
       "vegetarian"
     ],
@@ -387,7 +387,7 @@
     "name": "Омлет с овощами и сыром",
     "category": "breakfast",
     "cookTimeMin": 15,
-    "imageEmoji": "🧆",
+    "imageEmoji": "🍳",
     "tags": [
       "vegetarian",
       "high-protein"
@@ -451,7 +451,7 @@
     "name": "Куриное филе с рисом и овощами",
     "category": "lunch",
     "cookTimeMin": 30,
-    "imageEmoji": "🍚",
+    "imageEmoji": "🍛",
     "tags": [
       "high-protein",
       "batch-friendly"
@@ -567,7 +567,7 @@
     "name": "Паста с тунцом и помидорами",
     "category": "lunch",
     "cookTimeMin": 20,
-    "imageEmoji": "🐟",
+    "imageEmoji": "🍝",
     "tags": [
       "quick"
     ],
@@ -1134,7 +1134,7 @@
     "name": "Лосось с аспарагусом и лимоном",
     "category": "dinner",
     "cookTimeMin": 25,
-    "imageEmoji": "🍋",
+    "imageEmoji": "🐟",
     "tags": [
       "high-protein",
       "low-carb"
@@ -1197,7 +1197,7 @@
     "name": "Говядина с брокколи в соусе терияки",
     "category": "dinner",
     "cookTimeMin": 30,
-    "imageEmoji": "🥦",
+    "imageEmoji": "🥩",
     "tags": [
       "high-protein"
     ],
@@ -1382,7 +1382,7 @@
     "name": "Тефтели из индейки в томатном соусе",
     "category": "dinner",
     "cookTimeMin": 40,
-    "imageEmoji": "🫕",
+    "imageEmoji": "🍲",
     "tags": [
       "batch-friendly",
       "high-protein"
@@ -1508,7 +1508,7 @@
     "name": "Запечённая рыба с овощами",
     "category": "dinner",
     "cookTimeMin": 35,
-    "imageEmoji": "🐡",
+    "imageEmoji": "🐟",
     "tags": [
       "high-protein",
       "low-carb"
@@ -1757,7 +1757,7 @@
     "name": "Творог с мёдом и грецким орехом",
     "category": "snack",
     "cookTimeMin": 3,
-    "imageEmoji": "🍯",
+    "imageEmoji": "🥣",
     "tags": [
       "lazy",
       "vegetarian",
@@ -1937,7 +1937,7 @@
     "name": "Куриное филе с грибами на сковороде",
     "category": "dinner",
     "cookTimeMin": 25,
-    "imageEmoji": "🍄",
+    "imageEmoji": "🍗",
     "tags": [
       "high-protein",
       "quick"
@@ -1993,7 +1993,7 @@
     "name": "Индейка с гречкой экспресс",
     "category": "dinner",
     "cookTimeMin": 25,
-    "imageEmoji": "🦃",
+    "imageEmoji": "🍗",
     "tags": [
       "high-protein",
       "batch-friendly",
@@ -2048,7 +2048,7 @@
     "name": "Паста с креветками и чесноком",
     "category": "dinner",
     "cookTimeMin": 20,
-    "imageEmoji": "🍤",
+    "imageEmoji": "🍝",
     "tags": [
       "quick",
       "high-protein"
@@ -5428,7 +5428,7 @@
     "name": "Микс ягод с йогуртом и дробленым фундуком",
     "category": "snack",
     "cookTimeMin": 3,
-    "imageEmoji": "🍧",
+    "imageEmoji": "🥣",
     "tags": [
       "no-cooking",
       "high-protein",
