@@ -10,6 +10,7 @@ export const usePlanStore = create(
     (set, get) => ({
       // Недельный план: массив из 7 дней
       plan: null,
+      isLoading: false,
       /*
         plan shape: Array (length 7) of:
         {
@@ -32,8 +33,10 @@ export const usePlanStore = create(
       generatedAt: null,
 
       // Actions
+      setLoading: (val) => set({ isLoading: val }),
+
       setPlan: (plan) =>
-        set({ plan, generatedAt: new Date().toISOString(), completed: [] }),
+        set({ plan, generatedAt: new Date().toISOString(), completed: [], isLoading: false }),
 
       toggleCompleted: (dayIndex, mealType) => {
         const key = `${dayIndex}:${mealType}`;

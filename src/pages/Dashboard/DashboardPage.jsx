@@ -8,6 +8,7 @@ import { usePlanStore } from '../../store/usePlanStore';
 import { generatePlan } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
 
+import Skeleton from '../../components/Common/Skeleton';
 import './DashboardPage.css';
 
 const MEAL_LABELS = {
@@ -75,7 +76,18 @@ function MacroRing({ label, value, max, color }) {
 }
 
 /* ── Meal card ── */
-function MealCard({ meal, mealType, dayIndex, navigate }) {
+function MealCard({ meal, mealType, dayIndex, navigate, isLoading }) {
+  if (isLoading) {
+    return (
+      <div className="meal-card meal-card--skeleton">
+        <Skeleton width="60px" height="12px" style={{ marginBottom: 8, opacity: 0.5 }} />
+        <Skeleton circle width="32px" height="32px" style={{ marginBottom: 12 }} />
+        <Skeleton width="100%" height="14px" style={{ marginBottom: 8 }} />
+        <Skeleton width="70%" height="10px" />
+      </div>
+    );
+  }
+
   if (!meal) {
     return (
       <div className={`meal-card meal-card--empty`}>
@@ -104,13 +116,11 @@ function MealCard({ meal, mealType, dayIndex, navigate }) {
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading }) {
   const today = new Date().getDay();
-  // Convert JS getDay (0=Sun) to our Mon-based (0=Mon)
   const todayIndex = (today + 6) % 7;
   const isActualToday = day.dayIndex === todayIndex;
 
-  // Get date for this day
   const date = new Date();
   date.setDate(date.getDate() + (day.dayIndex - todayIndex));
   const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -121,11 +131,16 @@ function DayColumn({ day, navigate, isSelected, onSelect, order }) {
       <button 
         className={`day-col__header ${isActualToday ? 'day-col__header--today' : ''} ${isSelected ? 'day-col__header--selected' : ''}`}
         onClick={() => onSelect(day.dayIndex)}
+        disabled={isLoading}
       >
         <div className={`day-col__name ${isActualToday ? 'gradient-text' : ''}`}>
           {day.dayLabel}
         </div>
-        <div className="day-col__date">{dateStr}</div>
+        {isLoading ? (
+          <Skeleton width="40px" height="10px" style={{ margin: '4px auto' }} />
+        ) : (
+          <div className="day-col__date">{dateStr}</div>
+        )}
       </button>
 
       {order.map((mealType) => (
@@ -135,6 +150,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order }) {
           mealType={mealType}
           dayIndex={day.dayIndex}
           navigate={navigate}
+          isLoading={isLoading}
         />
       ))}
     </div>
@@ -142,11 +158,11 @@ function DayColumn({ day, navigate, isSelected, onSelect, order }) {
 }
 
 /* ── Today's nutrition summary ── */
-function TodaySummary({ plan, nutrition, selectedIndex }) {
+function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
   const selectedPlan = plan?.[selectedIndex];
 
   const totals = useMemo(() => {
-    if (!selectedPlan) return null;
+    if (!selectedPlan || isLoading) return null;
     return Object.values(selectedPlan.meals).reduce(
       (acc, m) => {
         if (!m) return acc;
@@ -159,7 +175,7 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
       },
       { calories: 0, protein: 0, fat: 0, carbs: 0 }
     );
-  }, [selectedPlan]);
+  }, [selectedPlan, isLoading]);
 
   const fullDate = useMemo(() => {
     if (!selectedPlan) return '';
@@ -168,9 +184,28 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
     const date = new Date();
     date.setDate(date.getDate() + (selectedIndex - todayIndex));
     const dateStr = date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    // Remove the trailing ' г.' (case-insensitive and handle potential trailing space)
     return dateStr.replace(/\s*г\.?\s*$/i, '');
   }, [selectedIndex, selectedPlan]);
+
+  if (isLoading) {
+    return (
+      <div className="day-summary">
+        <div className="day-summary__info" style={{ width: '100%' }}>
+          <Skeleton width="180px" height="24px" style={{ marginBottom: 12 }} />
+          <Skeleton width="120px" height="36px" style={{ marginBottom: 16 }} />
+          <Skeleton width="100%" height="8px" style={{ marginBottom: 0 }} />
+        </div>
+        <div className="macro-rings">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="macro-ring">
+              <Skeleton circle width="60px" height="60px" style={{ marginBottom: 8 }} />
+              <Skeleton width="40px" height="12px" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (!totals || !nutrition) return null;
 
@@ -217,7 +252,7 @@ function TodaySummary({ plan, nutrition, selectedIndex }) {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
-  const { plan, setPlan } = usePlanStore();
+  const { plan, setPlan, isLoading, setLoading } = usePlanStore();
 
   const today = new Date().getDay();
   const todayIdx = (today + 6) % 7;
@@ -231,11 +266,15 @@ export default function DashboardPage() {
   }, [plan]);
 
   const handleRegenerate = () => {
-    const newPlan = generatePlan(recipes, profile, nutrition);
-    setPlan(newPlan);
+    setLoading(true);
+    // Искусственная задержка для демонстрации "Wow"-эффекта скелетонов
+    setTimeout(() => {
+      const newPlan = generatePlan(recipes, profile, nutrition);
+      setPlan(newPlan);
+    }, 1200);
   };
 
-  if (!plan) {
+  if (!plan && !isLoading) {
     return (
       <div className="dashboard">
         <div className="plan-empty">
@@ -251,6 +290,10 @@ export default function DashboardPage() {
       </div>
     );
   }
+
+  // Fallback order for skeletons when plan is not yet generated
+  const displayOrder = mealOrder.length > 0 ? mealOrder : DEFAULT_ORDER.slice(0, 4);
+  const displayPlan = plan || Array.from({ length: 7 }, (_, i) => ({ dayIndex: i, dayLabel: DAY_LABELS[i], meals: {} }));
 
   return (
     <div className="dashboard">
@@ -268,7 +311,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Today's summary */}
-      <TodaySummary plan={plan} nutrition={nutrition} selectedIndex={selectedDayIndex} />
+      <TodaySummary plan={displayPlan} nutrition={nutrition} selectedIndex={selectedDayIndex} isLoading={isLoading} />
 
       {/* Weekly grid */}
       <motion.div
@@ -276,17 +319,18 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ '--meal-count': mealOrder.length }}
+        style={{ '--meal-count': displayOrder.length }}
       >
-        <TimeColumn order={mealOrder} />
-        {plan.map((day) => (
+        <TimeColumn order={displayOrder} />
+        {displayPlan.map((day) => (
           <DayColumn 
             key={day.dayIndex} 
             day={day} 
             navigate={navigate} 
             isSelected={selectedDayIndex === day.dayIndex}
             onSelect={setSelectedDayIndex}
-            order={mealOrder}
+            order={displayOrder}
+            isLoading={isLoading}
           />
         ))}
       </motion.div>
