@@ -13,7 +13,10 @@ import recipes from '../../data/recipes.json';
 import BiometricStep  from './steps/BiometricStep';
 import GoalStep       from './steps/GoalStep';
 import TimeStep       from './steps/TimeStep';
-import TasteStep      from './steps/TasteStep';
+import MeatStep       from './steps/MeatStep';
+import VegStep        from './steps/VegStep';
+import DairyStep      from './steps/DairyStep';
+import GrainsStep     from './steps/GrainsStep';
 import AllergenStep   from './steps/AllergenStep';
 import SummaryStep    from './steps/SummaryStep';
 
@@ -24,7 +27,10 @@ const STEPS = [
   { id: 'biometric', label: 'Данные',      component: BiometricStep },
   { id: 'goal',      label: 'Цель',         component: GoalStep },
   { id: 'time',      label: 'Время',        component: TimeStep },
-  { id: 'taste',     label: 'Вкус',         component: TasteStep },
+  { id: 'meat',      label: 'Мясо',         component: MeatStep },
+  { id: 'veg',       label: 'Овощи',        component: VegStep },
+  { id: 'dairy',     label: 'Молочное',     component: DairyStep },
+  { id: 'grains',    label: 'Гарниры',      component: GrainsStep },
   { id: 'allergen',  label: 'Ограничения',  component: AllergenStep },
   { id: 'summary',   label: 'Итог',         component: SummaryStep },
 ];
@@ -38,14 +44,18 @@ const INITIAL = {
   goal: 'lose', goalRate: -0.5, targetWeightKg: null,
   // Step 3 — Time
   cookTimeWindows: [30], cookFrequency: 'daily', preferLazy: false,
-  // Step 4 — Taste
-  tasteCategories: ['meat', 'poultry', 'dairy', 'grains', 'vegetables'],
+  // Steps 4-7 — Ingredients
+  likedProteins: ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'],
+  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin'],
+  likedDairy: ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'],
+  likedGrains: ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'bread'],
+  
   dislikedIngredients: [],   // legacy ID-based (for generator filter)
   dislikedFreeText: [],      // free-text input from user
   includeSugary: false,      // include sweets/desserts
   sugaryFrequency: 'few',    // 'few' | 'often' | 'daily'
   allowRepeatMeals: false,
-  // Step 5 — Allergens
+  // Step 8 — Allergens
   allergens: [], medicalRestrictions: [], dietaryStyles: [],
 };
 

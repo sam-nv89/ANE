@@ -116,6 +116,49 @@ function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType) {
   return toRef(closest[0], targetCal);
 }
 
+const INGREDIENT_KEYWORDS = {
+  // Proteins
+  beef: ['говяж', 'говядин'],
+  pork: ['свин'],
+  lamb: ['баран'],
+  chicken: ['кури', 'цыплен'],
+  turkey: ['индейк'],
+  fish: ['тун', 'лосось', 'треск', 'тиляпи', 'рыб'],
+  seafood: ['креветк', 'кальмар', 'морепродукт'],
+  
+  // Veggies
+  tomato: ['помидор', 'томат'],
+  cucumber: ['огурец', 'огурц'],
+  zucchini: ['кабачок', 'цукини'],
+  broccoli: ['брокколи', 'цветная капуста'],
+  carrot: ['морков'],
+  onion: ['лук'],
+  potato: ['картоф', 'батат'],
+  spinach: ['шпинат', 'зелен', 'салат'],
+  pumpkin: ['тыкв'],
+  
+  // Dairy & Eggs
+  cheese: ['сыр'],
+  'cottage-cheese': ['творог'],
+  yogurt: ['йогурт'],
+  kefir: ['кефир'],
+  milk: ['молоко'],
+  eggs: ['яйц', 'яйцо'],
+  
+  // Grains
+  pasta: ['паста', 'макарон', 'лапша', 'удон', 'соба'],
+  buckwheat: ['гречк'],
+  rice: ['рис'],
+  oats: ['овсян'],
+  quinoa: ['киноа', 'кеноа', 'булгур', 'кускус'],
+  bread: ['хлеб', 'лаваш']
+};
+
+function getUnselectedKeywords(selectedKeys, allKeys) {
+  const unselected = allKeys.filter(k => !selectedKeys.includes(k));
+  return unselected.flatMap(k => INGREDIENT_KEYWORDS[k] || []);
+}
+
 /**
  * Главная функция генерации рациона.
  *
@@ -134,6 +177,10 @@ export function generatePlan(allRecipes, profile, nutrition) {
     cookFrequency,
     preferLazy,
     allowRepeatMeals,
+    likedProteins,
+    likedVeg,
+    likedDairy,
+    likedGrains
   } = profile;
 
   const { targetCalories } = nutrition;
@@ -142,6 +189,18 @@ export function generatePlan(allRecipes, profile, nutrition) {
   let safeRecipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
 
   // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
+  const PROTEIN_KEYS = ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'];
+  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin'];
+  const DAIRY_KEYS   = ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'];
+  const GRAIN_KEYS   = ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'bread'];
+
+  const rejectedKeywords = [
+    ...getUnselectedKeywords(likedProteins || PROTEIN_KEYS, PROTEIN_KEYS),
+    ...getUnselectedKeywords(likedVeg || VEG_KEYS, VEG_KEYS),
+    ...getUnselectedKeywords(likedDairy || DAIRY_KEYS, DAIRY_KEYS),
+    ...getUnselectedKeywords(likedGrains || GRAIN_KEYS, GRAIN_KEYS),
+  ];
+
   safeRecipes = safeRecipes.filter((recipe) => {
     // Жёсткие ID (старая логика)
     if (recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
@@ -153,6 +212,15 @@ export function generatePlan(allRecipes, profile, nutrition) {
         texts.some(disliked => ing.name.toLowerCase().includes(disliked))
       );
       if (hasDislikedText) return false;
+    }
+
+    // Новая логика: отсеиваем жестко по невыбранным макро-категориям
+    if (rejectedKeywords.length > 0) {
+      const hasRejectedCategory = recipe.ingredients?.some(ing => {
+        const ingNameLower = ing.name.toLowerCase();
+        return rejectedKeywords.some(rejWord => ingNameLower.includes(rejWord));
+      });
+      if (hasRejectedCategory) return false;
     }
     
     return true;
