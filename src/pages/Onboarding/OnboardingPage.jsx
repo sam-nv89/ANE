@@ -46,7 +46,7 @@ const INITIAL = {
   cookTimeWindows: [30], cookFrequency: 'daily', preferLazy: false,
   // Steps 4-7 — Ingredients
   likedProteins: ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'],
-  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach'],
+  likedVeg: ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant'],
   likedDairy: ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'],
   likedGrains: ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'],
   

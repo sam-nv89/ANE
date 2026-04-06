@@ -125,30 +125,69 @@ const INGREDIENT_KEYWORDS = {
   turkey: ['индейк'],
   fish: ['тун', 'лосось', 'треск', 'тиляпи', 'рыб', 'минтай'],
   seafood: ['креветк', 'кальмар', 'морепродукт', 'миди'],
+  // Veggies - Корнеплоды
+  carrot: ['морков'],
+  beet: ['свёкл', 'свекл'],
+  radish: ['редис', 'редьк'],
+  turnip: ['реп'],
+  parsnip: ['пастернак'],
+  potato: ['картоф', 'батат'],
   
-  // Veggies
+  // Veggies - Луковичные
+  onion: ['лук'],
+  garlic: ['чеснок'],
+  leek: ['порей'],
+
+  // Veggies - Капустные
+  cabbage: ['капуст'],
+  broccoli: ['брокколи'],
+  cauliflower: ['цветная капуста'],
+  'brussels-sprouts': ['брюссельск'],
+
+  // Veggies - Паслёновые
   tomato: ['помидор', 'томат'],
+  eggplant: ['баклажан'],
+  'bell-pepper': ['перец болг', 'паприк'],
+
+  // Veggies - Тыквенные
   cucumber: ['огурец', 'огурц'],
   zucchini: ['кабачок', 'цукини'],
-  broccoli: ['брокколи', 'цветная капуста'],
-  carrot: ['морков'],
-  onion: ['лук'],
-  potato: ['картоф', 'батат'],
-  spinach: ['шпинат', 'зелен', 'салат', 'руккол'],
   pumpkin: ['тыкв'],
-  cabbage: ['капуст'],
-  'bell-pepper': ['перец болг', 'паприк'],
-  eggplant: ['баклажан'],
-  garlic: ['чеснок'],
-  mushrooms: ['гриб', 'шампиньон', 'вешенк'],
 
-  // Fruits & Berries
+  // Veggies - Листовые
+  lettuce: ['салат'],
+  spinach: ['шпинат'],
+  arugula: ['руккол'],
+
+  // Фрукты - Семечковые
   apple: ['яблок'],
+  pear: ['груш'],
+  quince: ['айв'],
+
+  // Фрукты - Косточковые
+  cherry: ['вишн', 'черешн'],
+  peach: ['персик'],
+  apricot: ['абрикос'],
+  plum: ['слив'],
+
+  // Фрукты - Цитрусовые
+  orange: ['апельсин'],
+  lemon: ['лимон'],
+  mandarin: ['мандарин'],
+  grapefruit: ['грейпфрут'],
+
+  // Фрукты - Экзотические
   banana: ['банан'],
-  citrus: ['апельсин', 'лимон', 'мандарин', 'грейпфрут'],
-  berries: ['ягод', 'клубник', 'малин', 'черник', 'вишн'],
-  peach: ['персик', 'абрикос', 'нектарин'],
-  
+  mango: ['манго'],
+  pineapple: ['ананас'],
+  kiwi: ['киви'],
+  papaya: ['папай'],
+
+  // Ягоды
+  strawberry: ['клубник', 'земляник'],
+  raspberry: ['малин'],
+  blueberry: ['черник', 'голубик'],
+  currant: ['смородин'],
   // Dairy & Eggs
   cheese: ['сыр'],
   'cottage-cheese': ['творог'],
@@ -212,7 +251,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
   // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
   const PROTEIN_KEYS = ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'];
-  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach'];
+  const VEG_KEYS     = ['tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 'cabbage', 'bell-pepper', 'eggplant', 'garlic', 'mushrooms', 'apple', 'banana', 'citrus', 'berries', 'peach', 'beet', 'radish', 'turnip', 'parsnip', 'leek', 'cauliflower', 'brussels-sprouts', 'lettuce', 'arugula', 'pear', 'quince', 'cherry', 'apricot', 'plum', 'orange', 'lemon', 'mandarin', 'grapefruit', 'mango', 'pineapple', 'kiwi', 'papaya', 'strawberry', 'raspberry', 'blueberry', 'currant'];
   const DAIRY_KEYS   = ['cheese', 'cottage-cheese', 'yogurt', 'kefir', 'milk', 'eggs'];
   const GRAIN_KEYS   = ['pasta', 'buckwheat', 'rice', 'oats', 'quinoa', 'wheat', 'barley', 'corn', 'millet', 'bread', 'lentil', 'pea', 'chickpea', 'beans'];
 
