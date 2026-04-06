@@ -2,13 +2,13 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const MEAT_OPTIONS = [
-  { value: 'beef',    emoji: '🥩', label: 'Говядина' },
-  { value: 'pork',    emoji: '🥓', label: 'Свинина' },
   { value: 'lamb',    emoji: '🍖', label: 'Баранина' },
-  { value: 'chicken', emoji: '🍗', label: 'Курица' },
+  { value: 'beef',    emoji: '🥩', label: 'Говядина' },
   { value: 'turkey',  emoji: '🦃', label: 'Индейка' },
-  { value: 'fish',    emoji: '🐟', label: 'Рыба' },
+  { value: 'chicken', emoji: '🍗', label: 'Курица' },
   { value: 'seafood', emoji: '🦐', label: 'Морепродукты' },
+  { value: 'fish',    emoji: '🐟', label: 'Рыба' },
+  { value: 'pork',    emoji: '🥓', label: 'Свинина' },
 ];
 
 export default function MeatStep({ form, update, onNext, onBack }) {

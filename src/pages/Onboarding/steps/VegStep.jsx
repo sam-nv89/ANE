@@ -3,90 +3,90 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const VEG_FRUIT_GROUPS = [
   {
+    title: '🥦 Капустные',
+    items: [
+      { value: 'cabbage', label: 'Белокочанная', emoji: '🥬' },
+      { value: 'broccoli', label: 'Брокколи', emoji: '🥦' },
+      { value: 'brussels-sprouts', label: 'Брюссельская', emoji: '🥬' },
+      { value: 'cauliflower', label: 'Цветная', emoji: '🥦' },
+    ]
+  },
+  {
     title: '🥕 Корнеплоды',
     items: [
+      { value: 'potato', label: 'Картофель', emoji: '🥔' },
       { value: 'carrot', label: 'Морковь', emoji: '🥕' },
-      { value: 'beet', label: 'Свёкла', emoji: '🔴' },
+      { value: 'parsnip', label: 'Пастернак', emoji: '🥕' },
       { value: 'radish', label: 'Редис', emoji: '🟣' },
       { value: 'turnip', label: 'Репа', emoji: '🟡' },
-      { value: 'parsnip', label: 'Пастернак', emoji: '🥕' },
-      { value: 'potato', label: 'Картофель', emoji: '🥔' },
+      { value: 'beet', label: 'Свёкла', emoji: '🔴' },
+    ]
+  },
+  {
+    title: '🍑 Косточковые',
+    items: [
+      { value: 'apricot', label: 'Абрикос', emoji: '🍑' },
+      { value: 'cherry', label: 'Вишня / Черешня', emoji: '🍒' },
+      { value: 'peach', label: 'Персик', emoji: '🍑' },
+      { value: 'plum', label: 'Слива', emoji: '🫐' },
+    ]
+  },
+  {
+    title: '🥬 Листовые',
+    items: [
+      { value: 'arugula', label: 'Руккола', emoji: '🌿' },
+      { value: 'lettuce', label: 'Салат', emoji: '🥬' },
+      { value: 'spinach', label: 'Шпинат', emoji: '🥬' },
     ]
   },
   {
     title: '🧅 Луковичные',
     items: [
       { value: 'onion', label: 'Лук', emoji: '🧅' },
-      { value: 'garlic', label: 'Чеснок', emoji: '🧄' },
       { value: 'leek', label: 'Лук-порей', emoji: '🧅' },
-    ]
-  },
-  {
-    title: '🥦 Капустные',
-    items: [
-      { value: 'cabbage', label: 'Белокочанная', emoji: '🥬' },
-      { value: 'broccoli', label: 'Брокколи', emoji: '🥦' },
-      { value: 'cauliflower', label: 'Цветная', emoji: '🥦' },
-      { value: 'brussels-sprouts', label: 'Брюссельская', emoji: '🥬' },
+      { value: 'garlic', label: 'Чеснок', emoji: '🧄' },
     ]
   },
   {
     title: '🍆 Паслёновые',
     items: [
-      { value: 'tomato', label: 'Помидор', emoji: '🍅' },
       { value: 'eggplant', label: 'Баклажан', emoji: '🍆' },
       { value: 'bell-pepper', label: 'Перец', emoji: '🫑' },
-    ]
-  },
-  {
-    title: '🎃 Тыквенные',
-    items: [
-      { value: 'cucumber', label: 'Огурец', emoji: '🥒' },
-      { value: 'zucchini', label: 'Кабачок', emoji: '💡' },
-      { value: 'pumpkin', label: 'Тыква', emoji: '🎃' },
-    ]
-  },
-  {
-    title: '🥬 Листовые',
-    items: [
-      { value: 'lettuce', label: 'Салат', emoji: '🥬' },
-      { value: 'spinach', label: 'Шпинат', emoji: '🥬' },
-      { value: 'arugula', label: 'Руккола', emoji: '🌿' },
+      { value: 'tomato', label: 'Помидор', emoji: '🍅' },
     ]
   },
   {
     title: '🍏 Семечковые',
     items: [
-      { value: 'apple', label: 'Яблоко', emoji: '🍎' },
-      { value: 'pear', label: 'Груша', emoji: '🍐' },
       { value: 'quince', label: 'Айва', emoji: '🍋' },
+      { value: 'pear', label: 'Груша', emoji: '🍐' },
+      { value: 'apple', label: 'Яблоко', emoji: '🍎' },
     ]
   },
   {
-    title: '🍑 Косточковые',
+    title: '🎃 Тыквенные',
     items: [
-      { value: 'cherry', label: 'Вишня / Черешня', emoji: '🍒' },
-      { value: 'peach', label: 'Персик', emoji: '🍑' },
-      { value: 'apricot', label: 'Абрикос', emoji: '🍑' },
-      { value: 'plum', label: 'Слива', emoji: '🫐' },
+      { value: 'zucchini', label: 'Кабачок', emoji: '💡' },
+      { value: 'cucumber', label: 'Огурец', emoji: '🥒' },
+      { value: 'pumpkin', label: 'Тыква', emoji: '🎃' },
     ]
   },
   {
     title: '🍊 Цитрусовые',
     items: [
       { value: 'orange', label: 'Апельсин', emoji: '🍊' },
+      { value: 'grapefruit', label: 'Грейпфрут', emoji: '🍊' },
       { value: 'lemon', label: 'Лимон', emoji: '🍋' },
       { value: 'mandarin', label: 'Мандарин', emoji: '🍊' },
-      { value: 'grapefruit', label: 'Грейпфрут', emoji: '🍊' },
     ]
   },
   {
     title: '🍍 Экзотические',
     items: [
-      { value: 'banana', label: 'Банан', emoji: '🍌' },
-      { value: 'mango', label: 'Манго', emoji: '🥭' },
       { value: 'pineapple', label: 'Ананас', emoji: '🍍' },
+      { value: 'banana', label: 'Банан', emoji: '🍌' },
       { value: 'kiwi', label: 'Киви', emoji: '🥝' },
+      { value: 'mango', label: 'Манго', emoji: '🥭' },
       { value: 'papaya', label: 'Папайя', emoji: '🍈' },
     ]
   },
@@ -95,8 +95,8 @@ const VEG_FRUIT_GROUPS = [
     items: [
       { value: 'strawberry', label: 'Клубника', emoji: '🍓' },
       { value: 'raspberry', label: 'Малина', emoji: '🔴' },
-      { value: 'blueberry', label: 'Черника', emoji: '🫐' },
       { value: 'currant', label: 'Смородина', emoji: '🫐' },
+      { value: 'blueberry', label: 'Черника', emoji: '🫐' },
     ]
   }
 ];
