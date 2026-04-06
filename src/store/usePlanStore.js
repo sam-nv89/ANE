@@ -21,7 +21,8 @@ export const usePlanStore = create(
             lunch:     RecipeRef | null,
             dinner:    RecipeRef | null,
             snack:     RecipeRef | null,
-          }
+          },
+          customMeals: [] // Array of { id, name, calories, protein, fat, carbs }
         }
         RecipeRef = { id, name, calories, protein, fat, carbs, cookTimeMin, imageEmoji }
       */
@@ -52,6 +53,26 @@ export const usePlanStore = create(
           const plan = state.plan.map((day, i) =>
             i === dayIndex
               ? { ...day, meals: { ...day.meals, [mealType]: newRecipeRef } }
+              : day
+          );
+          return { plan };
+        }),
+
+      addCustomMeal: (dayIndex, meal) =>
+        set((state) => {
+          const plan = state.plan.map((day, i) =>
+            i === dayIndex
+              ? { ...day, customMeals: [...(day.customMeals || []), { ...meal, id: `custom-${Date.now()}` || Date.now().toString() }] }
+              : day
+          );
+          return { plan };
+        }),
+
+      removeCustomMeal: (dayIndex, customMealId) =>
+        set((state) => {
+          const plan = state.plan.map((day, i) =>
+            i === dayIndex
+              ? { ...day, customMeals: (day.customMeals || []).filter(m => m.id !== customMealId) }
               : day
           );
           return { plan };

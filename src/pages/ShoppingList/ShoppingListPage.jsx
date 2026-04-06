@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Check, Trash2, RefreshCw } from 'lucide-react';
+import { ShoppingCart, Check, Trash2, RefreshCw, Printer, Download } from 'lucide-react';
 
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
@@ -47,6 +47,29 @@ export default function ShoppingListPage() {
     if (plan) buildList(plan, recipes);
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownload = () => {
+    const text = Object.entries(CATEGORY_CONFIG)
+      .sort(([, a], [, b]) => a.order - b.order)
+      .map(([cat, config]) => {
+        const catItems = Object.values(items).filter(i => (i.category || 'other') === cat);
+        if (catItems.length === 0) return '';
+        return `--- ${config.label} ---\n` + catItems.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.name}: ${i.totalAmount} ${i.unit}`).join('\n');
+      })
+      .filter(Boolean)
+      .join('\n\n');
+    
+    const blob = new Blob([`СПИСОК ПОКУПОК\n\n${text}`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'shopping-list.txt';
+    a.click();
+  };
+
   if (totalCount === 0) {
     return (
       <div className="shopping">
@@ -75,6 +98,12 @@ export default function ShoppingListPage() {
           </p>
         </div>
         <div className="shopping__actions">
+          <button className="btn-secondary" onClick={handleDownload} title="Скачать список">
+            <Download size={14} /> Скачать
+          </button>
+          <button className="btn-secondary" onClick={handlePrint} title="Печать">
+            <Printer size={14} /> Печать
+          </button>
           <button className="btn-secondary" onClick={handleRebuild} style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
             <RefreshCw size={14} /> Обновить
           </button>

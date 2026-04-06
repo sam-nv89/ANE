@@ -272,3 +272,69 @@ section {
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--clr-text-secondary); }
+
+/* ---------- Print Styles ---------- */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .sidebar, 
+  .dashboard__actions, 
+  .shopping__actions,
+  .btn-primary,
+  .btn-secondary,
+  .meal-card__swap-btn,
+  .meal-card__remove-btn,
+  .add-custom-btn,
+  .custom-meal-form,
+  .grid-overlay,
+  .nav-header {
+    display: none !important;
+  }
+
+  .app-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .dashboard, .shopping, .meal-detail {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .card, .meal-card, .day-summary, .shopping__group {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    color: #000 !important;
+  }
+
+  .meal-card--completed {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .meal-card__name, .day-summary__val, .shopping__item-name {
+    color: #000 !important;
+  }
+
+  .macro-ring__svg {
+    display: none; /* SVG rings don't always print well, better to show numbers */
+  }
+
+  .progress-bg, .day-summary__progress-bg {
+    border: 1px solid #000;
+  }
+
+  .week-grid {
+    display: block !important; /* Stack days vertically for better printing */
+  }
+
+  .day-col {
+    margin-bottom: 2rem;
+    break-inside: avoid;
+  }
+}

@@ -5,6 +5,7 @@ import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight } fro
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
+import { Download } from 'lucide-react';
 import { generatePlan, generateSingleMeal } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
 
@@ -77,7 +78,7 @@ function MacroRing({ label, value, max, color }) {
 }
 
 /* ── Meal card ── */
-function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap }) {
+function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCompleted, onToggle }) {
   if (isLoading) {
     return (
       <div className="meal-card meal-card--skeleton">
@@ -100,10 +101,23 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap }) {
 
   return (
     <motion.div
-      className="meal-card"
+      className={`meal-card ${isCompleted ? 'meal-card--completed' : ''}`}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.15 }}
     >
+      <button 
+        className="meal-card__done-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle(dayIndex, mealType);
+        }}
+        title={isCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
+      >
+        <div className={`check-circle ${isCompleted ? 'check-circle--active' : ''}`}>
+          {isCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
+        </div>
+      </button>
+
       <button 
         className="meal-card__main-btn"
         onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
@@ -139,7 +153,19 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap }) {
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom }) {
+  const [isAdding, setIsAdding] = React.useState(false);
+  const [customName, setCustomName] = React.useState('');
+  const [customCal, setCustomCal] = React.useState('');
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    if (!customName || !customCal) return;
+    onAddCustom(day.dayIndex, { name: customName, calories: parseInt(customCal, 10) });
+    setCustomName('');
+    setCustomCal('');
+    setIsAdding(false);
+  };
   const today = new Date().getDay();
   const todayIndex = (today + 6) % 7;
   const isActualToday = day.dayIndex === todayIndex;
@@ -175,20 +201,74 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
           navigate={navigate}
           isLoading={isLoading}
           onSwap={onSwap}
+          isCompleted={completed.includes(`${day.dayIndex}:${mealType}`)}
+          onToggle={onToggle}
         />
       ))}
+
+      {/* Custom Meals List */}
+      {day.customMeals?.map(m => (
+        <div key={m.id} className="meal-card meal-card--custom">
+          <button className="meal-card__remove-btn" onClick={() => onRemoveCustom(day.dayIndex, m.id)}>×</button>
+          <div className="meal-card__type">Свой продукт</div>
+          <div className="meal-card__name">{m.name}</div>
+          <div className="meal-card__meta">
+            <span className="meal-card__cal">{m.calories} ккал</span>
+          </div>
+        </div>
+      ))}
+
+      {/* Add Custom Meal Form */}
+      {isAdding ? (
+        <motion.form 
+          className="custom-meal-form"
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          onSubmit={handleAdd}
+        >
+          <input 
+            autoFocus
+            type="text" 
+            placeholder="Название..." 
+            value={customName}
+            onChange={e => setCustomName(e.target.value)}
+            className="custom-meal-form__input"
+          />
+          <div className="custom-meal-form__row">
+            <input 
+              type="number" 
+              placeholder="Ккал" 
+              value={customCal}
+              onChange={e => setCustomCal(e.target.value)}
+              className="custom-meal-form__input custom-meal-form__input--small"
+            />
+            <button type="submit" className="custom-meal-form__btn custom-meal-form__btn--add">OK</button>
+            <button type="button" onClick={() => setIsAdding(false)} className="custom-meal-form__btn">×</button>
+          </div>
+        </motion.form>
+      ) : (
+        <button 
+          className="add-custom-btn"
+          onClick={() => setIsAdding(true)}
+        >
+          + Свой продукт
+        </button>
+      )}
     </div>
   );
 }
 
 /* ── Today's nutrition summary ── */
-function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
+function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) {
   const selectedPlan = plan?.[selectedIndex];
 
   const totals = useMemo(() => {
     if (!selectedPlan || isLoading) return null;
-    return Object.values(selectedPlan.meals).reduce(
-      (acc, m) => {
+    const entries = Object.entries(selectedPlan.meals);
+    
+    // Считаем два набора данных: плановые (всё) и фактические (отмеченные)
+    const planSum = entries.reduce(
+      (acc, [type, m]) => {
         if (!m) return acc;
         return {
           calories: acc.calories + m.calories,
@@ -199,7 +279,32 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
       },
       { calories: 0, protein: 0, fat: 0, carbs: 0 }
     );
-  }, [selectedPlan, isLoading]);
+
+    // Добавляем customMeals к факту
+    const factSum = entries.reduce(
+      (acc, [type, m]) => {
+        if (!m || !completed.includes(`${selectedIndex}:${type}`)) return acc;
+        return {
+          calories: acc.calories + m.calories,
+          protein:  acc.protein  + m.protein,
+          fat:      acc.fat      + m.fat,
+          carbs:    acc.carbs    + m.carbs,
+        };
+      },
+      { calories: 0, protein: 0, fat: 0, carbs: 0 }
+    );
+
+    if (selectedPlan.customMeals && selectedPlan.customMeals.length > 0) {
+      selectedPlan.customMeals.forEach(m => {
+        factSum.calories += m.calories || 0;
+        factSum.protein  += m.protein  || 0;
+        factSum.fat      += m.fat      || 0;
+        factSum.carbs    += m.carbs    || 0;
+      });
+    }
+
+    return { plan: planSum, fact: factSum };
+  }, [selectedPlan, isLoading, completed, selectedIndex]);
 
   const fullDate = useMemo(() => {
     if (!selectedPlan) return '';
@@ -233,23 +338,23 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
 
   if (!totals || !nutrition) return null;
 
-  const progress = Math.min((totals.calories / nutrition.targetCalories) * 100, 100);
+  const progress = Math.min((totals.fact.calories / nutrition.targetCalories) * 100, 100);
 
   return (
     <div className="day-summary">
       <div className="day-summary__info">
         <div className="day-summary__label-row">
           <span className="day-summary__day-name">{fullDate}</span>
-          <span className="day-summary__status">Расчет рациона</span>
+          <span className="day-summary__status">Выполнено: {Math.round((totals.fact.calories / nutrition.targetCalories) * 100)}%</span>
         </div>
         <div className="day-summary__row">
           <div className="day-summary__group">
-            <span className="day-summary__sublabel">По плану</span>
-            <span className="day-summary__val day-summary__val--current">{totals.calories}</span>
+            <span className="day-summary__sublabel">Съедено</span>
+            <span className="day-summary__val day-summary__val--current">{totals.fact.calories}</span>
           </div>
           <div className="day-summary__divider">/</div>
           <div className="day-summary__group">
-            <span className="day-summary__sublabel">Цель на день</span>
+            <span className="day-summary__sublabel">Цель дня</span>
             <span className="day-summary__val day-summary__val--target">{nutrition.targetCalories} <small>ккал</small></span>
           </div>
         </div>
@@ -259,14 +364,17 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
-            key={selectedIndex}
+            key={`progress-${selectedIndex}`}
           />
+        </div>
+        <div className="day-summary__plan-info">
+          План на день: {totals.plan.calories} ккал
         </div>
       </div>
       <div className="macro-rings">
-        <MacroRing key={`p-${selectedIndex}`} label="Белки"    value={totals.protein} max={nutrition.protein} color="#00d4ff" />
-        <MacroRing key={`f-${selectedIndex}`} label="Жиры"     value={totals.fat}     max={nutrition.fat}     color="#f59e0b" />
-        <MacroRing key={`c-${selectedIndex}`} label="Углеводы" value={totals.carbs}   max={nutrition.carbs}   color="#a78bfa" />
+        <MacroRing key={`p-${selectedIndex}`} label="Белки"    value={totals.fact.protein} max={nutrition.protein} color="#00d4ff" />
+        <MacroRing key={`f-${selectedIndex}`} label="Жиры"     value={totals.fact.fat}     max={nutrition.fat}     color="#f59e0b" />
+        <MacroRing key={`c-${selectedIndex}`} label="Углеводы" value={totals.fact.carbs}   max={nutrition.carbs}   color="#a78bfa" />
       </div>
     </div>
   );
@@ -276,7 +384,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading }) {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
-  const { plan, setPlan, isLoading, setLoading, replaceMeal } = usePlanStore();
+  const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted, addCustomMeal, removeCustomMeal } = usePlanStore();
 
   const handleSwapMeal = (dayIndex, mealType) => {
     const dayMeals = plan[dayIndex].meals;
@@ -287,6 +395,27 @@ export default function DashboardPage() {
     if (newMeal) {
       replaceMeal(dayIndex, mealType, newMeal);
     }
+  };
+
+  const handleDownloadMenu = () => {
+    if (!plan) return;
+    const text = plan.map(day => {
+      let dayText = `=== ${day.dayLabel} ===\n`;
+      Object.entries(day.meals).forEach(([type, m]) => {
+        if (m) dayText += `${MEAL_LABELS[type] || type.toUpperCase()}: ${m.name} (${m.calories} ккал)\n`;
+      });
+      if (day.customMeals && day.customMeals.length > 0) {
+        dayText += `ДОПОЛНИТЕЛЬНО:\n` + day.customMeals.map(m => `- ${m.name} (${m.calories} ккал)`).join('\n') + '\n';
+      }
+      return dayText + '\n';
+    }).join('\n');
+
+    const blob = new Blob([`МОЙ РАЦИОН НА НЕДЕЛЮ\n\n${text}`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'weekly-menu.txt';
+    a.click();
   };
 
   const today = new Date().getDay();
@@ -337,10 +466,27 @@ export default function DashboardPage() {
             Персонализировано для {profile?.name} · {nutrition?.targetCalories} ккал/день
           </p>
         </div>
+        <div className="dashboard__actions" style={{ display: 'flex', gap: 12 }}>
+          <button 
+            className="btn-secondary" 
+            onClick={handleDownloadMenu}
+            disabled={!plan}
+            style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            <Download size={14} /> Скачать меню
+          </button>
+          <button 
+            className="btn-primary" 
+            onClick={() => navigate('/app/onboarding')}
+            style={{ fontSize: 13 }}
+          >
+            Обновить рацион
+          </button>
+        </div>
       </div>
 
       {/* Today's summary */}
-      <TodaySummary plan={displayPlan} nutrition={nutrition} selectedIndex={selectedDayIndex} isLoading={isLoading} />
+      <TodaySummary plan={displayPlan} nutrition={nutrition} selectedIndex={selectedDayIndex} isLoading={isLoading} completed={completed} />
 
       {/* Weekly grid */}
       <motion.div
@@ -361,6 +507,10 @@ export default function DashboardPage() {
             order={displayOrder}
             isLoading={isLoading}
             onSwap={handleSwapMeal}
+            completed={completed}
+            onToggle={toggleCompleted}
+            onAddCustom={addCustomMeal}
+            onRemoveCustom={removeCustomMeal}
           />
         ))}
       </motion.div>
