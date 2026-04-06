@@ -88,7 +88,6 @@ export default function AllergenStep({ form, update, onNext, onBack }) {
         <div className="field__hint">Перечислите продукты, которые вы НЕ хотите видеть в меню</div>
       </div>
 
-      {/* Meal Frequency */}
       <div className="field">
         <div className="field__label">Количество приёмов пищи</div>
         <div className="tag-grid">
@@ -99,7 +98,7 @@ export default function AllergenStep({ form, update, onNext, onBack }) {
               onClick={() => update({ mealFrequency: freq })}
               type="button"
             >
-              {freq} приёма
+              {freq === 3 ? '3 приёма' : `${freq} приёмов`}
             </button>
           ))}
         </div>
