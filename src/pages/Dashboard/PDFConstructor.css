@@ -1,0 +1,99 @@
+.pdf-constructor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0f172a;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: white;
+}
+
+.pdf-constructor__toolbar {
+  height: 64px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.pdf-constructor__canvas-area {
+  flex: 1;
+  background: #0f172a;
+  position: relative;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  padding: 80px;
+}
+
+/* A4 Container */
+.pdf-constructor__canvas {
+  width: 1000px;
+  min-height: 1414px; /* A4 aspect ratio approx */
+  background: white;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  margin-bottom: 80px;
+}
+
+.pdf-constructor__item {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+}
+
+.pdf-constructor__item:active {
+  cursor: grabbing;
+}
+
+.pdf-constructor__item--dragging {
+  z-index: 1000;
+}
+
+/* Toolbar Buttons */
+.pdf-constructor__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #334155;
+  border: 1px solid #475569;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pdf-constructor__btn:hover {
+  background: #475569;
+}
+
+.pdf-constructor__btn--primary {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.pdf-constructor__btn--primary:hover {
+  background: #059669;
+}
+
+/* Snap Lines Logic */
+.moveable-line.moveable-guideline {
+  background: #10b981 !important;
+  opacity: 0.8;
+}
+
+.moveable-line.moveable-guideline.moveable-horizontal {
+  height: 1px !important;
+}
+
+.moveable-line.moveable-guideline.moveable-vertical {
+  width: 1px !important;
+}

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
+import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
 import recipes from '../../data/recipes.json';
@@ -21,6 +22,7 @@ const CATEGORY_CONFIG = {
 export default function ShoppingListPage() {
   const { plan } = usePlanStore();
   const { items, buildList, toggleItem, clearList } = useShoppingStore();
+  const { profile } = useUserStore();
   const listRef = React.useRef(null);
   const [isExporting, setIsExporting] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -56,7 +58,20 @@ export default function ShoppingListPage() {
     window.print();
   };
 
+  const getPeriodString = () => {
+    const today = new Date().getDay();
+    const todayIndex = (today + 6) % 7;
+    const start = new Date();
+    start.setDate(start.getDate() - todayIndex);
+    const end = new Date();
+    end.setDate(end.getDate() + (6 - todayIndex));
+
+    const fmt = (d) => d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${fmt(start)}-${fmt(end)}`;
+  };
+
   const handleDownload = () => {
+    const period = getPeriodString();
     const text = Object.entries(CATEGORY_CONFIG)
       .sort(([, a], [, b]) => a.order - b.order)
       .map(([cat, config]) => {
@@ -67,51 +82,61 @@ export default function ShoppingListPage() {
       .filter(Boolean)
       .join('\n\n');
     
-    const blob = new Blob([`СПИСОК ПОКУПОК\n\n${text}`], { type: 'text/plain' });
+    const blob = new Blob([`СПИСОК ПОКУПОК (${period})\n\n${text}`], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'shopping-list.txt';
+    a.download = `shopping-list_${period}.txt`;
     a.click();
   };
 
   const handleExportPDF = async () => {
-    if (!listRef.current) return;
+    const element = document.getElementById('shopping-list-pdf-template');
+    if (!element) return;
     setIsExporting(true);
-    
-    // Give a small delay for CSS to apply light-mode if needed
-    // (We'll use a data-attribute on body to force light print styles in html2canvas)
-    document.body.setAttribute('data-print-mode', 'true');
+    const period = getPeriodString();
     
     try {
-      const canvas = await html2canvas(listRef.current, {
+      // PURE ISOLATION LOGIC: Captures the off-screen element without touching document body or state
+      const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff', // Force white bg in PDF
+        backgroundColor: '#ffffff',
         logging: false,
+        windowWidth: 1050,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
-          // Hide buttons and controls in the clone before capturing
-          const actions = clonedDoc.querySelector('.shopping__actions');
-          const checkboxes = clonedDoc.querySelectorAll('.shopping__checkbox');
-          if (actions) actions.style.display = 'none';
-          // Make text black and clear
-          clonedDoc.querySelectorAll('.shopping__item-name').forEach(el => el.style.color = '#000');
-          clonedDoc.querySelectorAll('.shopping__group-header').forEach(el => el.style.color = '#000');
-          clonedDoc.querySelectorAll('.shopping__title').forEach(el => el.style.color = '#000');
+          const cloneElement = clonedDoc.getElementById('shopping-list-pdf-template');
+          if (cloneElement) {
+            cloneElement.classList.add('is-active'); // Enable via class for capture
+            cloneElement.style.position = 'static'; // Reset for capture
+          }
         }
       });
       
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('shopping-list.pdf');
-    } catch (err) {
-      console.error('PDF Export Error:', err);
+      const imgProps = pdf.getImageProperties(imgData);
+      const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
+      const width = imgProps.width * ratio;
+      const height = imgProps.height * ratio;
+      const x = (pdfWidth - width) / 2;
+      
+      pdf.addImage(imgData, 'PNG', x, 5, width, height);
+      pdf.save(`shopping-list_${period}.pdf`);
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+      alert('Ошибка при создании PDF.');
     } finally {
-      document.body.removeAttribute('data-print-mode');
       setIsExporting(false);
     }
   };
@@ -134,13 +159,13 @@ export default function ShoppingListPage() {
   }
 
   return (
-    <div className="shopping" ref={listRef} data-is-exporting={isExporting}>
+    <div className="shopping" ref={listRef}>
       {/* Header */}
       <div className="shopping__header">
         <div>
           <h1 className="shopping__title">Список покупок</h1>
           <p className="shopping__subtitle">
-            {checkedCount} из {totalCount} · Zero Waste объединение
+            {checkedCount} из {totalCount}
           </p>
         </div>
         <div className="shopping__actions">
@@ -151,7 +176,7 @@ export default function ShoppingListPage() {
               disabled={isExporting}
               title="Выбрать формат скачивания"
             >
-              <Download size={14} /> {isExporting ? '...' : 'Скачать'} <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+              <Download size={14} /> Скачать <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
             <AnimatePresence>
               {isMenuOpen && (
@@ -163,10 +188,16 @@ export default function ShoppingListPage() {
                   transition={{ duration: 0.1, ease: 'easeOut' }}
                 >
                   <button className="download-dropdown__item" onClick={() => { handleExportPDF(); setIsMenuOpen(false); }}>
-                    <FileText size={14} /> PDF-документ (.pdf)
+                    <div className="download-dropdown__item-icon" style={{ color: '#ff4d4d' }}><FileText size={16} /></div>
+                    <div className="download-dropdown__item-content">
+                      <div className="download-dropdown__item-label">Список в PDF</div>
+                    </div>
                   </button>
                   <button className="download-dropdown__item" onClick={() => { handleDownload(); setIsMenuOpen(false); }}>
-                    <FileText size={14} /> Текстовый файл (.txt)
+                    <div className="download-dropdown__item-icon" style={{ color: '#4dabf7' }}><FileText size={16} /></div>
+                    <div className="download-dropdown__item-content">
+                      <div className="download-dropdown__item-label">Список в TXT</div>
+                    </div>
                   </button>
                 </motion.div>
               )}
@@ -241,6 +272,40 @@ export default function ShoppingListPage() {
           ✅ Все продукты куплены! Можно приступать к готовке.
         </motion.div>
       )}
-    </div>
+      {/* Isolated Static PDF Template (rendered off-screen to avoid shifts) */}
+      <div id="shopping-list-pdf-template" className="shopping-list-pdf-template">
+          <div className="shopping-list-pdf-template__header">
+            <div className="shopping-list-pdf-template__header-bar" />
+            <h1 className="shopping-list-pdf-template__title">СПИСОК ПОКУПОК НА НЕДЕЛЮ</h1>
+            <div className="shopping-list-pdf-template__meta">
+              <span>{profile?.name || 'Пользователь'}</span>
+              <span className="dot">•</span>
+              <span>{getPeriodString()}</span>
+            </div>
+          </div>
+
+          <div className="shopping-list-pdf-template__grid">
+            {grouped.map(([category, categoryItems]) => (
+              <div key={category} className="pdf-shop-group">
+                <div className="pdf-shop-group__header">
+                  {CATEGORY_CONFIG[category]?.label ?? category}
+                </div>
+                <div className="pdf-shop-group__items">
+                  {categoryItems.map((item) => (
+                    <div key={item.id} className="pdf-shop-item">
+                      <div className="pdf-shop-item__box" />
+                      <span className="pdf-shop-item__name">{item.name}</span>
+                      <div className="pdf-shop-item__spacer" />
+                      <span className="pdf-shop-item__amount">
+                        {item.totalAmount % 1 === 0 ? item.totalAmount : item.totalAmount.toFixed(1)} {item.unit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
   );
 }

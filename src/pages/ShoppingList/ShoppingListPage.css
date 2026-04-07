@@ -140,3 +140,135 @@
   background: rgba(255, 255, 255, 0.1) !important;
   border-color: var(--clr-accent-1) !important;
 }
+/* PDF Export Template Styling - High Density 3-Column Layout */
+.shopping-list-pdf-template {
+  display: block !important;
+  position: absolute !important;
+  left: -20000px !important;
+  top: 0 !important;
+  width: 1050px !important;
+  padding: 40px 40px 80px 40px !important;
+  background: white !important;
+  color: #000 !important;
+  font-family: 'Inter', sans-serif !important;
+  line-height: normal !important;
+  visibility: visible !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+
+.shopping-list-pdf-template.is-active {
+  opacity: 1 !important;
+}
+
+.shopping-list-pdf-template__header {
+  position: relative;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #000;
+}
+
+.shopping-list-pdf-template__header-bar {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: #10b981;
+}
+
+.shopping-list-pdf-template__title {
+  font-size: 36px;
+  font-weight: 900;
+  margin: 0;
+  color: #000 !important;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.shopping-list-pdf-template__meta {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #475569;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shopping-list-pdf-template__meta .dot {
+  color: #cbd5e1;
+}
+
+/* 3-Column Core Grid */
+.shopping-list-pdf-template__grid {
+  column-count: 3;
+  column-gap: 40px;
+  column-rule: 1px solid #f1f5f9;
+  width: 100%;
+}
+
+.pdf-shop-group {
+  break-inside: avoid; /* Категория не рвется между колонками */
+  display: inline-block; /* Стабилизирует column-count в некоторых браузерах */
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.pdf-shop-group__header {
+  font-size: 16px;
+  font-weight: 800;
+  color: #000 !important;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdf-shop-group__items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdf-shop-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  line-height: normal;
+}
+
+.pdf-shop-item__box {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid #94a3b8;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transform: translateY(1px); /* Precise optical nudge */
+  background: #fff;
+}
+
+.pdf-shop-item__name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.pdf-shop-item__spacer {
+  flex: 1;
+  border-bottom: 1px dotted #e2e8f0;
+  margin: 0 4px;
+  align-self: center;
+  height: 1px;
+}
+
+.pdf-shop-item__amount {
+  font-weight: 700;
+  color: #10b981;
+  white-space: nowrap;
+}

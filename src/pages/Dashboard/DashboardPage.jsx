@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, ChevronDown, Download } from 'lucide-react';
+import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
@@ -36,6 +36,11 @@ const MEAL_TIMES = {
 
 const DEFAULT_ORDER = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
 const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+const fmtNum = (num) => {
+  if (num === null || num === undefined) return '0';
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+};
 
 /* ── Time column ── */
 function TimeColumn({ order }) {
@@ -129,10 +134,10 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
         <div className="meal-card__name">{meal.name}</div>
         <div className="meal-card__meta">
           <div className="meal-card__cal-row">
-            <span className="meal-card__cal">{meal.calories} ккал</span>
+            <span className="meal-card__cal">{fmtNum(meal.calories)} ккал</span>
             {meal.targetCal && (
               <span className={`meal-card__precision ${Math.abs(meal.calories - meal.targetCal) <= 5 ? 'meal-card__precision--perfect' : ''}`}>
-                {meal.calories - meal.targetCal === 0 ? '✓' : (meal.calories - meal.targetCal > 0 ? `+${meal.calories - meal.targetCal}` : `${meal.calories - meal.targetCal}`)}
+                {meal.calories - meal.targetCal === 0 ? '✓' : (meal.calories - meal.targetCal > 0 ? `+${fmtNum(meal.calories - meal.targetCal)}` : `${fmtNum(meal.calories - meal.targetCal)}`)}
               </span>
             )}
           </div>
@@ -215,7 +220,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
           <div className="meal-card__type">Свой продукт</div>
           <div className="meal-card__name">{m.name}</div>
           <div className="meal-card__meta">
-            <span className="meal-card__cal">{m.calories} ккал</span>
+            <span className="meal-card__cal">{fmtNum(m.calories)} ккал</span>
           </div>
         </div>
       ))}
@@ -352,12 +357,12 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) 
         <div className="day-summary__row">
           <div className="day-summary__group">
             <span className="day-summary__sublabel">Съедено</span>
-            <span className="day-summary__val day-summary__val--current">{totals.fact.calories}</span>
+            <span className="day-summary__val day-summary__val--current">{fmtNum(totals.fact.calories)}</span>
           </div>
           <div className="day-summary__divider">/</div>
           <div className="day-summary__group">
             <span className="day-summary__sublabel">Цель дня</span>
-            <span className="day-summary__val day-summary__val--target">{nutrition.targetCalories} <small>ккал</small></span>
+            <span className="day-summary__val day-summary__val--target">{fmtNum(nutrition.targetCalories)} <small>ккал</small></span>
           </div>
         </div>
         <div className="day-summary__progress-bg">
@@ -370,7 +375,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) 
           />
         </div>
         <div className="day-summary__plan-info">
-          План на день: {totals.plan.calories} ккал
+          План на день: {fmtNum(totals.plan.calories)} ккал
         </div>
       </div>
       <div className="macro-rings">
@@ -394,68 +399,110 @@ export default function DashboardPage() {
   const handleSwapMeal = (dayIndex, mealType) => {
     const dayMeals = plan[dayIndex].meals;
     const currentMealId = dayMeals[mealType]?.id;
-    const selectedSoFar = Object.values(dayMeals).filter(Boolean).map((m) => ({ id: m.id }));
-
-    const newMeal = generateSingleMeal(recipes, profile, nutrition, mealType, selectedSoFar, currentMealId);
+    const newMeal = generateSingleMeal(recipes, mealType, dayMeals, nutrition, currentMealId);
     if (newMeal) {
       replaceMeal(dayIndex, mealType, newMeal);
     }
   };
 
+  const getPeriodString = () => {
+    const today = new Date().getDay();
+    const todayIndex = (today + 6) % 7;
+    const start = new Date();
+    start.setDate(start.getDate() - todayIndex);
+    const end = new Date();
+    end.setDate(end.getDate() + (6 - todayIndex));
+
+    const fmt = (d) => d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${fmt(start)}-${fmt(end)}`;
+  };
+
   const handleDownloadMenu = () => {
-    if (!plan) return;
-    const text = plan.map(day => {
-      let dayText = `=== ${day.dayLabel} ===\n`;
+    const period = getPeriodString();
+    const text = plan.map((day, idx) => {
+      let dailyTotal = 0;
+      
+      const today = new Date().getDay();
+      const todayIdx = (today + 6) % 7;
+      const date = new Date();
+      date.setDate(date.getDate() - todayIdx + idx);
+      const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+      let dayText = `=== ${day.dayLabel.toUpperCase()} - ${dateStr} ===\n`;
+      
       Object.entries(day.meals).forEach(([type, m]) => {
-        if (m) dayText += `${MEAL_LABELS[type] || type.toUpperCase()}: ${m.name} (${m.calories} ккал)\n`;
+        if (m) {
+          dailyTotal += m.calories;
+          const timeRange = MEAL_TIMES[type] ? ` (${MEAL_TIMES[type]})` : '';
+          dayText += `${MEAL_LABELS[type] || type.toUpperCase()}${timeRange}: ${m.name} (${fmtNum(m.calories)} ккал)\n`;
+        }
       });
+
       if (day.customMeals && day.customMeals.length > 0) {
-        dayText += `ДОПОЛНИТЕЛЬНО:\n` + day.customMeals.map(m => `- ${m.name} (${m.calories} ккал)`).join('\n') + '\n';
+        dayText += `ДОПОЛНИТЕЛЬНО:\n`;
+        day.customMeals.forEach(m => {
+          dailyTotal += m.calories;
+          dayText += `- ${m.name} (${fmtNum(m.calories)} ккал)\n`;
+        });
       }
+      
+      dayText += `--------------------------------\n`;
+      dayText += `ИТОГО ЗА ДЕНЬ: ${fmtNum(dailyTotal)} ккал\n`;
       return dayText + '\n';
     }).join('\n');
 
-    const blob = new Blob([`МОЙ РАЦИОН НА НЕДЕЛЮ\n\n${text}`], { type: 'text/plain' });
+    const blob = new Blob([`МОЙ РАЦИОН НА НЕДЕЛЮ (${period})\n\n${text}`], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'weekly-menu.txt';
+    a.download = `weekly-menu_${period}.txt`;
     a.click();
   };
 
   const handleExportPDF = async () => {
-    if (!dashboardRef.current) return;
+    if (!plan) return;
     setIsExporting(true);
-    document.body.setAttribute('data-print-mode', 'true');
+    const period = getPeriodString();
     
     try {
-      // Capture the week-grid primarily
-      const element = document.querySelector('.week-grid');
-      const canvas = await html2canvas(element || dashboardRef.current, {
+      const element = document.getElementById('pdf-export-template');
+      if (!element) throw new Error('Export template not found');
+
+      const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: 1000,
         onclone: (clonedDoc) => {
-          const sidebar = clonedDoc.querySelector('.app__sidebar');
-          if (sidebar) sidebar.style.display = 'none';
-          // Fix colors
-          clonedDoc.querySelectorAll('.meal-card__name').forEach(el => el.style.color = '#000');
-          clonedDoc.querySelectorAll('.day-col__name').forEach(el => el.style.color = '#000');
-          clonedDoc.querySelectorAll('.dashboard__title').forEach(el => el.style.color = '#000');
+          clonedDoc.body.setAttribute('data-print-mode', 'true');
+          const dash = clonedDoc.querySelector('.pdf-export-template');
+          if (dash) dash.style.display = 'block';
         }
       });
       
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape for weekly grid
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('weekly-menu.pdf');
+      const imgProps = pdf.getImageProperties(imgData);
+      const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
+      const width = imgProps.width * ratio;
+      const height = imgProps.height * ratio;
+      const x = (pdfWidth - width) / 2;
+      
+      pdf.addImage(imgData, 'PNG', x, 5, width, height);
+      pdf.save(`weekly-menu_${period}.pdf`);
     } catch (err) {
       console.error('PDF Export Error:', err);
+      alert('Ошибка при создании PDF.');
     } finally {
-      document.body.removeAttribute('data-print-mode');
       setIsExporting(false);
     }
   };
@@ -480,7 +527,7 @@ export default function DashboardPage() {
 
   if (!plan && !isLoading) {
     return (
-      <div className="dashboard">
+      <div className="dashboard" ref={dashboardRef}>
         <div className="plan-empty">
           <div className="plan-empty__emoji">🍽️</div>
           <div className="plan-empty__title">Рацион ещё не создан</div>
@@ -499,8 +546,7 @@ export default function DashboardPage() {
   const displayPlan = plan || Array.from({ length: 7 }, (_, i) => ({ dayIndex: i, dayLabel: DAY_LABELS[i], meals: {} }));
 
   return (
-    <div className="dashboard">
-      {/* Header */}
+    <div className="dashboard" ref={dashboardRef}>
       <div className="dashboard__header">
         <div>
           <h1 className="dashboard__title">Рацион на неделю</h1>
@@ -514,9 +560,9 @@ export default function DashboardPage() {
               className={`btn-secondary ${isMenuOpen ? 'btn-secondary--active' : ''}`} 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               disabled={!plan || isExporting}
-              style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}
+              style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px' }}
             >
-              <Download size={14} /> {isExporting ? '...' : 'Скачать'} <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+              <Download size={14} /> Скачать <ChevronDown size={12} style={{ transition: '0.2s', transform: isMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
             <AnimatePresence>
               {isMenuOpen && (
@@ -528,30 +574,26 @@ export default function DashboardPage() {
                   transition={{ duration: 0.1, ease: 'easeOut' }}
                 >
                   <button className="download-dropdown__item" onClick={() => { handleExportPDF(); setIsMenuOpen(false); }}>
-                    <FileText size={14} /> PDF-документ (.pdf)
+                    <div className="download-dropdown__item-icon" style={{ color: '#ff4d4d' }}><FileText size={16} /></div>
+                    <div className="download-dropdown__item-content">
+                      <div className="download-dropdown__item-label">Рацион в PDF</div>
+                    </div>
                   </button>
                   <button className="download-dropdown__item" onClick={() => { handleDownloadMenu(); setIsMenuOpen(false); }}>
-                    <FileText size={14} /> Текстовый файл (.txt)
+                    <div className="download-dropdown__item-icon" style={{ color: '#4dabf7' }}><FileText size={16} /></div>
+                    <div className="download-dropdown__item-content">
+                      <div className="download-dropdown__item-label">Рацион в TXT</div>
+                    </div>
                   </button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-
-          <button 
-            className="btn-primary" 
-            onClick={() => navigate('/app/onboarding')}
-            style={{ fontSize: 13 }}
-          >
-            Обновить рацион
-          </button>
         </div>
       </div>
 
-      {/* Today's summary */}
       <TodaySummary plan={displayPlan} nutrition={nutrition} selectedIndex={selectedDayIndex} isLoading={isLoading} completed={completed} />
 
-      {/* Weekly grid */}
       <motion.div
         className="week-grid"
         initial={{ opacity: 0, y: 16 }}
@@ -577,6 +619,137 @@ export default function DashboardPage() {
           />
         ))}
       </motion.div>
+
+      {/* Hidden PDF Template */}
+      <div style={{ position: 'absolute', top: '-10000px', left: '-10000px' }}>
+        <div id="pdf-export-template" className="pdf-export-template">
+          <div className="pdf-export-template__branding">
+            <div className="pdf-export-template__accent-bar" />
+            <h1 className="pdf-export-template__main-title">ЕЖЕНЕДЕЛЬНЫЙ ПЛАН ПИТАНИЯ</h1>
+          </div>
+
+          <div className="pdf-export-template__info-panel">
+            <div className="pdf-export-template__info-group">
+              <span className="pdf-export-template__info-label">ПОЛЬЗОВАТЕЛЬ</span>
+              <span className="pdf-export-template__info-value">{profile?.name || 'Участник'}</span>
+            </div>
+            <div className="pdf-export-template__info-group">
+              <span className="pdf-export-template__info-label">ПЕРИОД</span>
+              <span className="pdf-export-template__info-value">{getPeriodString()}</span>
+            </div>
+            <div className="pdf-export-template__info-group">
+              <span className="pdf-export-template__info-label">ЦЕЛЕВАЯ НОРМА (ДЕНЬ)</span>
+              <span className="pdf-export-template__info-value">{fmtNum(nutrition?.targetCalories)} ккал/день</span>
+            </div>
+            <div className="pdf-export-template__info-group">
+              <span className="pdf-export-template__info-label">ЦЕЛЕВАЯ НОРМА (НЕДЕЛЯ)</span>
+              <span className="pdf-export-template__info-value">{fmtNum(nutrition?.targetCalories * 7)} ккал/нед</span>
+            </div>
+          </div>
+
+          <div className="pdf-export-template__grid">
+            <div className="pdf-export-template__col">
+              {displayPlan.slice(0, 4).map((day, dIdx) => {
+                const totalCals = Object.values(day.meals).reduce((acc, m) => acc + (m?.calories || 0), 0) + 
+                                  (day.customMeals ? day.customMeals.reduce((acc, m) => acc + (m?.calories || 0), 0) : 0);
+                const date = new Date();
+                const tOff = (new Date().getDay() + 6) % 7;
+                date.setDate(date.getDate() - tOff + dIdx);
+                const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+
+                return (
+                  <div key={day.dayIndex} className="pdf-day-card">
+                    <div className="pdf-day-card__header">
+                      <div className="pdf-day-card__title">
+                        <span className="pdf-day-card__label">{day.dayLabel}</span>
+                        <span className="pdf-day-card__date">{dateStr}</span>
+                      </div>
+                      <div className="pdf-day-card__total">{fmtNum(totalCals)} ккал</div>
+                    </div>
+                    <div className="pdf-day-card__meals">
+                      {displayOrder.map(type => {
+                        const m = day.meals[type];
+                        if (!m) return null;
+                        return (
+                          <div key={type} className="pdf-meal-item">
+                            <div className="pdf-meal-item__meta">
+                              <span className="pdf-meal-item__time">{MEAL_TIMES[type]?.split(' – ')[0]}</span>
+                              <span className="pdf-meal-item__type">{MEAL_LABELS[type]}</span>
+                            </div>
+                            <div className="pdf-meal-item__content">
+                              <span className="pdf-meal-item__name">{m.name}</span>
+                              <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {day.customMeals?.map(m => (
+                        <div key={m.id} className="pdf-meal-item">
+                          <div className="pdf-meal-item__meta"><span className="pdf-meal-item__time">—</span><span className="pdf-meal-item__type">ДОП.</span></div>
+                          <div className="pdf-meal-item__content">
+                            <span className="pdf-meal-item__name">{m.name}</span>
+                            <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="pdf-export-template__col">
+              {displayPlan.slice(4).map((day, dIdx) => {
+                const dayActualIdx = dIdx + 4;
+                const totalCals = Object.values(day.meals).reduce((acc, m) => acc + (m?.calories || 0), 0) + 
+                                  (day.customMeals ? day.customMeals.reduce((acc, m) => acc + (m?.calories || 0), 0) : 0);
+                const date = new Date();
+                const tOff = (new Date().getDay() + 6) % 7;
+                date.setDate(date.getDate() - tOff + dayActualIdx);
+                const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+
+                return (
+                  <div key={day.dayIndex} className="pdf-day-card">
+                    <div className="pdf-day-card__header">
+                      <div className="pdf-day-card__title">
+                        <span className="pdf-day-card__label">{day.dayLabel}</span>
+                        <span className="pdf-day-card__date">{dateStr}</span>
+                      </div>
+                      <div className="pdf-day-card__total">{fmtNum(totalCals)} ккал</div>
+                    </div>
+                    <div className="pdf-day-card__meals">
+                      {displayOrder.map(type => {
+                        const m = day.meals[type];
+                        if (!m) return null;
+                        return (
+                          <div key={type} className="pdf-meal-item">
+                            <div className="pdf-meal-item__meta">
+                              <span className="pdf-meal-item__time">{MEAL_TIMES[type]?.split(' – ')[0]}</span>
+                              <span className="pdf-meal-item__type">{MEAL_LABELS[type]}</span>
+                            </div>
+                            <div className="pdf-meal-item__content">
+                              <span className="pdf-meal-item__name">{m.name}</span>
+                              <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {day.customMeals?.map(m => (
+                        <div key={m.id} className="pdf-meal-item">
+                          <div className="pdf-meal-item__meta"><span className="pdf-meal-item__time">—</span><span className="pdf-meal-item__type">ДОП.</span></div>
+                          <div className="pdf-meal-item__content">
+                            <span className="pdf-meal-item__name">{m.name}</span>
+                            <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
