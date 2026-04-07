@@ -237,38 +237,149 @@
 }
 
 .pdf-shop-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  line-height: normal;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  margin-bottom: 5px !important;
+  width: 100% !important;
 }
 
 .pdf-shop-item__box {
-  width: 14px;
-  height: 14px;
-  border: 1.5px solid #94a3b8;
-  border-radius: 3px;
-  flex-shrink: 0;
-  transform: translateY(1px); /* Precise optical nudge */
-  background: #fff;
+  min-width: 14px !important;
+  max-width: 14px !important;
+  height: 14px !important;
+  border: 1.5px solid #94a3b8 !important;
+  border-radius: 3px !important;
+  flex-shrink: 0 !important;
+  margin-top: 3.5px !important; /* Optical center for 13px text */
+  background: #fff !important;
 }
 
 .pdf-shop-item__name {
-  font-weight: 600;
-  color: #0f172a;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  flex-shrink: 0 !important;
 }
 
 .pdf-shop-item__spacer {
-  flex: 1;
-  border-bottom: 1px dotted #e2e8f0;
-  margin: 0 4px;
-  align-self: center;
-  height: 1px;
+  flex: 1 !important;
+  border-bottom: 1px dotted #e2e8f0 !important;
+  margin: 0 4px !important;
+  margin-top: 13px !important; /* Aligns dots with text bottom */
+  height: 0 !important;
 }
 
 .pdf-shop-item__amount {
-  font-weight: 700;
-  color: #10b981;
-  white-space: nowrap;
+  font-weight: 700 !important;
+  color: #10b981 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+/* @media print - Compact 3-Column Paper Layout */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  /* Hide UI Noise */
+  .sidebar, 
+  .dashboard__header, 
+  .shopping__actions, 
+  .shopping__progress-bar, 
+  .shopping__subtitle, 
+  .download-dropdown,
+  .shopping__done-banner {
+    display: none !important;
+  }
+
+  /* Global Reset for White Paper */
+  body, #root, .main-layout, .dashboard, .shopping, .shopping__group {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  .shopping {
+    max-width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .shopping__title {
+    color: black !important;
+    font-size: 22px !important;
+    margin-top: 0 !important;
+    margin-bottom: 15px !important;
+    text-transform: uppercase;
+    border-bottom: 2px solid black;
+    padding-bottom: 8px;
+  }
+
+  /* 3-Column List Layout */
+  .shopping__groups {
+    display: block !important;
+    column-count: 3 !important;
+    column-gap: 25px !important;
+    column-rule: 1px solid #eee;
+  }
+
+  /* Group & Item Optimization */
+  .shopping__group {
+    break-inside: avoid !important;
+    page-break-inside: avoid;
+    border: none !important;
+    margin-bottom: 20px !important;
+  }
+
+  .shopping__group-header {
+    background: none !important;
+    border-bottom: 1.5px solid black !important;
+    color: black !important;
+    padding: 2px 0 !important;
+    margin-bottom: 6px !important;
+    font-size: 13px !important;
+  }
+
+  .shopping__item {
+    padding: 3px 0 !important;
+    border-bottom: 1px dotted #ccc !important;
+    color: black !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+    background: none !important;
+    min-height: 0 !important;
+  }
+
+  .shopping__checkbox {
+    border: 1px solid #555 !important;
+    width: 11px !important;
+    height: 11px !important;
+    margin-top: 3px !important;
+    background: white !important;
+    border-radius: 2px !important;
+    min-width: 11px !important;
+  }
+
+  .shopping__item-name {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: black !important;
+  }
+
+  .shopping__item-amount {
+    font-size: 10px !important;
+    color: #333 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Ensure our extra PDF template stays hidden during regular print */
+  .shopping-list-pdf-template {
+    display: none !important;
+  }
 }
