@@ -128,6 +128,7 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
         ease: "easeInOut"
       } : { duration: 0.2 }}
       style={{ cursor: 'pointer' }}
+      id={`meal-${dayIndex}-${mealType}`}
     >
       <div className="meal-card__top-row">
         <div className="meal-card__done-indicator">
@@ -549,6 +550,14 @@ export default function DashboardPage() {
       if (d !== undefined && t !== undefined) {
         setHighlightCoords({ day: parseInt(d, 10), type: t });
         
+        // Плавный скролл к новому блюду
+        setTimeout(() => {
+          const el = document.getElementById(`meal-${d}-${t}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+
         // Удаляем параметр из URL сразу, чтобы не мозолил глаза, но сохраняем состояние в стейте
         const timer = setTimeout(() => {
           setHighlightCoords(null);

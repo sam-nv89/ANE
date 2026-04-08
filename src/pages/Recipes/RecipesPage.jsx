@@ -138,7 +138,7 @@ export default function RecipesPage() {
 
     replaceMeal(targetDay, targetMealType, recipeRef);
     setAddingToPlan(null);
-    navigate(`/dashboard?highlight=${targetDay}:${targetMealType}`);
+    navigate(`/app/dashboard?highlight=${targetDay}:${targetMealType}`);
   };
 
   return (
@@ -363,7 +363,7 @@ export default function RecipesPage() {
                 {!plan ? (
                   <div className="modal-error-box">
                     <p>План на неделю еще не создан. Пожалуйста, сгенерируйте его на главной странице.</p>
-                    <button className="btn-modal-primary" onClick={() => navigate('/dashboard')}>
+                    <button className="btn-modal-primary" onClick={() => navigate('/app/dashboard')}>
                       Перейти к Дашборду
                     </button>
                   </div>
