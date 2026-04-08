@@ -233,11 +233,9 @@
 .recipe-card-alt__action-btn {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -245,17 +243,13 @@
   transition: all 0.2s ease;
 }
 
-/* ... (action-btn:hover не меняется) ... */
-
 .recipe-card-alt__action-btn:hover {
-  transform: scale(1.1);
-  border-color: var(--clr-accent-1);
-  background: rgba(15, 23, 42, 0.95);
+  transform: scale(1.2);
+  color: #fff;
 }
 
 .recipe-card-alt__action-btn--active {
   color: var(--clr-accent-1);
-  border-color: var(--clr-accent-1);
 }
 
 .recipe-card-alt__emoji {
@@ -313,11 +307,9 @@
   margin-left: auto;
   width: 30px;
   height: 30px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -327,9 +319,8 @@
 }
 
 .recipe-card-alt__add-inline:hover {
-  transform: scale(1.1);
-  border-color: var(--clr-accent-1);
-  background: rgba(15, 23, 42, 0.95);
+  transform: scale(1.2);
+  color: var(--clr-accent-1);
 }
 
 .recipes-empty {
