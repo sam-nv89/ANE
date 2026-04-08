@@ -275,7 +275,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) 
     
     // Считаем два набора данных: плановые (всё) и фактические (отмеченные)
     const planSum = entries.reduce(
-      (acc, [type, m]) => {
+      (acc, [, m]) => {
         if (!m) return acc;
         return {
           calories: acc.calories + m.calories,

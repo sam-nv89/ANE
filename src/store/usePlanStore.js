@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
  */
 export const usePlanStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Недельный план: массив из 7 дней
       plan: null,
       isLoading: false,
@@ -62,7 +62,7 @@ export const usePlanStore = create(
         set((state) => {
           const plan = state.plan.map((day, i) =>
             i === dayIndex
-              ? { ...day, customMeals: [...(day.customMeals || []), { ...meal, id: `custom-${Date.now()}` || Date.now().toString() }] }
+              ? { ...day, customMeals: [...(day.customMeals || []), { ...meal, id: `custom-${Date.now()}` }] }
               : day
           );
           return { plan };

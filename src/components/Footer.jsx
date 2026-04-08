@@ -59,7 +59,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div className="footer__contacts">
-            {CONTACT_LINKS.map(({ icon: Icon, label, href }) => (
+            {CONTACT_LINKS.map(({ icon: ContactIcon, label, href }) => (
               <a
                 key={label}
                 href={href}
@@ -67,7 +67,7 @@ export default function Footer() {
                 target={href.startsWith('http') ? '_blank' : undefined}
                 rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
               >
-                <Icon size={14} />
+                <ContactIcon size={14} />
                 {label}
               </a>
             ))}

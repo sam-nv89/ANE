@@ -282,12 +282,14 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 8mm !important;
   }
 
-  /* Hide UI Noise */
+  /* Hide UI Noise including Shell panels */
   .sidebar, 
   .dashboard__header, 
+  .shell__sidebar,
+  .shell__topbar,
   .shopping__actions, 
   .shopping__progress-bar, 
   .shopping__subtitle, 
@@ -297,13 +299,16 @@
   }
 
   /* Global Reset for White Paper */
-  body, #root, .main-layout, .dashboard, .shopping, .shopping__group {
+  body, #root, .shell, .shell__body, .shell__main, .main-layout, .dashboard, .shopping, .shopping__group {
     background: white !important;
     color: black !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     box-shadow: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important; /* Force block to avoid grid overflows */
   }
 
   .shopping {
@@ -313,7 +318,7 @@
 
   .shopping__title {
     color: black !important;
-    font-size: 22px !important;
+    font-size: 20px !important;
     margin-top: 0 !important;
     margin-bottom: 15px !important;
     text-transform: uppercase;
@@ -331,10 +336,11 @@
 
   /* Group & Item Optimization */
   .shopping__group {
-    break-inside: avoid !important;
-    page-break-inside: avoid;
+    break-inside: avoid-column !important;
+    page-break-inside: avoid !important;
     border: none !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 15px !important;
+    display: block !important;
   }
 
   .shopping__group-header {
@@ -348,34 +354,47 @@
 
   .shopping__item {
     padding: 3px 0 !important;
-    border-bottom: 1px dotted #ccc !important;
+    border-bottom: 1px dotted transparent !important; /* Use spacer for dots */
     color: black !important;
     gap: 8px !important;
     align-items: flex-start !important;
     background: none !important;
     min-height: 0 !important;
+    display: flex !important;
   }
 
   .shopping__checkbox {
-    border: 1px solid #555 !important;
+    border: 1px solid #000 !important;
     width: 11px !important;
     height: 11px !important;
-    margin-top: 3px !important;
+    margin-top: 3.5px !important;
     background: white !important;
     border-radius: 2px !important;
     min-width: 11px !important;
+    flex-shrink: 0 !important;
+    z-index: 10 !important;
   }
 
   .shopping__item-name {
     font-size: 11px !important;
     font-weight: 600 !important;
     color: black !important;
+    line-height: normal !important;
+    flex-shrink: 0 !important;
+  }
+
+  .shopping__item-spacer {
+    flex: 1 !important;
+    border-bottom: 1px dotted #ccc !important;
+    height: 12px !important; /* Fixed height to align with text base */
+    margin: 0 4px !important;
   }
 
   .shopping__item-amount {
     font-size: 10px !important;
     color: #333 !important;
     font-weight: 700 !important;
+    flex-shrink: 0 !important;
   }
 
   /* Ensure our extra PDF template stays hidden during regular print */

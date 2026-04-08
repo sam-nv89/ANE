@@ -65,7 +65,7 @@ const DayCard = React.memo(({ day, index, layout, onSelect, registerRef, fmtNum,
   );
 });
 
-export default function PDFConstructor({ onClose, getPeriodString, fmtNum, MEAL_LABELS, MEAL_TIMES }) {
+export default function PDFConstructor({ onClose, getPeriodString, fmtNum, MEAL_LABELS }) {
   const { plan } = usePlanStore();
   const { nutrition } = useUserStore();
   const { layouts, updateLayout, setLayouts, resetLayouts } = usePDFLayoutStore();
@@ -118,7 +118,7 @@ export default function PDFConstructor({ onClose, getPeriodString, fmtNum, MEAL_
     });
 
     if (hasChanges) setLayouts(newLayouts);
-  }, [isHydrated, plan, setLayouts]);
+  }, [isHydrated, plan, setLayouts, layouts]);
 
   // Target selection synchronization
   React.useLayoutEffect(() => {
@@ -139,7 +139,7 @@ export default function PDFConstructor({ onClose, getPeriodString, fmtNum, MEAL_
     return Object.keys(elementsRef.current)
       .filter(id => id !== selectedId && elementsRef.current[id])
       .map(id => elementsRef.current[id]);
-  }, [selectedId, isHydrated]);
+  }, [selectedId]);
 
   const handleDownload = async () => {
     setIsExporting(true);

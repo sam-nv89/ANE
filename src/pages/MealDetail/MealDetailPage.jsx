@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Clock, Flame, Dumbbell, Wheat, Droplets, ShoppingCart, Plus, Minus, Users, Heart } from 'lucide-react';
 
-import { usePlanStore } from '../../store/usePlanStore';
 import { useShoppingStore } from '../../store/useShoppingStore';
 import { useUserStore } from '../../store/useUserStore';
 import { useFavoritesStore } from '../../store/useFavoritesStore';
@@ -48,7 +47,7 @@ export default function MealDetailPage() {
 
   const [portions, setPortions] = React.useState(1);
   const totalMultiplier = suggestedMultiplier * portions;
-  const { plan } = usePlanStore();
+
 
   if (!recipe) {
     return (
@@ -153,9 +152,9 @@ export default function MealDetailPage() {
             { icon: Dumbbell, label: 'Белки',   value: protein,  unit: 'г',    color: '#00d4ff' },
             { icon: Droplets, label: 'Жиры',    value: fat,      unit: 'г',    color: '#f59e0b' },
             { icon: Wheat,    label: 'Углеводы',value: carbs,    unit: 'г',    color: '#a78bfa' },
-          ].map(({ icon: Icon, label, value, unit, color }) => (
+          ].map(({ icon: MacroIcon, label, value, unit, color }) => (
             <div key={label} className="nutrition-table__cell">
-              <Icon size={18} color={color} />
+              <MacroIcon size={18} color={color} />
               <div className="nutrition-table__value" style={{ color }}>
                 {value}<span className="nutrition-table__unit">{unit}</span>
               </div>

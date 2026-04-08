@@ -6,7 +6,7 @@ import { persist } from 'zustand/middleware';
  */
 export const useProgressStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       // weightLog: Array<{ date: ISO string, weightKg: number }>
       weightLog: [],
 

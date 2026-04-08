@@ -32,7 +32,7 @@ export default function ShoppingListPage() {
     if (plan && Object.keys(items).length === 0) {
       buildList(plan, recipes);
     }
-  }, [plan]);
+  }, [plan, buildList, items]);
 
   const grouped = useMemo(() => {
     const groups = {};

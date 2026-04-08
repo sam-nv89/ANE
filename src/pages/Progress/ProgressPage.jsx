@@ -72,7 +72,7 @@ function ComplianceBar({ rate }) {
 export default function ProgressPage() {
   const { weightLog, logWeight, dailyCompliance } = useProgressStore();
   const { profile, nutrition } = useUserStore();
-  const { plan, completed } = usePlanStore();
+  const { completed } = usePlanStore();
 
   const [weightInput, setWeightInput] = useState('');
 

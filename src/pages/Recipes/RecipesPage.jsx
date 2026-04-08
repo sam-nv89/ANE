@@ -81,7 +81,7 @@ export default function RecipesPage() {
       if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [searchQuery, activeCategory, limitTime, sortBy, sortOrder]);
+  }, [searchQuery, activeCategory, limitTime, sortBy, sortOrder, favorites]);
 
   return (
     <div className="recipes-page">

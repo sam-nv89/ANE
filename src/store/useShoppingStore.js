@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
  */
 export const useShoppingStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       // items: Record<ingredientId, ShoppingItem>
       items: {},
       /*

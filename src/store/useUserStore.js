@@ -7,7 +7,7 @@ import { persist } from 'zustand/middleware';
  */
 export const useUserStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       // Флаг завершения онбординга
       profileComplete: false,
 

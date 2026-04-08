@@ -9,7 +9,7 @@ import { useUserStore } from '../store/useUserStore';
 import { usePlanStore } from '../store/usePlanStore';
 import { generatePlan } from '../lib/planner/generator';
 import recipes from '../data/recipes.json';
-import './AppShell.css';
+
 
 const NAV_ITEMS = [
   { to: '/app/dashboard', icon: LayoutDashboard, label: 'Рацион' },
@@ -82,7 +82,7 @@ export default function AppShell() {
 
         {/* Navigation */}
         <nav className="shell__nav" aria-label="Основная навигация">
-          {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+          {NAV_ITEMS.map(({ to, icon: NavIcon, label }) => (
             <NavLink
               key={to}
               to={to}
@@ -90,7 +90,7 @@ export default function AppShell() {
                 `shell__nav-link ${isActive ? 'shell__nav-link--active' : ''}`
               }
             >
-              <Icon size={18} strokeWidth={1.75} />
+              <NavIcon size={18} strokeWidth={1.75} />
               <span>{label}</span>
               <ChevronRight size={14} className="shell__nav-arrow" aria-hidden="true" />
             </NavLink>

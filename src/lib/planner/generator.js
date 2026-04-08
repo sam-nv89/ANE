@@ -240,7 +240,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
     allergens        = [],
     dietaryStyles    = [],
     dislikedIngredients = [],
-    dislikedFreeText = [],
+
     cookTimeWindows,
     cookFrequency,
     preferLazy,

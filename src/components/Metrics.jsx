@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, useInView, useMotionValue, animate } from 'framer-motion';
 import { useEffect } from 'react';
 import { ShieldCheck, Users, Clock, Star } from 'lucide-react';
 import './Metrics.css';
