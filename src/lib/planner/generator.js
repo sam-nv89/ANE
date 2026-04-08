@@ -222,47 +222,36 @@ const INGREDIENT_KEYWORDS = {
   beans: ['фасол']
 };
 
+/**
+ * Helper: возвращает список ключевых слов для тех категорий, которые пользователь НЕ выбрал.
+ */
 function getUnselectedKeywords(selectedKeys, allKeys) {
   const unselected = allKeys.filter(k => !selectedKeys.includes(k));
   return unselected.flatMap(k => INGREDIENT_KEYWORDS[k] || []);
 }
 
 /**
- * Главная функция генерации рациона.
- *
- * @param {object[]} allRecipes     — полная база рецептов
- * @param {object}   profile        — профиль из useUserStore
- * @param {object}   nutrition      — { targetCalories, protein, fat, carbs }
- * @returns {object[]}              — план на 7 дней
+ * Фильтрует базу рецептов на основе всех предпочтений и ограничений профиля.
  */
-export function generatePlan(allRecipes, profile, nutrition) {
+function filterRecipesForProfile(allRecipes, profile) {
+  if (!profile) return allRecipes;
   const {
-    allergens        = [],
-    dietaryStyles    = [],
+    allergens = [],
+    dietaryStyles = [],
     dislikedIngredients = [],
-
-    cookTimeWindows,
-    cookFrequency,
-    preferLazy,
-    allowRepeatMeals,
+    excludedIngredientsFreeText = '',
     likedProteins,
     likedVeg,
     likedDairy,
     likedGrains,
-    excludedIngredientsFreeText,
-    mealFrequency = 3,
-    mealSpecifics = [],
+    cookTimeWindows,
+    preferLazy
   } = profile;
 
-  // 1. Определение списка приёмов пищи и распределения калорий
-  const { distribution: CALORIE_DISTRIBUTION, types: currentMealTypes } = getCalorieDistribution(mealFrequency, mealSpecifics);
+  // 1. Аллергены
+  let recipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
 
-  const { targetCalories } = nutrition;
-
-  // ── Шаг 1: Аллерген-фильтр ──
-  let safeRecipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
-
-  // ── Шаг 2: Фильтр нелюбимых ингредиентов ──
+  // 2. Нелюбимые ингредиенты (по категориям из онбординга)
   const PROTEIN_KEYS = ['beef', 'pork', 'lamb', 'chicken', 'turkey', 'fish', 'seafood'];
   const VEG_KEYS     = [
     'tomato', 'cucumber', 'zucchini', 'broccoli', 'carrot', 'onion', 'potato', 'spinach', 'pumpkin', 
@@ -282,11 +271,11 @@ export function generatePlan(allRecipes, profile, nutrition) {
     ...getUnselectedKeywords(likedGrains || GRAIN_KEYS, GRAIN_KEYS),
   ];
 
-  safeRecipes = safeRecipes.filter((recipe) => {
-    // Жёсткие ID (старая логика)
+  recipes = recipes.filter((recipe) => {
+    // Жёсткие ID
     if (recipe.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
     
-    // Свободный ввод (новая логика для textarea)
+    // Свободный ввод (textarea)
     if (excludedIngredientsFreeText?.trim().length > 0) {
       const texts = excludedIngredientsFreeText.toLowerCase().split(/[,\n]/).map(t => t.trim()).filter(Boolean);
       const hasExcludedText = recipe.ingredients?.some(ing => {
@@ -296,7 +285,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
       if (hasExcludedText) return false;
     }
 
-    // Новая логика: отсеиваем жестко по невыбранным макро-категориям
+    // По невыбранным макро-категориям
     if (rejectedKeywords.length > 0) {
       const hasRejectedCategory = recipe.ingredients?.some(ing => {
         const ingNameLower = ing.name.toLowerCase();
@@ -308,34 +297,59 @@ export function generatePlan(allRecipes, profile, nutrition) {
     return true;
   });
 
-  // ── Шаг 3: Времённой фильтр с fallback-расширением ──
+  return recipes;
+}
+
+/**
+ * Главная функция генерации рациона.
+ *
+ * @param {object[]} allRecipes     — полная база рецептов
+ * @param {object}   profile        — профиль из useUserStore
+ * @param {object}   nutrition      — { targetCalories, protein, fat, carbs }
+ * @returns {object[]}              — план на 7 дней
+ */
+export function generatePlan(allRecipes, profile, nutrition) {
+  const {
+    cookTimeWindows,
+    cookFrequency,
+    preferLazy,
+    allowRepeatMeals,
+    mealFrequency = 3,
+    mealSpecifics = [],
+  } = profile;
+
+  const { targetCalories } = nutrition;
+
+  // 1. Предварительная фильтрация
+  const safeRecipes = filterRecipesForProfile(allRecipes, profile);
+
+  // 2. Времённой фильтр и сортировка
   const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
   const baseSorted   = sortByBatchPriority(baseFiltered, cookFrequency);
+
+  // 3. Определение списка приёмов пищи
+  const { distribution: CALORIE_DISTRIBUTION, types: currentMealTypes } = getCalorieDistribution(mealFrequency, mealSpecifics);
 
   // Разбиваем по категориям с fallback-расширением
   const pools = {};
   for (const mealType of currentMealTypes) {
     let pool = baseSorted.filter((r) => {
-      // Поддержка разных видов перекусов (snack, snack2, snack3...)
       const cat = r.category || 'snack';
       if (mealType.startsWith('snack')) return cat === 'snack';
       return cat === mealType;
     });
 
-    // Fallback: если пул меньше 3 рецептов — ослабляем time-ограничение
     if (pool.length < 3) {
       const maxVal = Array.isArray(cookTimeWindows) ? Math.max(...cookTimeWindows) : (cookTimeWindows || 60);
       const fallbackWindow = Math.round(maxVal * 1.5);
-      
       const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
       pool = filterByTimeWindow(
         safeRecipes.filter((r) => r.category === rawCategory),
         fallbackWindow,
-        false // не применяем lazy-фильтр в fallback
+        false
       );
     }
 
-    // Аварийный fallback: берём все безопасные рецепты этой категории
     if (pool.length === 0) {
       const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
       pool = safeRecipes.filter((r) => r.category === rawCategory);
@@ -357,7 +371,7 @@ export function generatePlan(allRecipes, profile, nutrition) {
 
       const picked = pickRecipe(
         pools[mealType],
-        selectedPerType[mealType], // передаём только список своего типа
+        selectedPerType[mealType],
         calorieTarget,
         allowRepeatMeals,
         mealType
@@ -381,35 +395,55 @@ export function generatePlan(allRecipes, profile, nutrition) {
  * Генерирует замену для ОДНОГО приёма пищи.
  */
 export function generateSingleMeal(allRecipes, profile, nutrition, mealType, selectedSoFar = [], currentMealId = null) {
-  // 1. Аллергены
-  const { allergens = [], dietaryStyles = [], dislikedIngredients = [], excludedIngredientsFreeText = [], cookTimeWindows, preferLazy } = profile;
-  let safeRecipes = filterSafeRecipes(allRecipes, allergens, dietaryStyles);
 
-  // 2. Нелюбимые
-  safeRecipes = safeRecipes.filter((r) => {
-    if (currentMealId && r.id === currentMealId) return false; // Исключаем текущее
-    if (r.ingredients?.some((ing) => dislikedIngredients.includes(ing.id))) return false;
-    if (excludedIngredientsFreeText?.trim().length > 0) {
-      const texts = excludedIngredientsFreeText.toLowerCase().split(/[,\n]/).map(t => t.trim()).filter(Boolean);
-      const hasExt = r.ingredients?.some(ing => texts.some(ex => ing.name.toLowerCase().includes(ex)));
-      if (hasExt) return false;
-    }
-    return true;
-  });
+  // Исключаем текущее блюдо
+  if (currentMealId) {
+    safeRecipes = safeRecipes.filter(r => r.id !== currentMealId);
+  }
 
-  // 3. Time + Category
+  // 2. Time + Category
+  const { cookTimeWindows, preferLazy, allowRepeatMeals, mealFrequency = 3, mealSpecifics = [] } = profile || {};
   const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
   const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
+  
   let pool = baseFiltered.filter((r) => r.category === rawCategory);
 
-  // Fallback
+  // 3. Calorie target
+  const { distribution } = getCalorieDistribution(mealFrequency, mealSpecifics);
+  const targetCals = (nutrition?.targetCalories || 2000);
+  const calorieTarget = Math.round(targetCals * (distribution[mealType] || 0.1));
+
+  const result = pickRecipe(pool, selectedSoFar, calorieTarget, allowRepeatMeals, mealType);
+  return result;
+}
+
+/**
+ * Возвращает список всех подходящих рецептов для конкретного слота.
+ * Используется в UI для ручного выбора блюда.
+ */
+export function getFilteredPoolForMeal(allRecipes, profile, nutrition, mealType) {
+  // 1. Предварительная фильтрация по профилю
+  const safeRecipes = filterRecipesForProfile(allRecipes, profile);
+
+  // 2. Времённой фильтр и категория
+  const { cookTimeWindows, preferLazy, mealFrequency = 3, mealSpecifics = [] } = profile || {};
+  const baseFiltered = filterByTimeWindow(safeRecipes, cookTimeWindows, preferLazy);
+  const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
+  
+  let pool = baseFiltered.filter((r) => r.category === rawCategory);
+
+  // Fallback по времени (если слишком строгие рамки)
   if (pool.length === 0) {
     pool = safeRecipes.filter((r) => r.category === rawCategory);
   }
 
-  // 4. Calorie target
-  const { distribution } = getCalorieDistribution(profile.mealFrequency, profile.mealSpecifics);
-  const calorieTarget = Math.round(nutrition.targetCalories * (distribution[mealType] || 0.1));
+  // 3. Скейлинг под калории (чтобы в списке сразу видеть реальные цифры)
+  const { distribution } = getCalorieDistribution(mealFrequency, mealSpecifics);
+  const targetCalsBase = (nutrition?.targetCalories || 2000);
+  const calorieTarget = Math.round(targetCalsBase * (distribution[mealType] || 0.1));
 
-  return pickRecipe(pool, selectedSoFar, calorieTarget, profile.allowRepeatMeals, mealType);
+  // Превращаем в Ref-объекты со скейлингом
+  return pool.map(r => toRef(r, calorieTarget));
 }
+
+
