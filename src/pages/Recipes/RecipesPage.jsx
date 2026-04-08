@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart, ChevronDown, Plus } from 'lucide-react';
@@ -34,12 +34,15 @@ const DAY_NAMES_FULL = [
   'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'
 ];
 
-const MEAL_TYPES_LIST = [
-  { id: 'breakfast', label: 'Завтрак' },
-  { id: 'snack', label: 'Перекус 1' },
-  { id: 'lunch', label: 'Обед' },
-  { id: 'dinner', label: 'Ужин' },
-];
+const MEAL_LABELS = {
+  breakfast: 'Завтрак',
+  lunch: 'Обед',
+  dinner: 'Ужин',
+  snack: 'Перекус 1',
+  snack2: 'Перекус 2',
+  snack3: 'Перекус 3',
+  snack4: 'Перекус 4',
+};
 
 export default function RecipesPage() {
   const navigate = useNavigate();
@@ -57,6 +60,22 @@ export default function RecipesPage() {
 
   const { favorites, toggleFavorite } = useFavoritesStore();
   const { plan, replaceMeal } = usePlanStore();
+
+  // Динамический список трапез на основе текущего плана
+  const mealTypes = useMemo(() => {
+    if (!plan || !plan[0]) return [];
+    return Object.keys(plan[0].meals).map(id => ({
+      id,
+      label: MEAL_LABELS[id] || id
+    }));
+  }, [plan]);
+
+  // Устанавливаем первую доступную трапезу при открытии модалки
+  useEffect(() => {
+    if (addingToPlan && mealTypes.length > 0) {
+      setTargetMealType(mealTypes[0].id);
+    }
+  }, [addingToPlan, mealTypes]);
 
   const handleSortChange = (key) => {
     if (sortBy === key) {
@@ -374,7 +393,7 @@ export default function RecipesPage() {
                     <div className="modal-section">
                       <label className="modal-label">Прием пищи:</label>
                       <div className="modal-grid-meals">
-                        {MEAL_TYPES_LIST.map((mt) => (
+                        {mealTypes.map((mt) => (
                           <button 
                             key={mt.id}
                             className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
@@ -387,7 +406,7 @@ export default function RecipesPage() {
                     </div>
 
                     <button className="modal-submit-btn" onClick={onConfirmAdd}>
-                      Готово, добавить!
+                      Добавить
                     </button>
                   </>
                 )}
