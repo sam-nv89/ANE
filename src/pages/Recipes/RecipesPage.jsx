@@ -68,10 +68,20 @@ export default function RecipesPage() {
     }));
   }, [plan]);
 
-  // Устанавливаем первую доступную трапезу при открытии модалки
+  // Устанавливаем подходящую трапезу при открытии модалки на основе категории рецепта
   useEffect(() => {
     if (addingToPlan && mealTypes.length > 0) {
-      setTargetMealType(mealTypes[0].id);
+      const recipeCategory = addingToPlan.category;
+      
+      // Ищем точное совпадение (завтрак, обед, ужин)
+      let matched = mealTypes.find(mt => mt.id === recipeCategory);
+      
+      // Если это перекус, ищем первый доступный вариант перекуса
+      if (recipeCategory === 'snack') {
+        matched = mealTypes.find(mt => mt.id.includes('snack'));
+      }
+      
+      setTargetMealType(matched ? matched.id : mealTypes[0].id);
     }
   }, [addingToPlan, mealTypes]);
 
@@ -383,23 +393,10 @@ export default function RecipesPage() {
                       </div>
                     </div>
 
-                    <div className="modal-section">
-                      <label className="modal-label">Прием пищи:</label>
-                      <div className="modal-grid-meals-columns">
-                        <div className="modal-meals-column">
-                          {mealTypes
-                            .filter(mt => ['breakfast', 'lunch', 'dinner'].includes(mt.id))
-                            .map((mt) => (
-                              <button 
-                                key={mt.id}
-                                className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
-                                onClick={() => setTargetMealType(mt.id)}
-                              >
-                                {mt.label}
-                              </button>
-                            ))}
-                        </div>
-                        <div className="modal-meals-column">
+                    {addingToPlan.category === 'snack' && (
+                      <div className="modal-section">
+                        <label className="modal-label">Выберите перекус:</label>
+                        <div className="modal-grid-meals">
                           {mealTypes
                             .filter(mt => mt.id.includes('snack'))
                             .map((mt) => (
@@ -413,7 +410,7 @@ export default function RecipesPage() {
                             ))}
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     <button className="modal-submit-btn" onClick={onConfirmAdd}>
                       Добавить
