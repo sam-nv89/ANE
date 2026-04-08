@@ -188,8 +188,8 @@ export default function RecipesPage() {
               onClick={() => toggleDropdown('category')}
             >
               <div className="dropdown__trigger-content">
-                {activeCategory === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
                 <span>{CATEGORIES.find(c => c.id === activeCategory)?.label}</span>
+                {activeCategory === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
               </div>
               <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'category' ? 'dropdown__arrow--open' : ''}`} />
             </button>
@@ -207,8 +207,8 @@ export default function RecipesPage() {
                       className={`dropdown__item ${activeCategory === cat.id ? 'dropdown__item--active' : ''}`}
                       onClick={() => { setActiveCategory(cat.id); setActiveDropdown(null); }}
                     >
-                      {cat.id === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
                       {cat.label}
+                      {cat.id === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
                     </button>
                   ))}
                 </motion.div>
