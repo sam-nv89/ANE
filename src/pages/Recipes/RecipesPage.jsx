@@ -389,16 +389,33 @@ export default function RecipesPage() {
 
                     <div className="modal-section">
                       <label className="modal-label">Прием пищи:</label>
-                      <div className="modal-grid-meals">
-                        {mealTypes.map((mt) => (
-                          <button 
-                            key={mt.id}
-                            className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
-                            onClick={() => setTargetMealType(mt.id)}
-                          >
-                            {mt.label}
-                          </button>
-                        ))}
+                      <div className="modal-grid-meals-columns">
+                        <div className="modal-meals-column">
+                          {mealTypes
+                            .filter(mt => ['breakfast', 'lunch', 'dinner'].includes(mt.id))
+                            .map((mt) => (
+                              <button 
+                                key={mt.id}
+                                className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
+                                onClick={() => setTargetMealType(mt.id)}
+                              >
+                                {mt.label}
+                              </button>
+                            ))}
+                        </div>
+                        <div className="modal-meals-column">
+                          {mealTypes
+                            .filter(mt => mt.id.includes('snack'))
+                            .map((mt) => (
+                              <button 
+                                key={mt.id}
+                                className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
+                                onClick={() => setTargetMealType(mt.id)}
+                              >
+                                {mt.label}
+                              </button>
+                            ))}
+                        </div>
                       </div>
                     </div>
 
