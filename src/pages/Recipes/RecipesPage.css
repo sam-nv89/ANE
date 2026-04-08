@@ -267,7 +267,6 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
-  padding-right: 32px;
 }
 
 .recipe-card-alt__cat {
@@ -287,6 +286,7 @@
 
 .recipe-card-alt__meta {
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-top: 8px;
 }
@@ -297,6 +297,29 @@
   gap: 4px;
   font-size: 11px;
   color: var(--clr-text-muted);
+}
+
+.recipe-card-alt__add-inline {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--clr-accent-1);
+  color: var(--clr-accent-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.recipe-card-alt__add-inline:hover {
+  background: var(--clr-accent-1);
+  color: var(--clr-bg-surface);
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.4);
 }
 
 .recipes-empty {

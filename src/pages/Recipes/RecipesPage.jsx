@@ -296,17 +296,6 @@ export default function RecipesPage() {
                 >
                   <Heart size={16} fill={favorites.includes(recipe.id) ? 'currentColor' : 'none'} />
                 </button>
-
-                <button 
-                  className="recipe-card-alt__action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setAddingToPlan(recipe);
-                  }}
-                  title="Добавить в рацион"
-                >
-                  <Plus size={16} />
-                </button>
               </div>
 
               <div className="recipe-card-alt__emoji">{recipe.imageEmoji}</div>
@@ -321,6 +310,16 @@ export default function RecipesPage() {
                   <div className="recipe-card-alt__stat">
                     <Flame size={12} /> {recipe.nutrition.calories} ккал
                   </div>
+                  <button 
+                    className="recipe-card-alt__add-inline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAddingToPlan(recipe);
+                    }}
+                    title="Добавить в рацион"
+                  >
+                    <Plus size={14} />
+                  </button>
                 </div>
               </div>
             </motion.div>
