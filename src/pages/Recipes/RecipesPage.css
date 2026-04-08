@@ -206,7 +206,10 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
+  min-height: 124px; /* Фиксированная минимальная высота для ровной сетки */
 }
+
+/* ... (hover и actions не меняются) ... */
 
 .recipe-card-alt:hover {
   border-color: var(--clr-accent-1);
@@ -225,6 +228,8 @@
   z-index: 10;
 }
 
+/* ... (action-btn не меняется) ... */
+
 .recipe-card-alt__action-btn {
   width: 30px;
   height: 30px;
@@ -239,6 +244,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+/* ... (action-btn:hover не меняется) ... */
 
 .recipe-card-alt__action-btn:hover {
   transform: scale(1.1);
@@ -290,7 +297,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: auto; /* Прижимает блок к низу */
+  padding-top: 8px;
 }
 
 .recipe-card-alt__stat {
