@@ -138,6 +138,7 @@ export default function RecipesPage() {
 
     replaceMeal(targetDay, targetMealType, recipeRef);
     setAddingToPlan(null);
+    navigate(`/dashboard?highlight=${targetDay}:${targetMealType}`);
   };
 
   return (

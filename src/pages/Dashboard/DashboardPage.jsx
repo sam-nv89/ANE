@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download, ExternalLink } from 'lucide-react';
 
@@ -85,7 +85,7 @@ function MacroRing({ label, value, max, color }) {
 }
 
 /* ── Meal card ── */
-function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCompleted, onToggle }) {
+function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCompleted, onToggle, isHighlighted }) {
   if (isLoading) {
     return (
       <div className="meal-card meal-card--skeleton">
@@ -108,11 +108,25 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
 
   return (
     <motion.div
-      className={`meal-card ${isCompleted ? 'meal-card--completed' : ''}`}
+      className={`meal-card ${isCompleted ? 'meal-card--completed' : ''} ${isHighlighted ? 'meal-card--highlighted' : ''}`}
       onClick={() => onToggle(dayIndex, mealType)}
       whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)' }}
       whileTap={{ scale: 0.96 }}
-      transition={{ duration: 0.15 }}
+      initial={isHighlighted ? { scale: 0.95, opacity: 0.8 } : false}
+      animate={isHighlighted ? { 
+        scale: [1, 1.03, 1],
+        opacity: 1,
+        boxShadow: [
+          '0 0 0px rgba(0, 245, 160, 0)',
+          '0 0 20px rgba(0, 245, 160, 0.4)',
+          '0 0 0px rgba(0, 245, 160, 0)'
+        ]
+      } : { opacity: 1, scale: 1 }}
+      transition={isHighlighted ? { 
+        duration: 0.8, 
+        repeat: 3,
+        ease: "easeInOut"
+      } : { duration: 0.2 }}
       style={{ cursor: 'pointer' }}
     >
       <div className="meal-card__top-row">
@@ -171,7 +185,7 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom, targetCalories }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom, targetCalories, highlightCoords }) {
   const [isAdding, setIsAdding] = React.useState(false);
   const [customName, setCustomName] = React.useState('');
   const [customCal, setCustomCal] = React.useState('');
@@ -244,6 +258,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
           onSwap={onSwap}
           isCompleted={completed.includes(`${day.dayIndex}:${mealType}`)}
           onToggle={onToggle}
+          isHighlighted={highlightCoords?.day === day.dayIndex && highlightCoords?.type === mealType}
         />
       ))}
 
@@ -516,12 +531,33 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
 /* ── Main page ── */
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightParam = searchParams.get('highlight');
+  const [highlightCoords, setHighlightCoords] = React.useState(null);
+
   const { profile, nutrition } = useUserStore();
   const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted, addCustomMeal, removeCustomMeal } = usePlanStore();
   const [summaryPeriod, setSummaryPeriod] = React.useState('day');
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const dashboardRef = React.useRef(null);
+
+  // Обработка подсветки добавленного блюда
+  React.useEffect(() => {
+    if (highlightParam) {
+      const [d, t] = highlightParam.split(':');
+      if (d !== undefined && t !== undefined) {
+        setHighlightCoords({ day: parseInt(d, 10), type: t });
+        
+        // Удаляем параметр из URL сразу, чтобы не мозолил глаза, но сохраняем состояние в стейте
+        const timer = setTimeout(() => {
+          setHighlightCoords(null);
+          setSearchParams({}, { replace: true });
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [highlightParam, setSearchParams]);
 
   const handleSwapMeal = (dayIndex, mealType) => {
     const dayMeals = plan[dayIndex].meals;
@@ -769,6 +805,7 @@ export default function DashboardPage() {
             onAddCustom={addCustomMeal}
             onRemoveCustom={removeCustomMeal}
             targetCalories={nutrition?.targetCalories}
+            highlightCoords={highlightCoords}
           />
         ))}
       </motion.div>
