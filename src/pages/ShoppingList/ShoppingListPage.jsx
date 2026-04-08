@@ -77,7 +77,7 @@ export default function ShoppingListPage() {
       .map(([cat, config]) => {
         const catItems = Object.values(items).filter(i => (i.category || 'other') === cat);
         if (catItems.length === 0) return '';
-        return `--- ${config.label} ---\n` + catItems.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.name}: ${i.totalAmount} ${i.unit}`).join('\n');
+        return `--- ${config.label} ---\n` + catItems.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.name}: ${i.displayAmount} ${i.unit}`).join('\n');
       })
       .filter(Boolean)
       .join('\n\n');
@@ -254,7 +254,7 @@ export default function ShoppingListPage() {
                   </div>
                   <span className="shopping__item-name">{item.name}</span>
                   <span className="shopping__item-amount">
-                    {item.totalAmount % 1 === 0 ? item.totalAmount : item.totalAmount.toFixed(1)} {item.unit}
+                    {item.displayAmount} {item.unit}
                   </span>
                 </button>
               ))}
