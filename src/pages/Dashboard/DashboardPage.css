@@ -10,6 +10,61 @@
 .dashboard__title   { font-family: var(--font-heading); font-size: 26px; font-weight: 800; color: var(--clr-text-primary); letter-spacing: -0.02em; }
 .dashboard__subtitle { font-size: 14px; color: var(--clr-text-muted); margin-top: 4px; }
 
+/* ── Period Selector (Day/Week) ── */
+.period-selector {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--clr-border);
+  padding: 4px;
+  border-radius: 100px;
+  width: fit-content;
+  margin-bottom: -16px; 
+  position: relative;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.period-btn {
+  position: relative;
+  padding: 6px 16px;
+  border-radius: 100px;
+  border: none;
+  background: none;
+  color: var(--clr-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  outline: none;
+}
+
+.period-btn--active {
+  color: var(--clr-text-primary);
+}
+
+.period-btn__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--clr-bg-card);
+  border: 1px solid var(--clr-border);
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 0;
+}
+
+.period-btn__text {
+  position: relative;
+  z-index: 1;
+}
+
 /* ── Today summary ── */
 .day-summary {
   display: grid;
@@ -26,15 +81,28 @@
 
 .day-summary__info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 
-.day-summary__label-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.day-summary__label-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 2px; }
 
-.day-summary__day-name { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--clr-accent-1); text-transform: capitalize; }
+.day-summary__day-name { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--clr-accent-1); text-transform: none; }
 
 .day-summary__status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--clr-text-muted); opacity: 0.8; }
 
-.day-summary__row { display: flex; align-items: flex-end; gap: 8px; }
+.day-summary__row { 
+  display: flex; 
+  align-items: flex-end; 
+  justify-content: space-between; 
+  gap: 16px; 
+  width: 100%; 
+}
 
-.day-summary__group { display: flex; flex-direction: column; gap: 2px; }
+.day-summary__group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 2px; 
+  align-items: center; 
+  flex: 1; 
+  text-align: center;
+}
 
 .day-summary__sublabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--clr-text-muted); }
 
@@ -55,7 +123,26 @@
   letter-spacing: 0.02em;
 }
 
-.day-summary__progress-bg { height: 6px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; position: relative; }
+.day-summary__val--compliance {
+  color: var(--clr-accent-1);
+}
+
+.day-summary__val--compliance small {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+
+.day-summary__progress-bg { 
+  height: 10px; 
+  background: rgba(255,255,255,0.05); 
+  border-radius: 99px; 
+  overflow: hidden; 
+  position: relative; 
+  margin-top: 12px;
+}
 
 .day-summary__progress-fg { height: 100%; background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2)); border-radius: 99px; }
 
@@ -177,6 +264,38 @@
 .day-col__name { font-family: var(--font-heading); font-size: 13px; font-weight: 800; color: var(--clr-text-primary); }
 .day-col__date { font-size: 11px; color: var(--clr-text-secondary); margin-top: 1px; }
 
+.day-col__progress-wrap {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.day-col__progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.day-col__progress-fill {
+  height: 100%;
+  background: var(--clr-accent-1);
+  border-radius: 99px;
+}
+
+.day-col__compliance-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--clr-accent-1);
+  min-width: 25px;
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
 /* Meal card */
 .meal-card {
   position: relative;
@@ -204,19 +323,27 @@
   margin: 0;
   width: 100%;
   height: 100%;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-/* Done Checkbox */
+/* Meal card header for controls */
+.meal-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  min-height: 32px;
+}
+
+
 .meal-card__done-btn {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  margin: -10px 0 -10px -10px; /* Expand hit area outwards */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,11 +382,9 @@
 }
 
 .meal-card__swap-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
+  margin: -10px -10px -10px 0; /* Expand hit area outwards */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,16 +393,30 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--clr-text-muted);
   cursor: pointer;
-  opacity: 0.4; /* Сделали слегка видимым изначально */
+  opacity: 0.6; /* More visible by default on mobile */
   transform: scale(0.9);
   transition: all 0.2s ease;
   z-index: 10;
 }
 
-.meal-card:hover .meal-card__swap-btn {
-  opacity: 1;
-  transform: scale(1);
-  background: rgba(255, 255, 255, 0.1);
+/* On desktop, keep the hover effect, but on mobile/touch, make it always visible */
+@media (hover: hover) {
+  .meal-card__swap-btn {
+    opacity: 0.4;
+  }
+  .meal-card:hover .meal-card__swap-btn {
+    opacity: 1;
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (hover: none) {
+  .meal-card__swap-btn {
+    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
 }
 
 .meal-card__swap-btn:hover {
@@ -300,12 +439,19 @@
 .meal-card--completed .meal-card__main-btn {
   opacity: 0.4;
   filter: grayscale(0.8);
-  pointer-events: none;
 }
 
 .meal-card--completed:hover {
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: none;
+}
+
+.meal-card__type-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .meal-card__type {
@@ -314,10 +460,10 @@
   letter-spacing: 0.06em;
   color: var(--clr-text-muted);
   font-weight: 700;
-  margin-bottom: 4px;
 }
 
-.meal-card__emoji { font-size: 20px; display: block; margin-bottom: 4px; }
+.meal-card__emoji { font-size: 32px; display: block; margin-bottom: 4px; }
+
 
 .meal-card__name {
   font-size: 12px;
@@ -334,42 +480,41 @@
 
 .meal-card__meta {
   margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  font-size: 0.75rem;
-  color: var(--clr-text-muted);
+  width: 100%;
 }
 
 .meal-card__cal-row {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .meal-card__precision {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--clr-primary);
-  opacity: 0.8;
-  background: rgba(0, 245, 160, 0.1);
-  padding: 1px 4px;
-  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 245, 160, 0.2);
+  padding: 1px 6px;
+  border-radius: 6px;
   width: fit-content;
+  box-shadow: 0 0 10px rgba(0, 245, 160, 0.1);
 }
 
 .meal-card__precision--perfect {
-  color: #fff;
   background: linear-gradient(135deg, var(--clr-primary), #00d4ff);
-  opacity: 1;
-  box-shadow: 0 0 10px rgba(0, 245, 160, 0.3);
+  border-color: transparent;
+  box-shadow: 0 0 15px rgba(0, 245, 160, 0.4);
 }
 
 .meal-card__cal {
-  font-weight: 600;
-  color: var(--clr-text-main);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--clr-text-muted);
+  opacity: 0.8;
 }
-.meal-card__time { font-size: 11px; color: var(--clr-text-secondary); }
+.meal-card__time { font-size: 11px; color: var(--clr-text-muted); opacity: 0.8; display: flex; align-items: center; gap: 4px; }
 
 .meal-card--empty {
   opacity: 0.35;
@@ -483,19 +628,22 @@
   min-height: auto;
   border-left: 3px solid var(--clr-accent-2);
   background: rgba(245, 158, 11, 0.05);
+  align-items: center; /* Center vertically for simple items */
 }
 
 .meal-card__remove-btn {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+  width: 40px;
+  height: 40px;
+  margin: -10px -10px -10px 0;
   background: none;
   border: none;
   color: var(--clr-text-muted);
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
   line-height: 1;
-  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .meal-card__remove-btn:hover {

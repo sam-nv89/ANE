@@ -110,26 +110,43 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
     <motion.div
       className={`meal-card ${isCompleted ? 'meal-card--completed' : ''}`}
       whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.15 }}
     >
-      <button 
-        className="meal-card__done-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggle(dayIndex, mealType);
-        }}
-        title={isCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
-      >
-        <div className={`check-circle ${isCompleted ? 'check-circle--active' : ''}`}>
-          {isCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
-        </div>
-      </button>
+      <div className="meal-card__header">
+        <button 
+          className="meal-card__done-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle(dayIndex, mealType);
+          }}
+          title={isCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
+        >
+          <div className={`check-circle ${isCompleted ? 'check-circle--active' : ''}`}>
+            {isCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
+          </div>
+        </button>
+
+        <button 
+          className="meal-card__swap-btn" 
+          onClick={(e) => {
+            e.stopPropagation();
+            onSwap(dayIndex, mealType);
+          }}
+          title="Заменить это блюдо"
+        >
+          <RefreshCw size={14} />
+        </button>
+      </div>
 
       <button 
         className="meal-card__main-btn"
         onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
       >
-        <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
+        <div className="meal-card__type-row">
+          <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
+          <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
+        </div>
         <span className="meal-card__emoji">{meal.imageEmoji}</span>
         <div className="meal-card__name">{meal.name}</div>
         <div className="meal-card__meta">
@@ -141,26 +158,14 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
               </span>
             )}
           </div>
-          <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
         </div>
-      </button>
-
-      <button 
-        className="meal-card__swap-btn" 
-        onClick={(e) => {
-          e.stopPropagation();
-          onSwap(dayIndex, mealType);
-        }}
-        title="Заменить это блюдо"
-      >
-        <RefreshCw size={14} />
       </button>
     </motion.div>
   );
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom }) {
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom, targetCalories }) {
   const [isAdding, setIsAdding] = React.useState(false);
   const [customName, setCustomName] = React.useState('');
   const [customCal, setCustomCal] = React.useState('');
@@ -182,6 +187,15 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
   const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' })
     .replace(/\s*г\.?\s*$/i, '');
 
+  const factCalories = Object.keys(day.meals)
+    .filter(type => day.meals[type] && completed.includes(`${day.dayIndex}:${type}`))
+    .reduce((acc, type) => acc + (day.meals[type]?.calories || 0), 0) +
+    (day.customMeals?.filter(m => completed.includes(`${day.dayIndex}:${m.id}`))
+      .reduce((acc, m) => acc + (m.calories || 0), 0) || 0);
+
+  const compliance = targetCalories > 0 ? (factCalories / targetCalories) * 100 : 0;
+  const progressPercent = Math.min(compliance, 100);
+
   return (
     <div className="day-col">
       <button 
@@ -196,6 +210,20 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
           <Skeleton width="40px" height="10px" style={{ margin: '4px auto' }} />
         ) : (
           <div className="day-col__date">{dateStr}</div>
+        )}
+        
+        {!isLoading && targetCalories > 0 && (
+          <div className="day-col__progress-wrap">
+            <div className="day-col__progress-bar">
+              <motion.div 
+                className="day-col__progress-fill"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+            <span className="day-col__compliance-text">{Math.round(progressPercent)}%</span>
+          </div>
         )}
       </button>
 
@@ -213,17 +241,30 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
         />
       ))}
 
-      {/* Custom Meals List */}
-      {day.customMeals?.map(m => (
-        <div key={m.id} className="meal-card meal-card--custom">
-          <button className="meal-card__remove-btn" onClick={() => onRemoveCustom(day.dayIndex, m.id)}>×</button>
-          <div className="meal-card__type">Свой продукт</div>
-          <div className="meal-card__name">{m.name}</div>
-          <div className="meal-card__meta">
-            <span className="meal-card__cal">{fmtNum(m.calories)} ккал</span>
+      {day.customMeals?.map(m => {
+        const isMCompleted = completed.includes(`${day.dayIndex}:${m.id}`);
+        return (
+          <div key={m.id} className={`meal-card meal-card--custom ${isMCompleted ? 'meal-card--completed' : ''}`}>
+             <div className="meal-card__header">
+              <button 
+                className="meal-card__done-btn"
+                onClick={() => onToggle(day.dayIndex, m.id)}
+                title={isMCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
+              >
+                <div className={`check-circle ${isMCompleted ? 'check-circle--active' : ''}`}>
+                  {isMCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
+                </div>
+              </button>
+              <button className="meal-card__remove-btn" onClick={() => onRemoveCustom(day.dayIndex, m.id)}>×</button>
+            </div>
+            <div className="meal-card__type">Свой продукт</div>
+            <div className="meal-card__name">{m.name}</div>
+            <div className="meal-card__meta">
+              <span className="meal-card__cal">{fmtNum(m.calories)} ккал</span>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* Add Custom Meal Form */}
       {isAdding ? (
@@ -266,62 +307,140 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
 }
 
 /* ── Today's nutrition summary ── */
-function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) {
-  const selectedPlan = plan?.[selectedIndex];
-
+function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, period = 'day' }) {
   const totals = useMemo(() => {
-    if (!selectedPlan || isLoading) return null;
-    const entries = Object.entries(selectedPlan.meals);
-    
-    // Считаем два набора данных: плановые (всё) и фактические (отмеченные)
-    const planSum = entries.reduce(
-      (acc, [, m]) => {
-        if (!m) return acc;
-        return {
-          calories: acc.calories + m.calories,
-          protein:  acc.protein  + m.protein,
-          fat:      acc.fat      + m.fat,
-          carbs:    acc.carbs    + m.carbs,
-        };
-      },
-      { calories: 0, protein: 0, fat: 0, carbs: 0 }
-    );
+    if (!plan || isLoading) return null;
 
-    // Добавляем customMeals к факту
-    const factSum = entries.reduce(
-      (acc, [type, m]) => {
-        if (!m || !completed.includes(`${selectedIndex}:${type}`)) return acc;
-        return {
-          calories: acc.calories + m.calories,
-          protein:  acc.protein  + m.protein,
-          fat:      acc.fat      + m.fat,
-          carbs:    acc.carbs    + m.carbs,
-        };
-      },
-      { calories: 0, protein: 0, fat: 0, carbs: 0 }
-    );
+    if (period === 'day') {
+      const day = plan[selectedIndex];
+      const entries = Object.entries(day.meals);
+      
+      const planSum = entries.reduce(
+        (acc, [, m]) => {
+          if (!m) return acc;
+          return {
+            calories: acc.calories + m.calories,
+            protein:  acc.protein  + m.protein,
+            fat:      acc.fat      + m.fat,
+            carbs:    acc.carbs    + m.carbs,
+            mealsCount: acc.mealsCount + 1,
+          };
+        },
+        { calories: 0, protein: 0, fat: 0, carbs: 0, mealsCount: 0 }
+      );
 
-    if (selectedPlan.customMeals && selectedPlan.customMeals.length > 0) {
-      selectedPlan.customMeals.forEach(m => {
-        factSum.calories += m.calories || 0;
-        factSum.protein  += m.protein  || 0;
-        factSum.fat      += m.fat      || 0;
-        factSum.carbs    += m.carbs    || 0;
+      const factSum = entries.reduce(
+        (acc, [type, m]) => {
+          if (!m || !completed.includes(`${selectedIndex}:${type}`)) return acc;
+          return {
+            calories: acc.calories + m.calories,
+            protein:  acc.protein  + m.protein,
+            fat:      acc.fat      + m.fat,
+            carbs:    acc.carbs    + m.carbs,
+            mealsCount: acc.mealsCount + 1,
+          };
+        },
+        { calories: 0, protein: 0, fat: 0, carbs: 0, mealsCount: 0 }
+      );
+
+      if (day.customMeals && day.customMeals.length > 0) {
+        day.customMeals.forEach(m => {
+          totalPlan.mealsCount += 1;
+          if (completed.includes(`${selectedIndex}:${m.id}`)) {
+            factSum.calories += m.calories || 0;
+            factSum.protein  += m.protein  || 0;
+            factSum.fat      += m.fat      || 0;
+            factSum.carbs    += m.carbs    || 0;
+            factSum.mealsCount += 1;
+          }
+        });
+      }
+
+      return { plan: planSum, fact: factSum, target: nutrition };
+    } else {
+      // WEEKLY CALCULATION
+      let totalPlan = { calories: 0, protein: 0, fat: 0, carbs: 0, mealsCount: 0 };
+      let totalFact = { calories: 0, protein: 0, fat: 0, carbs: 0, mealsCount: 0 };
+
+      plan.forEach((day, dIdx) => {
+        Object.entries(day.meals).forEach(([type, m]) => {
+          if (!m) return;
+          totalPlan.calories += m.calories;
+          totalPlan.protein  += m.protein;
+          totalPlan.fat      += m.fat;
+          totalPlan.carbs    += m.carbs;
+          totalPlan.mealsCount += 1;
+
+          if (completed.includes(`${dIdx}:${type}`)) {
+            totalFact.calories += m.calories;
+            totalFact.protein  += m.protein;
+            totalFact.fat      += m.fat;
+            totalFact.carbs    += m.carbs;
+            totalFact.mealsCount += 1;
+          }
+        });
+
+        if (day.customMeals) {
+          day.customMeals.forEach(m => {
+            totalPlan.mealsCount += 1;
+            if (completed.includes(`${dIdx}:${m.id}`)) {
+              totalFact.calories += m.calories || 0;
+              totalFact.protein  += m.protein  || 0;
+              totalFact.fat      += m.fat      || 0;
+              totalFact.carbs    += m.carbs    || 0;
+              totalFact.mealsCount += 1;
+            }
+          });
+        }
       });
+
+      return { 
+        plan: totalPlan, 
+        fact: totalFact, 
+        target: {
+          targetCalories: nutrition.targetCalories * 7,
+          protein: nutrition.protein * 7,
+          fat: nutrition.fat * 7,
+          carbs: nutrition.carbs * 7
+        } 
+      };
     }
+  }, [plan, isLoading, completed, selectedIndex, period, nutrition]);
 
-    return { plan: planSum, fact: factSum };
-  }, [selectedPlan, isLoading, completed, selectedIndex]);
+  const periodLabel = useMemo(() => {
+    if (!plan) return '';
+    
+    // Helper to get week number
+    const getWeekNo = (d) => {
+      const date = new Date(d.getTime());
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+      const week1 = new Date(date.getFullYear(), 0, 4);
+      return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    };
 
-  const fullDate = useMemo(() => {
-    if (!selectedPlan) return '';
-    const today = new Date().getDay();
-    const todayIndex = (today + 6) % 7;
-    const date = new Date();
-    date.setDate(date.getDate() + (selectedIndex - todayIndex));
-    const dateStr = date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    return dateStr.replace(/\s*г\.?\s*$/i, '');
-  }, [selectedIndex, selectedPlan]);
+    // Helper to format date
+    const fmtDT = (d) => d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    if (period === 'day') {
+      const today = new Date().getDay();
+      const todayIndex = (today + 6) % 7;
+      const date = new Date();
+      date.setDate(date.getDate() + (selectedIndex - todayIndex));
+      const label = date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      return label.charAt(0).toUpperCase() + label.slice(1);
+    } else {
+      const today = new Date().getDay();
+      const todayIndex = (today + 6) % 7;
+      const start = new Date();
+      start.setDate(start.getDate() - todayIndex);
+      const end = new Date();
+      end.setDate(end.getDate() + (6 - todayIndex));
+      
+      const weekNum = getWeekNo(start);
+      return `Неделя ${weekNum}: с ${fmtDT(start)} по ${fmtDT(end)}`;
+    }
+  }, [selectedIndex, plan, period]);
 
   if (isLoading) {
     return (
@@ -345,24 +464,28 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) 
 
   if (!totals || !nutrition) return null;
 
-  const progress = Math.min((totals.fact.calories / nutrition.targetCalories) * 100, 100);
+  const progress = Math.min((totals.fact.calories / totals.target.targetCalories) * 100, 100);
 
   return (
     <div className="day-summary">
       <div className="day-summary__info">
         <div className="day-summary__label-row">
-          <span className="day-summary__day-name">{fullDate}</span>
-          <span className="day-summary__status">Выполнено: {Math.round((totals.fact.calories / nutrition.targetCalories) * 100)}%</span>
+          <span className="day-summary__day-name">{periodLabel}</span>
         </div>
         <div className="day-summary__row">
           <div className="day-summary__group">
-            <span className="day-summary__sublabel">Съедено</span>
+            <span className="day-summary__sublabel">{period === 'day' ? 'Съедено, ккал.' : 'Итого за неделю, ккал.'}</span>
             <span className="day-summary__val day-summary__val--current">{fmtNum(totals.fact.calories)}</span>
           </div>
-          <div className="day-summary__divider">/</div>
           <div className="day-summary__group">
-            <span className="day-summary__sublabel">Цель дня</span>
-            <span className="day-summary__val day-summary__val--target">{fmtNum(nutrition.targetCalories)} <small>ккал</small></span>
+            <span className="day-summary__sublabel">{period === 'day' ? 'Цель дня, ккал.' : 'Цель на неделю, ккал.'}</span>
+            <span className="day-summary__val day-summary__val--target">{fmtNum(totals.target.targetCalories)}</span>
+          </div>
+          <div className="day-summary__group">
+            <span className="day-summary__sublabel">Выполнение</span>
+            <span className="day-summary__val day-summary__val--compliance">
+              {Math.round((totals.fact.calories / totals.target.targetCalories) * 100)}%
+            </span>
           </div>
         </div>
         <div className="day-summary__progress-bg">
@@ -371,17 +494,14 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed }) 
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
-            key={`progress-${selectedIndex}`}
+            key={`progress-${selectedIndex}-${period}`}
           />
-        </div>
-        <div className="day-summary__plan-info">
-          План на день: {fmtNum(totals.plan.calories)} ккал
         </div>
       </div>
       <div className="macro-rings">
-        <MacroRing key={`p-${selectedIndex}`} label="Белки"    value={totals.fact.protein} max={nutrition.protein} color="#00d4ff" />
-        <MacroRing key={`f-${selectedIndex}`} label="Жиры"     value={totals.fact.fat}     max={nutrition.fat}     color="#f59e0b" />
-        <MacroRing key={`c-${selectedIndex}`} label="Углеводы" value={totals.fact.carbs}   max={nutrition.carbs}   color="#a78bfa" />
+        <MacroRing key={`p-${selectedIndex}-${period}`} label="Белки"    value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
+        <MacroRing key={`f-${selectedIndex}-${period}`} label="Жиры"     value={totals.fact.fat}     max={totals.target.fat}     color="#f59e0b" />
+        <MacroRing key={`c-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs}   max={totals.target.carbs}   color="#a78bfa" />
       </div>
     </div>
   );
@@ -392,6 +512,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, nutrition } = useUserStore();
   const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted, addCustomMeal, removeCustomMeal } = usePlanStore();
+  const [summaryPeriod, setSummaryPeriod] = React.useState('day');
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const dashboardRef = React.useRef(null);
@@ -592,7 +713,32 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <TodaySummary plan={displayPlan} nutrition={nutrition} selectedIndex={selectedDayIndex} isLoading={isLoading} completed={completed} />
+      {/* Summary Period Tabs */}
+      <div className="period-selector">
+        <button 
+          className={`period-btn ${summaryPeriod === 'day' ? 'period-btn--active' : ''}`}
+          onClick={() => setSummaryPeriod('day')}
+        >
+          {summaryPeriod === 'day' && <motion.div layoutId="period-pill" className="period-btn__bg" />}
+          <span className="period-btn__text">День</span>
+        </button>
+        <button 
+          className={`period-btn ${summaryPeriod === 'week' ? 'period-btn--active' : ''}`}
+          onClick={() => setSummaryPeriod('week')}
+        >
+          {summaryPeriod === 'week' && <motion.div layoutId="period-pill" className="period-btn__bg" />}
+          <span className="period-btn__text">Неделя</span>
+        </button>
+      </div>
+
+      <TodaySummary 
+        plan={displayPlan} 
+        nutrition={nutrition}
+        selectedIndex={selectedDayIndex} 
+        isLoading={isLoading} 
+        completed={completed}
+        period={summaryPeriod}
+      />
 
       <motion.div
         className="week-grid"
@@ -616,6 +762,7 @@ export default function DashboardPage() {
             onToggle={toggleCompleted}
             onAddCustom={addCustomMeal}
             onRemoveCustom={removeCustomMeal}
+            targetCalories={nutrition?.targetCalories}
           />
         ))}
       </motion.div>
