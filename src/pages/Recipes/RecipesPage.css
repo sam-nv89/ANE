@@ -245,7 +245,7 @@
 
 .recipe-card-alt__action-btn:hover {
   transform: scale(1.2);
-  color: #fff;
+  color: var(--clr-accent-1);
 }
 
 .recipe-card-alt__action-btn--active {
