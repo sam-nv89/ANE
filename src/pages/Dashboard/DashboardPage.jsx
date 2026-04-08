@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download } from 'lucide-react';
+import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download, ExternalLink } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
@@ -109,24 +109,43 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
   return (
     <motion.div
       className={`meal-card ${isCompleted ? 'meal-card--completed' : ''}`}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.98 }}
+      onClick={() => onToggle(dayIndex, mealType)}
+      whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)' }}
+      whileTap={{ scale: 0.96 }}
       transition={{ duration: 0.15 }}
+      style={{ cursor: 'pointer' }}
     >
-      <div className="meal-card__header">
-        <button 
-          className="meal-card__done-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle(dayIndex, mealType);
-          }}
-          title={isCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
-        >
+      <div className="meal-card__top-row">
+        <div className="meal-card__done-indicator">
           <div className={`check-circle ${isCompleted ? 'check-circle--active' : ''}`}>
             {isCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
           </div>
-        </button>
+        </div>
 
+        <div className="meal-card__type-info">
+          <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
+          <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
+        </div>
+      </div>
+
+      <div className="meal-card__content">
+        <span className="meal-card__emoji">{meal.imageEmoji}</span>
+        <div className="meal-card__name">
+          {meal.name}
+          <button 
+            className="meal-card__link-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } });
+            }}
+            title="Открыть рецепт"
+          >
+            <ExternalLink size={14} />
+          </button>
+        </div>
+      </div>
+
+      <div className="meal-card__footer-row">
         <button 
           className="meal-card__swap-btn" 
           onClick={(e) => {
@@ -137,29 +156,16 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
         >
           <RefreshCw size={14} />
         </button>
-      </div>
 
-      <button 
-        className="meal-card__main-btn"
-        onClick={() => navigate(`/app/meal/${meal.id}`, { state: { multiplier: meal.multiplier, calories: meal.calories } })}
-      >
-        <div className="meal-card__type-row">
-          <div className="meal-card__type">{MEAL_LABELS[mealType]}</div>
-          <span className="meal-card__time">⏱ {meal.cookTimeMin} мин</span>
+        <div className="meal-card__cal-row">
+          <span className="meal-card__cal">{fmtNum(meal.calories)} ккал</span>
+          {meal.targetCal && (
+            <span className={`meal-card__precision ${Math.abs(meal.calories - meal.targetCal) <= 5 ? 'meal-card__precision--perfect' : ''}`}>
+              {meal.calories - meal.targetCal === 0 ? '✓' : (meal.calories - meal.targetCal > 0 ? `+${fmtNum(meal.calories - meal.targetCal)}` : `${fmtNum(meal.calories - meal.targetCal)}`)}
+            </span>
+          )}
         </div>
-        <span className="meal-card__emoji">{meal.imageEmoji}</span>
-        <div className="meal-card__name">{meal.name}</div>
-        <div className="meal-card__meta">
-          <div className="meal-card__cal-row">
-            <span className="meal-card__cal">{fmtNum(meal.calories)} ккал</span>
-            {meal.targetCal && (
-              <span className={`meal-card__precision ${Math.abs(meal.calories - meal.targetCal) <= 5 ? 'meal-card__precision--perfect' : ''}`}>
-                {meal.calories - meal.targetCal === 0 ? '✓' : (meal.calories - meal.targetCal > 0 ? `+${fmtNum(meal.calories - meal.targetCal)}` : `${fmtNum(meal.calories - meal.targetCal)}`)}
-              </span>
-            )}
-          </div>
-        </div>
-      </button>
+      </div>
     </motion.div>
   );
 }
