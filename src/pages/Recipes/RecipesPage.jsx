@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart, ChevronDown } from 'lucide-react';
-
+import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart, ChevronDown, Plus } from 'lucide-react';
 import { useFavoritesStore } from '../../store/useFavoritesStore';
+import { usePlanStore } from '../../store/usePlanStore';
 
 import recipes from '../../data/recipes.json';
 import './RecipesPage.css';
@@ -30,6 +30,17 @@ const SORT_OPTIONS = [
   { id: 'time', label: 'По времени' },
 ];
 
+const DAY_NAMES_FULL = [
+  'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'
+];
+
+const MEAL_TYPES_LIST = [
+  { id: 'breakfast', label: 'Завтрак' },
+  { id: 'snack', label: 'Перекус 1' },
+  { id: 'lunch', label: 'Обед' },
+  { id: 'dinner', label: 'Ужин' },
+];
+
 export default function RecipesPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,7 +50,13 @@ export default function RecipesPage() {
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [activeDropdown, setActiveDropdown] = useState(null); // 'category', 'time', 'sort'
   
+  // States for adding to plan
+  const [addingToPlan, setAddingToPlan] = useState(null); // recipe object
+  const [targetDay, setTargetDay] = useState(0);
+  const [targetMealType, setTargetMealType] = useState('breakfast');
+
   const { favorites, toggleFavorite } = useFavoritesStore();
+  const { plan, replaceMeal } = usePlanStore();
 
   const handleSortChange = (key) => {
     if (sortBy === key) {
@@ -84,6 +101,26 @@ export default function RecipesPage() {
 
   const toggleDropdown = (name) => {
     setActiveDropdown(activeDropdown === name ? null : name);
+  };
+
+  const onConfirmAdd = () => {
+    if (!plan) return;
+    
+    // Формируем RecipeRef
+    const recipeRef = {
+      id: addingToPlan.id,
+      name: addingToPlan.name,
+      calories: addingToPlan.nutrition.calories,
+      protein: addingToPlan.nutrition.protein,
+      fat: addingToPlan.nutrition.fat,
+      carbs: addingToPlan.nutrition.carbs,
+      cookTimeMin: addingToPlan.cookTimeMin,
+      imageEmoji: addingToPlan.imageEmoji,
+      multiplier: 1 // По умолчанию
+    };
+
+    replaceMeal(targetDay, targetMealType, recipeRef);
+    setAddingToPlan(null);
   };
 
   return (
@@ -230,15 +267,29 @@ export default function RecipesPage() {
               transition={{ duration: 0.2, delay: idx * 0.02 }}
               onClick={() => navigate(`/app/meal/${recipe.id}`)}
             >
-              <button 
-                className={`recipe-card-alt__fav ${favorites.includes(recipe.id) ? 'recipe-card-alt__fav--active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleFavorite(recipe.id);
-                }}
-              >
-                <Heart size={16} fill={favorites.includes(recipe.id) ? 'currentColor' : 'none'} />
-              </button>
+              <div className="recipe-card-alt__actions">
+                <button 
+                  className={`recipe-card-alt__action-btn ${favorites.includes(recipe.id) ? 'recipe-card-alt__action-btn--active' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(recipe.id);
+                  }}
+                  title="В избранное"
+                >
+                  <Heart size={16} fill={favorites.includes(recipe.id) ? 'currentColor' : 'none'} />
+                </button>
+
+                <button 
+                  className="recipe-card-alt__action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAddingToPlan(recipe);
+                  }}
+                  title="Добавить в рацион"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
 
               <div className="recipe-card-alt__emoji">{recipe.imageEmoji}</div>
               <div className="recipe-card-alt__content">
@@ -273,6 +324,78 @@ export default function RecipesPage() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {addingToPlan && (
+          <div className="modal-overlay" onClick={() => setAddingToPlan(null)}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="add-to-plan-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <div>
+                  <h3 className="modal-title">Добавить в рацион</h3>
+                  <p className="modal-recipe-name">{addingToPlan.name}</p>
+                </div>
+                <button className="modal-close" onClick={() => setAddingToPlan(null)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="modal-body">
+                {!plan ? (
+                  <div className="modal-error-box">
+                    <p>План на неделю еще не создан. Пожалуйста, сгенерируйте его на главной странице.</p>
+                    <button className="btn-modal-primary" onClick={() => navigate('/dashboard')}>
+                      Перейти к Дашборду
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="modal-section">
+                      <label className="modal-label">День недели:</label>
+                      <div className="modal-grid-days">
+                        {DAY_NAMES_FULL.map((name, idx) => (
+                          <button 
+                            key={idx}
+                            className={`modal-grid-btn ${targetDay === idx ? 'active' : ''}`}
+                            onClick={() => setTargetDay(idx)}
+                          >
+                            <span className="day-short">{['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][idx]}</span>
+                            <span className="day-full">{name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="modal-section">
+                      <label className="modal-label">Прием пищи:</label>
+                      <div className="modal-grid-meals">
+                        {MEAL_TYPES_LIST.map((mt) => (
+                          <button 
+                            key={mt.id}
+                            className={`modal-grid-btn ${targetMealType === mt.id ? 'active' : ''}`}
+                            onClick={() => setTargetMealType(mt.id)}
+                          >
+                            {mt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button className="modal-submit-btn" onClick={onConfirmAdd}>
+                      Готово, добавить!
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

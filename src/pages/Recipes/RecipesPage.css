@@ -191,7 +191,7 @@
 .recipes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  gap: 16px;
   min-height: 200px;
 }
 
@@ -199,42 +199,13 @@
   background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
-  padding: 12px; /* Меньше паддинг */
+  padding: 12px;
   display: flex;
   gap: 12px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
-}
-
-.recipe-card-alt__fav {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
-  z-index: 5;
-  transition: all 0.2s ease;
-}
-
-.recipe-card-alt__fav:hover {
-  transform: scale(1.1);
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.recipe-card-alt__fav--active {
-  color: #ff4b2b;
-  border-color: rgba(255, 75, 43, 0.3);
 }
 
 .recipe-card-alt:hover {
@@ -244,17 +215,51 @@
   box-shadow: 0 12px 24px rgba(0,0,0,0.3);
 }
 
+.recipe-card-alt__actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+.recipe-card-alt__action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recipe-card-alt__action-btn:hover {
+  transform: scale(1.1);
+  border-color: var(--clr-accent-1);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.recipe-card-alt__action-btn--active {
+  color: var(--clr-accent-1);
+  border-color: var(--clr-accent-1);
+}
+
 .recipe-card-alt__emoji {
-  font-size: 38px; /* Немного увеличим для акцента */
+  font-size: 38px;
   width: 64px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8));
-  background: transparent;
-  border: none;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
 }
 
 .recipe-card-alt__content {
@@ -262,7 +267,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
-  padding-right: 36px; /* Резервируем место под сердечко */
+  padding-right: 32px;
 }
 
 .recipe-card-alt__cat {
@@ -295,7 +300,8 @@
 }
 
 .recipe-card-alt__footer {
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 8px;
   display: flex;
   justify-content: flex-end;
 }
@@ -308,32 +314,161 @@
   font-weight: 700;
   color: var(--clr-text-muted);
   opacity: 0.6;
-  transition: all 0.2s ease;
-}
-
-.recipe-card-alt:hover .recipe-card-alt__more {
-  color: var(--clr-accent-1);
-  opacity: 1;
 }
 
 .recipes-empty {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 60px 40px;
-  background: var(--clr-bg-surface);
-  border-radius: var(--radius-lg);
-  border: 1px dashed var(--clr-border);
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-.recipes-empty__icon { font-size: 48px; margin-bottom: 12px; }
-.recipes-empty h3 { color: #fff; margin-bottom: 8px; }
-.recipes-empty p { font-size: 14px; margin-bottom: 24px; }
+.recipes-empty__icon { font-size: 48px; }
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.add-to-plan-modal {
+  width: 100%;
+  max-width: 440px;
+  background: var(--clr-bg-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--clr-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title { font-size: 18px; font-weight: 800; color: #fff; margin: 0; }
+.modal-recipe-name { font-size: 13px; color: var(--clr-accent-1); margin: 4px 0 0 0; }
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-text-muted);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.modal-grid-days {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.modal-grid-meals {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.modal-grid-btn {
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  color: var(--clr-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-grid-btn.active {
+  background: var(--clr-accent-1);
+  color: #000;
+  border-color: var(--clr-accent-1);
+}
+
+.day-short { font-size: 13px; }
+.day-full { font-size: 9px; opacity: 0.6; }
+
+.modal-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--clr-accent-1);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+.modal-submit-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.modal-error-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 16px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-error-box p { color: #f87171; font-size: 13px; margin-bottom: 12px; }
+
+.btn-modal-primary {
+  padding: 8px 16px;
+  background: #f87171;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
 @media (max-width: 600px) {
   .recipes-header__title { font-size: 24px; }
-  .filters-row { gap: 16px; }
   .recipe-card-alt { flex-direction: column; text-align: center; }
   .recipe-card-alt__emoji { margin: 0 auto; }
   .recipe-card-alt__meta { justify-content: center; }
   .recipe-card-alt__footer { justify-content: center; }
+  .modal-grid-days { grid-template-columns: repeat(3, 1fr); }
 }
