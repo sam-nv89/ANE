@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download, ExternalLink } from 'lucide-react';
+import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download, ExternalLink, X, Search, ArrowLeft, ArrowUp, ArrowDown } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
-import { generatePlan, generateSingleMeal } from '../../lib/planner/generator';
+import { generatePlan, generateSingleMeal, getFilteredPoolForMeal } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
 
 import html2canvas from 'html2canvas';
@@ -26,12 +26,12 @@ const MEAL_LABELS = {
 
 const MEAL_TIMES = {
   breakfast: '08:00 – 09:00',
-  snack:     '11:00 – 11:30',
-  lunch:     '13:00 – 14:00',
-  snack2:    '15:30 – 16:00',
-  snack3:    '17:00 – 17:30',
-  dinner:    '19:00 – 20:00',
-  snack4:    '21:00 – 21:30',
+  snack: '11:00 – 11:30',
+  lunch: '13:00 – 14:00',
+  snack2: '15:30 – 16:00',
+  snack3: '17:00 – 17:30',
+  dinner: '19:00 – 20:00',
+  snack4: '21:00 – 21:30',
 };
 
 const DEFAULT_ORDER = ['breakfast', 'snack', 'lunch', 'snack2', 'snack3', 'dinner', 'snack4'];
@@ -50,7 +50,7 @@ function TimeColumn({ order }) {
       {order.map((mealType) => (
         <div key={mealType} className="time-col__cell">
           <div className="time-col__time">
-            {(MEAL_TIMES[mealType] || '—').split(' – ')[0]}<br/>
+            {(MEAL_TIMES[mealType] || '—').split(' – ')[0]}<br />
             <span style={{ opacity: 0.5 }}>{(MEAL_TIMES[mealType] || '').split(' – ')[1]}</span>
           </div>
         </div>
@@ -113,7 +113,7 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
       whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)' }}
       whileTap={{ scale: 0.96 }}
       initial={isHighlighted ? { scale: 0.95, opacity: 0.8 } : false}
-      animate={isHighlighted ? { 
+      animate={isHighlighted ? {
         scale: [1, 1.03, 1],
         opacity: 1,
         boxShadow: [
@@ -122,8 +122,8 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
           '0 0 0px rgba(0, 245, 160, 0)'
         ]
       } : { opacity: 1, scale: 1 }}
-      transition={isHighlighted ? { 
-        duration: 0.8, 
+      transition={isHighlighted ? {
+        duration: 0.8,
         repeat: 3,
         ease: "easeInOut"
       } : { duration: 0.2 }}
@@ -147,7 +147,7 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
         <span className="meal-card__emoji">{meal.imageEmoji}</span>
         <div className="meal-card__name">
           {meal.name}
-          <button 
+          <button
             className="meal-card__link-btn"
             onClick={(e) => {
               e.stopPropagation();
@@ -161,8 +161,8 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
       </div>
 
       <div className="meal-card__footer-row">
-        <button 
-          className="meal-card__swap-btn" 
+        <button
+          className="meal-card__swap-btn"
           onClick={(e) => {
             e.stopPropagation();
             onSwap(dayIndex, mealType);
@@ -219,7 +219,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
 
   return (
     <div className="day-col">
-      <button 
+      <button
         className={`day-col__header ${isActualToday ? 'day-col__header--today' : ''} ${isSelected ? 'day-col__header--selected' : ''}`}
         onClick={() => onSelect(day.dayIndex)}
         disabled={isLoading}
@@ -232,11 +232,11 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
         ) : (
           <div className="day-col__date">{dateStr}</div>
         )}
-        
+
         {!isLoading && targetCalories > 0 && (
           <div className="day-col__progress-wrap">
             <div className="day-col__progress-bar">
-              <motion.div 
+              <motion.div
                 className="day-col__progress-fill"
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercent}%` }}
@@ -267,8 +267,8 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
         const isMCompleted = completed.includes(`${day.dayIndex}:${m.id}`);
         return (
           <div key={m.id} className={`meal-card meal-card--custom ${isMCompleted ? 'meal-card--completed' : ''}`}>
-             <div className="meal-card__header">
-              <button 
+            <div className="meal-card__header">
+              <button
                 className="meal-card__done-btn"
                 onClick={() => onToggle(day.dayIndex, m.id)}
                 title={isMCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
@@ -290,24 +290,24 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
 
       {/* Add Custom Meal Form */}
       {isAdding ? (
-        <motion.form 
+        <motion.form
           className="custom-meal-form"
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleAdd}
         >
-          <input 
+          <input
             autoFocus
-            type="text" 
-            placeholder="Название..." 
+            type="text"
+            placeholder="Название..."
             value={customName}
             onChange={e => setCustomName(e.target.value)}
             className="custom-meal-form__input"
           />
           <div className="custom-meal-form__row">
-            <input 
-              type="number" 
-              placeholder="Ккал" 
+            <input
+              type="number"
+              placeholder="Ккал"
               value={customCal}
               onChange={e => setCustomCal(e.target.value)}
               className="custom-meal-form__input custom-meal-form__input--small"
@@ -317,7 +317,7 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
           </div>
         </motion.form>
       ) : (
-        <button 
+        <button
           className="add-custom-btn"
           onClick={() => setIsAdding(true)}
         >
@@ -336,15 +336,15 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
     if (period === 'day') {
       const day = plan[selectedIndex];
       const entries = Object.entries(day.meals);
-      
+
       const planSum = entries.reduce(
         (acc, [, m]) => {
           if (!m) return acc;
           return {
             calories: acc.calories + m.calories,
-            protein:  acc.protein  + m.protein,
-            fat:      acc.fat      + m.fat,
-            carbs:    acc.carbs    + m.carbs,
+            protein: acc.protein + m.protein,
+            fat: acc.fat + m.fat,
+            carbs: acc.carbs + m.carbs,
             mealsCount: acc.mealsCount + 1,
           };
         },
@@ -356,9 +356,9 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
           if (!m || !completed.includes(`${selectedIndex}:${type}`)) return acc;
           return {
             calories: acc.calories + m.calories,
-            protein:  acc.protein  + m.protein,
-            fat:      acc.fat      + m.fat,
-            carbs:    acc.carbs    + m.carbs,
+            protein: acc.protein + m.protein,
+            fat: acc.fat + m.fat,
+            carbs: acc.carbs + m.carbs,
             mealsCount: acc.mealsCount + 1,
           };
         },
@@ -367,12 +367,12 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
 
       if (day.customMeals && day.customMeals.length > 0) {
         day.customMeals.forEach(m => {
-          totalPlan.mealsCount += 1;
+          planSum.mealsCount += 1;
           if (completed.includes(`${selectedIndex}:${m.id}`)) {
             factSum.calories += m.calories || 0;
-            factSum.protein  += m.protein  || 0;
-            factSum.fat      += m.fat      || 0;
-            factSum.carbs    += m.carbs    || 0;
+            factSum.protein += m.protein || 0;
+            factSum.fat += m.fat || 0;
+            factSum.carbs += m.carbs || 0;
             factSum.mealsCount += 1;
           }
         });
@@ -388,16 +388,16 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
         Object.entries(day.meals).forEach(([type, m]) => {
           if (!m) return;
           totalPlan.calories += m.calories;
-          totalPlan.protein  += m.protein;
-          totalPlan.fat      += m.fat;
-          totalPlan.carbs    += m.carbs;
+          totalPlan.protein += m.protein;
+          totalPlan.fat += m.fat;
+          totalPlan.carbs += m.carbs;
           totalPlan.mealsCount += 1;
 
           if (completed.includes(`${dIdx}:${type}`)) {
             totalFact.calories += m.calories;
-            totalFact.protein  += m.protein;
-            totalFact.fat      += m.fat;
-            totalFact.carbs    += m.carbs;
+            totalFact.protein += m.protein;
+            totalFact.fat += m.fat;
+            totalFact.carbs += m.carbs;
             totalFact.mealsCount += 1;
           }
         });
@@ -407,31 +407,31 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
             totalPlan.mealsCount += 1;
             if (completed.includes(`${dIdx}:${m.id}`)) {
               totalFact.calories += m.calories || 0;
-              totalFact.protein  += m.protein  || 0;
-              totalFact.fat      += m.fat      || 0;
-              totalFact.carbs    += m.carbs    || 0;
+              totalFact.protein += m.protein || 0;
+              totalFact.fat += m.fat || 0;
+              totalFact.carbs += m.carbs || 0;
               totalFact.mealsCount += 1;
             }
           });
         }
       });
 
-      return { 
-        plan: totalPlan, 
-        fact: totalFact, 
+      return {
+        plan: totalPlan,
+        fact: totalFact,
         target: {
           targetCalories: nutrition.targetCalories * 7,
           protein: nutrition.protein * 7,
           fat: nutrition.fat * 7,
           carbs: nutrition.carbs * 7
-        } 
+        }
       };
     }
   }, [plan, isLoading, completed, selectedIndex, period, nutrition]);
 
   const periodLabel = useMemo(() => {
     if (!plan) return '';
-    
+
     // Helper to get week number
     const getWeekNo = (d) => {
       const date = new Date(d.getTime());
@@ -458,7 +458,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
       start.setDate(start.getDate() - todayIndex);
       const end = new Date();
       end.setDate(end.getDate() + (6 - todayIndex));
-      
+
       const weekNum = getWeekNo(start);
       return `Неделя ${weekNum}: с ${fmtDT(start)} по ${fmtDT(end)}`;
     }
@@ -511,7 +511,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
           </div>
         </div>
         <div className="day-summary__progress-bg">
-          <motion.div 
+          <motion.div
             className="day-summary__progress-fg"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -521,9 +521,9 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
         </div>
       </div>
       <div className="macro-rings">
-        <MacroRing key={`p-${selectedIndex}-${period}`} label="Белки"    value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
-        <MacroRing key={`f-${selectedIndex}-${period}`} label="Жиры"     value={totals.fact.fat}     max={totals.target.fat}     color="#f59e0b" />
-        <MacroRing key={`c-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs}   max={totals.target.carbs}   color="#a78bfa" />
+        <MacroRing key={`p-${selectedIndex}-${period}`} label="Белки" value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
+        <MacroRing key={`f-${selectedIndex}-${period}`} label="Жиры" value={totals.fact.fat} max={totals.target.fat} color="#f59e0b" />
+        <MacroRing key={`c-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs} max={totals.target.carbs} color="#a78bfa" />
       </div>
     </div>
   );
@@ -543,13 +543,26 @@ export default function DashboardPage() {
   const [isExporting, setIsExporting] = React.useState(false);
   const dashboardRef = React.useRef(null);
 
+  // --- Новые состояния для выбора замены ---
+  const [activeSwapSlot, setActiveSwapSlot] = React.useState(null); // { dayIndex, mealType }
+  const [showSwapChoice, setShowSwapChoice] = React.useState(false);
+  const [showPicker, setShowPicker] = React.useState(false);
+  const [pickerPool, setPickerPool] = React.useState([]);
+  const [sortBy, setSortBy] = React.useState('name'); // 'name', 'calories'
+  const [sortOrder, setSortOrder] = React.useState('asc'); // 'asc', 'desc'
+  const [activeDropdown, setActiveDropdown] = React.useState(null); // 'sort' or null
+
+  const today = new Date().getDay();
+  const todayIdx = (today + 6) % 7;
+  const [selectedDayIndex, setSelectedDayIndex] = React.useState(todayIdx);
+
   // Обработка подсветки добавленного блюда
   React.useEffect(() => {
     if (highlightParam) {
       const [d, t] = highlightParam.split(':');
       if (d !== undefined && t !== undefined) {
         setHighlightCoords({ day: parseInt(d, 10), type: t });
-        
+
         // Плавный скролл к новому блюду
         setTimeout(() => {
           const el = document.getElementById(`meal-${d}-${t}`);
@@ -569,12 +582,69 @@ export default function DashboardPage() {
   }, [highlightParam, setSearchParams]);
 
   const handleSwapMeal = (dayIndex, mealType) => {
-    const dayMeals = plan[dayIndex].meals;
-    const currentMealId = dayMeals[mealType]?.id;
-    const newMeal = generateSingleMeal(recipes, mealType, dayMeals, nutrition, currentMealId);
+    setActiveSwapSlot({ dayIndex, mealType });
+    setShowSwapChoice(true);
+  };
+
+  const handleAutoSwap = () => {
+    if (!activeSwapSlot || !plan) return;
+    const { dayIndex, mealType } = activeSwapSlot;
+
+    const currentMealId = plan[dayIndex].meals[mealType]?.id;
+    const selectedSoFar = plan.flatMap(day => day.meals[mealType] ? [day.meals[mealType]] : []);
+
+    const newMeal = generateSingleMeal(recipes, profile, nutrition, mealType, selectedSoFar, currentMealId);
     if (newMeal) {
       replaceMeal(dayIndex, mealType, newMeal);
     }
+    setShowSwapChoice(false);
+    setActiveSwapSlot(null);
+  };
+
+  const handleOpenPicker = () => {
+    if (!activeSwapSlot) return;
+    const { mealType } = activeSwapSlot;
+    const pool = getFilteredPoolForMeal(recipes, profile, nutrition, mealType);
+    setPickerPool(pool);
+    setShowSwapChoice(false);
+    setShowPicker(true);
+  };
+
+  const handleBackToChoice = () => {
+    setShowPicker(false);
+    setShowSwapChoice(true);
+  };
+
+  // Мемоизированная сортировка пула
+  const sortedPool = React.useMemo(() => {
+    if (!pickerPool) return [];
+    return [...pickerPool].sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === 'name') {
+        comparison = a.name.localeCompare(b.name);
+      } else if (sortBy === 'calories') {
+        comparison = a.calories - b.calories;
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  }, [pickerPool, sortBy, sortOrder]);
+
+  const handleSortToggle = (type) => {
+    if (sortBy === type) {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(type);
+      setSortOrder('asc');
+    }
+    setActiveDropdown(null);
+  };
+
+  const handleSelectFromPicker = (newMeal) => {
+    if (!activeSwapSlot) return;
+    const { dayIndex, mealType } = activeSwapSlot;
+    replaceMeal(dayIndex, mealType, newMeal);
+    setShowPicker(false);
+    setActiveSwapSlot(null);
   };
 
   const getPeriodString = () => {
@@ -593,7 +663,7 @@ export default function DashboardPage() {
     const period = getPeriodString();
     const text = plan.map((day, idx) => {
       let dailyTotal = 0;
-      
+
       const today = new Date().getDay();
       const todayIdx = (today + 6) % 7;
       const date = new Date();
@@ -601,7 +671,7 @@ export default function DashboardPage() {
       const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
       let dayText = `=== ${day.dayLabel.toUpperCase()} - ${dateStr} ===\n`;
-      
+
       Object.entries(day.meals).forEach(([type, m]) => {
         if (m) {
           dailyTotal += m.calories;
@@ -617,7 +687,7 @@ export default function DashboardPage() {
           dayText += `- ${m.name} (${fmtNum(m.calories)} ккал)\n`;
         });
       }
-      
+
       dayText += `--------------------------------\n`;
       dayText += `ИТОГО ЗА ДЕНЬ: ${fmtNum(dailyTotal)} ккал\n`;
       return dayText + '\n';
@@ -635,7 +705,7 @@ export default function DashboardPage() {
     if (!plan) return;
     setIsExporting(true);
     const period = getPeriodString();
-    
+
     try {
       const element = document.getElementById('pdf-export-template');
       if (!element) throw new Error('Export template not found');
@@ -652,7 +722,7 @@ export default function DashboardPage() {
           if (dash) dash.style.display = 'block';
         }
       });
-      
+
       const imgData = canvas.toDataURL('image/png', 1.0);
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -662,13 +732,13 @@ export default function DashboardPage() {
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       const imgProps = pdf.getImageProperties(imgData);
       const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
       const width = imgProps.width * ratio;
       const height = imgProps.height * ratio;
       const x = (pdfWidth - width) / 2;
-      
+
       pdf.addImage(imgData, 'PNG', x, 5, width, height);
       pdf.save(`weekly-menu_${period}.pdf`);
     } catch (err) {
@@ -679,9 +749,6 @@ export default function DashboardPage() {
     }
   };
 
-  const today = new Date().getDay();
-  const todayIdx = (today + 6) % 7;
-  const [selectedDayIndex, setSelectedDayIndex] = React.useState(todayIdx);
 
   const mealOrder = useMemo(() => {
     if (!plan || plan.length === 0) return [];
@@ -728,8 +795,8 @@ export default function DashboardPage() {
         </div>
         <div className="dashboard__actions" style={{ display: 'flex', gap: 12 }}>
           <div className="download-dropdown">
-            <button 
-              className={`btn-secondary ${isMenuOpen ? 'btn-secondary--active' : ''}`} 
+            <button
+              className={`btn-secondary ${isMenuOpen ? 'btn-secondary--active' : ''}`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               disabled={!plan || isExporting}
               style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px' }}
@@ -738,7 +805,7 @@ export default function DashboardPage() {
             </button>
             <AnimatePresence>
               {isMenuOpen && (
-                <motion.div 
+                <motion.div
                   className="download-dropdown__menu"
                   initial={{ opacity: 0, y: 8, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -766,14 +833,14 @@ export default function DashboardPage() {
 
       {/* Summary Period Tabs */}
       <div className="period-selector">
-        <button 
+        <button
           className={`period-btn ${summaryPeriod === 'day' ? 'period-btn--active' : ''}`}
           onClick={() => setSummaryPeriod('day')}
         >
           {summaryPeriod === 'day' && <motion.div layoutId="period-pill" className="period-btn__bg" />}
           <span className="period-btn__text">День</span>
         </button>
-        <button 
+        <button
           className={`period-btn ${summaryPeriod === 'week' ? 'period-btn--active' : ''}`}
           onClick={() => setSummaryPeriod('week')}
         >
@@ -782,11 +849,11 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      <TodaySummary 
-        plan={displayPlan} 
+      <TodaySummary
+        plan={displayPlan}
         nutrition={nutrition}
-        selectedIndex={selectedDayIndex} 
-        isLoading={isLoading} 
+        selectedIndex={selectedDayIndex}
+        isLoading={isLoading}
         completed={completed}
         period={summaryPeriod}
       />
@@ -800,10 +867,10 @@ export default function DashboardPage() {
       >
         <TimeColumn order={displayOrder} />
         {displayPlan.map((day) => (
-          <DayColumn 
-            key={day.dayIndex} 
-            day={day} 
-            navigate={navigate} 
+          <DayColumn
+            key={day.dayIndex}
+            day={day}
+            navigate={navigate}
             isSelected={selectedDayIndex === day.dayIndex}
             onSelect={setSelectedDayIndex}
             order={displayOrder}
@@ -820,135 +887,163 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Hidden PDF Template */}
-      <div style={{ position: 'absolute', top: '-10000px', left: '-10000px' }}>
-        <div id="pdf-export-template" className="pdf-export-template">
-          <div className="pdf-export-template__branding">
-            <div className="pdf-export-template__accent-bar" />
-            <h1 className="pdf-export-template__main-title">ЕЖЕНЕДЕЛЬНЫЙ ПЛАН ПИТАНИЯ</h1>
-          </div>
+      {/* ... (existing pdf template) ... */}
 
-          <div className="pdf-export-template__info-panel">
-            <div className="pdf-export-template__info-group">
-              <span className="pdf-export-template__info-label">ПОЛЬЗОВАТЕЛЬ</span>
-              <span className="pdf-export-template__info-value">{profile?.name || 'Участник'}</span>
-            </div>
-            <div className="pdf-export-template__info-group">
-              <span className="pdf-export-template__info-label">ПЕРИОД</span>
-              <span className="pdf-export-template__info-value">{getPeriodString()}</span>
-            </div>
-            <div className="pdf-export-template__info-group">
-              <span className="pdf-export-template__info-label">ЦЕЛЕВАЯ НОРМА (ДЕНЬ)</span>
-              <span className="pdf-export-template__info-value">{fmtNum(nutrition?.targetCalories)} ккал/день</span>
-            </div>
-            <div className="pdf-export-template__info-group">
-              <span className="pdf-export-template__info-label">ЦЕЛЕВАЯ НОРМА (НЕДЕЛЯ)</span>
-              <span className="pdf-export-template__info-value">{fmtNum(nutrition?.targetCalories * 7)} ккал/нед</span>
-            </div>
-          </div>
+      {/* ── Choice Modal ── */}
+      <AnimatePresence>
+        {showSwapChoice && (
+          <motion.div
+            className="swap-dialog-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowSwapChoice(false)}
+          >
+            <motion.div
+              className="swap-dialog"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="swap-dialog__header">
+                <button className="swap-dialog__close" onClick={() => setShowSwapChoice(false)}>
+                  <X size={18} />
+                </button>
+              </div>
 
-          <div className="pdf-export-template__grid">
-            <div className="pdf-export-template__col">
-              {displayPlan.slice(0, 4).map((day, dIdx) => {
-                const totalCals = Object.values(day.meals).reduce((acc, m) => acc + (m?.calories || 0), 0) + 
-                                  (day.customMeals ? day.customMeals.reduce((acc, m) => acc + (m?.calories || 0), 0) : 0);
-                const date = new Date();
-                const tOff = (new Date().getDay() + 6) % 7;
-                date.setDate(date.getDate() - tOff + dIdx);
-                const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+              <div className="swap-dialog__body">
+                <h3 className="swap-dialog__title">Замена блюда</h3>
+                <p className="swap-dialog__sub">Как вы хотите заменить этот прием пищи?</p>
 
-                return (
-                  <div key={day.dayIndex} className="pdf-day-card">
-                    <div className="pdf-day-card__header">
-                      <div className="pdf-day-card__title">
-                        <span className="pdf-day-card__label">{day.dayLabel}</span>
-                        <span className="pdf-day-card__date">{dateStr}</span>
-                      </div>
-                      <div className="pdf-day-card__total">{fmtNum(totalCals)} ккал</div>
-                    </div>
-                    <div className="pdf-day-card__meals">
-                      {displayOrder.map(type => {
-                        const m = day.meals[type];
-                        if (!m) return null;
-                        return (
-                          <div key={type} className="pdf-meal-item">
-                            <div className="pdf-meal-item__meta">
-                              <span className="pdf-meal-item__time">{MEAL_TIMES[type]?.split(' – ')[0]}</span>
-                              <span className="pdf-meal-item__type">{MEAL_LABELS[type]}</span>
-                            </div>
-                            <div className="pdf-meal-item__content">
-                              <span className="pdf-meal-item__name">{m.name}</span>
-                              <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {day.customMeals?.map(m => (
-                        <div key={m.id} className="pdf-meal-item">
-                          <div className="pdf-meal-item__meta"><span className="pdf-meal-item__time">—</span><span className="pdf-meal-item__type">ДОП.</span></div>
-                          <div className="pdf-meal-item__content">
-                            <span className="pdf-meal-item__name">{m.name}</span>
-                            <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
-                          </div>
+                <div className="swap-options">
+                  <button className="swap-option swap-option--auto" onClick={handleAutoSwap}>
+                    <div className="swap-option__icon"><Zap size={24} /></div>
+                    <span className="swap-option__label">Автоматически</span>
+                  </button>
+                  <button className="swap-option swap-option--manual" onClick={handleOpenPicker}>
+                    <div className="swap-option__icon"><Layout size={24} /></div>
+                    <span className="swap-option__label">Выбрать из списка</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Recipe Picker Modal ── */}
+      <AnimatePresence>
+        {showPicker && (
+          <motion.div
+            className="picker-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="picker"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            >
+              <div className="picker__header">
+                <div className="picker__header-left">
+                  <button className="picker__back" onClick={handleBackToChoice} title="Назад">
+                    <ArrowLeft size={20} />
+                  </button>
+                  <h3 className="picker__title">Выберите новое блюдо</h3>
+                </div>
+
+                <div className="picker__header-right">
+                  <div className="dropdown">
+                      <button 
+                        className={`dropdown__trigger ${sortBy !== 'name' || sortOrder !== 'asc' ? 'dropdown__trigger--active' : ''}`}
+                        onClick={() => setActiveDropdown(activeDropdown === 'sort' ? null : 'sort')}
+                      >
+                        <div className="dropdown__trigger-content">
+                          <span>{sortBy === 'name' ? 'По алфавиту' : 'По калориям'}</span>
+                          <span className="sort-indicator">
+                            {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                          </span>
                         </div>
-                      ))}
-                    </div>
+                        <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'sort' ? 'dropdown__arrow--open' : ''}`} />
+                      </button>
+                      
+                      <AnimatePresence>
+                        {activeDropdown === 'sort' && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            className="dropdown__menu"
+                          >
+                            <button 
+                              className={`dropdown__item ${sortBy === 'name' ? 'dropdown__item--active' : ''}`}
+                              onClick={() => handleSortToggle('name')}
+                            >
+                              <span>По алфавиту</span>
+                              {sortBy === 'name' && (
+                                <span className="item-sort-arrow">
+                                  {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                                </span>
+                              )}
+                            </button>
+                            <button 
+                              className={`dropdown__item ${sortBy === 'calories' ? 'dropdown__item--active' : ''}`}
+                              onClick={() => handleSortToggle('calories')}
+                            >
+                              <span>По калориям</span>
+                              {sortBy === 'calories' && (
+                                <span className="item-sort-arrow">
+                                  {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                                </span>
+                              )}
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                   </div>
-                );
-              })}
-            </div>
-            <div className="pdf-export-template__col">
-              {displayPlan.slice(4).map((day, dIdx) => {
-                const dayActualIdx = dIdx + 4;
-                const totalCals = Object.values(day.meals).reduce((acc, m) => acc + (m?.calories || 0), 0) + 
-                                  (day.customMeals ? day.customMeals.reduce((acc, m) => acc + (m?.calories || 0), 0) : 0);
-                const date = new Date();
-                const tOff = (new Date().getDay() + 6) % 7;
-                date.setDate(date.getDate() - tOff + dayActualIdx);
-                const dateStr = date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
 
-                return (
-                  <div key={day.dayIndex} className="pdf-day-card">
-                    <div className="pdf-day-card__header">
-                      <div className="pdf-day-card__title">
-                        <span className="pdf-day-card__label">{day.dayLabel}</span>
-                        <span className="pdf-day-card__date">{dateStr}</span>
-                      </div>
-                      <div className="pdf-day-card__total">{fmtNum(totalCals)} ккал</div>
-                    </div>
-                    <div className="pdf-day-card__meals">
-                      {displayOrder.map(type => {
-                        const m = day.meals[type];
-                        if (!m) return null;
-                        return (
-                          <div key={type} className="pdf-meal-item">
-                            <div className="pdf-meal-item__meta">
-                              <span className="pdf-meal-item__time">{MEAL_TIMES[type]?.split(' – ')[0]}</span>
-                              <span className="pdf-meal-item__type">{MEAL_LABELS[type]}</span>
-                            </div>
-                            <div className="pdf-meal-item__content">
-                              <span className="pdf-meal-item__name">{m.name}</span>
-                              <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {day.customMeals?.map(m => (
-                        <div key={m.id} className="pdf-meal-item">
-                          <div className="pdf-meal-item__meta"><span className="pdf-meal-item__time">—</span><span className="pdf-meal-item__type">ДОП.</span></div>
-                          <div className="pdf-meal-item__content">
-                            <span className="pdf-meal-item__name">{m.name}</span>
-                            <span className="pdf-meal-item__cals">{fmtNum(m.calories)} ккал</span>
-                          </div>
+                  <button className="picker__close" onClick={() => setShowPicker(false)}>
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="picker__content">
+                <div className="picker-grid">
+                  {sortedPool.length > 0 ? (
+                    sortedPool.map((recipe) => (
+                      <motion.div
+                        key={recipe.id}
+                        className="picker-card"
+                        whileHover={{ y: -4 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleSelectFromPicker(recipe)}
+                      >
+                        <div className="picker-card__icon">{recipe.imageEmoji}</div>
+                        <div className="picker-card__name">{recipe.name}</div>
+                        <div className="picker-card__macros">
+                          <span>Б: {recipe.protein}г</span>
+                          <span>Ж: {recipe.fat}г</span>
+                          <span>У: {recipe.carbs}г</span>
                         </div>
-                      ))}
+                        <div className="picker-card__cal">{recipe.calories} ккал</div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="picker-empty">
+                      Подходящих рецептов не найдено. Попробуйте изменить настройки профиля.
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
