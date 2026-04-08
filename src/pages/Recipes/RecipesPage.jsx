@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart } from 'lucide-react';
+import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart, ChevronDown } from 'lucide-react';
 
 import { useFavoritesStore } from '../../store/useFavoritesStore';
 
@@ -37,6 +37,8 @@ export default function RecipesPage() {
   const [limitTime, setLimitTime] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'category', 'time', 'sort'
+  
   const { favorites, toggleFavorite } = useFavoritesStore();
 
   const handleSortChange = (key) => {
@@ -62,10 +64,8 @@ export default function RecipesPage() {
       return matchQuery && matchCategory && matchTime;
     });
 
-    // Применяем сортировку
     return result.sort((a, b) => {
       let valA, valB;
-      
       if (sortBy === 'name') {
         valA = a.name.toLowerCase();
         valB = b.name.toLowerCase();
@@ -76,26 +76,29 @@ export default function RecipesPage() {
         valA = a.cookTimeMin;
         valB = b.cookTimeMin;
       }
-
       if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
       if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
   }, [searchQuery, activeCategory, limitTime, sortBy, sortOrder, favorites]);
 
+  const toggleDropdown = (name) => {
+    setActiveDropdown(activeDropdown === name ? null : name);
+  };
+
   return (
     <div className="recipes-page">
       <header className="recipes-header">
         <div className="recipes-header__info">
-          <h1 className="recipes-header__title">База рецептов</h1>
+          <h1 className="recipes-header__title">Рецепты</h1>
           <p className="recipes-header__subtitle">
             Найдено {filteredRecipes.length} вкусных идей для вашего рациона
           </p>
         </div>
       </header>
 
-      {/* Search & Filters */}
-      <section className="recipes-controls">
+      {/* Toolbar: Search + Dropdown Filters */}
+      <div className="recipes-toolbar">
         <div className="search-box">
           <Search className="search-box__icon" size={20} />
           <input 
@@ -112,58 +115,106 @@ export default function RecipesPage() {
           )}
         </div>
 
-        <div className="filters-row">
-          <div className="filter-group">
-            <span className="filter-group__label">Категория:</span>
-            <div className="filter-tags">
-              {CATEGORIES.map(cat => (
-                <button 
-                  key={cat.id}
-                  className={`filter-tag ${activeCategory === cat.id ? 'filter-tag--active' : ''}`}
-                  onClick={() => setActiveCategory(cat.id)}
+        <div className="recipes-filters">
+          {/* Category Dropdown */}
+          <div className="dropdown">
+            <button 
+              className={`dropdown__trigger ${activeCategory !== 'all' ? 'dropdown__trigger--active' : ''}`}
+              onClick={() => toggleDropdown('category')}
+            >
+              <span>{CATEGORIES.find(c => c.id === activeCategory)?.label}</span>
+              <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'category' ? 'dropdown__arrow--open' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {activeDropdown === 'category' && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="dropdown__menu"
                 >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+                  {CATEGORIES.map(cat => (
+                    <button 
+                      key={cat.id}
+                      className={`dropdown__item ${activeCategory === cat.id ? 'dropdown__item--active' : ''}`}
+                      onClick={() => { setActiveCategory(cat.id); setActiveDropdown(null); }}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          <div className="filter-group">
-            <span className="filter-group__label">Время:</span>
-            <div className="filter-tags">
-              {TIME_FILTERS.map(tf => (
-                <button 
-                  key={tf.id}
-                  className={`filter-tag ${limitTime === tf.id ? 'filter-tag--active' : ''}`}
-                  onClick={() => setLimitTime(tf.id)}
+          {/* Time Dropdown */}
+          <div className="dropdown">
+            <button 
+              className={`dropdown__trigger ${limitTime !== 0 ? 'dropdown__trigger--active' : ''}`}
+              onClick={() => toggleDropdown('time')}
+            >
+              <span>{TIME_FILTERS.find(t => t.id === limitTime)?.label}</span>
+              <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'time' ? 'dropdown__arrow--open' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {activeDropdown === 'time' && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="dropdown__menu"
                 >
-                  {tf.label}
-                </button>
-              ))}
-            </div>
+                  {TIME_FILTERS.map(tf => (
+                    <button 
+                      key={tf.id}
+                      className={`dropdown__item ${limitTime === tf.id ? 'dropdown__item--active' : ''}`}
+                      onClick={() => { setLimitTime(tf.id); setActiveDropdown(null); }}
+                    >
+                      {tf.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          <div className="filter-group">
-            <span className="filter-group__label">Сортировка:</span>
-            <div className="filter-tags">
-              {SORT_OPTIONS.map(opt => (
-                <button 
-                  key={opt.id}
-                  className={`filter-tag ${sortBy === opt.id ? 'filter-tag--active' : ''}`}
-                  onClick={() => handleSortChange(opt.id)}
+          {/* Sort Dropdown */}
+          <div className="dropdown">
+            <button 
+              className={`dropdown__trigger ${sortBy !== 'name' || sortOrder !== 'asc' ? 'dropdown__trigger--active' : ''}`}
+              onClick={() => toggleDropdown('sort')}
+            >
+              <div className="dropdown__trigger-content">
+                <span>{SORT_OPTIONS.find(o => o.id === sortBy)?.label}</span>
+                <span className="sort-indicator">
+                  {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                </span>
+              </div>
+              <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'sort' ? 'dropdown__arrow--open' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {activeDropdown === 'sort' && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="dropdown__menu"
                 >
-                  {opt.label}
-                  {sortBy === opt.id && (
-                    <span className="sort-icon-inline">
-                      {sortOrder === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+                  {SORT_OPTIONS.map(opt => (
+                    <button 
+                      key={opt.id}
+                      className={`dropdown__item ${sortBy === opt.id ? 'dropdown__item--active' : ''}`}
+                      onClick={() => { handleSortChange(opt.id); setActiveDropdown(null); }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Results Grid */}
       <div className="recipes-grid">

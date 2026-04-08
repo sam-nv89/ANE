@@ -1,7 +1,7 @@
 .recipes-page {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px; /* Возвращаем воздух */
   animation: fadeIn 0.4s ease-out;
 }
 
@@ -14,7 +14,7 @@
 .recipes-header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .recipes-header__title {
@@ -23,24 +23,27 @@
   font-weight: 800;
   color: var(--clr-text-primary);
   letter-spacing: -0.02em;
+  margin: 0;
 }
 
 .recipes-header__subtitle {
   font-size: 14px;
   color: var(--clr-text-muted);
+  margin: 0;
 }
 
-/* ── Controls ── */
-.recipes-controls {
+/* ── Toolbar ── */
+.recipes-toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .search-box {
   position: relative;
-  width: 100%;
-  max-width: 600px;
+  flex: 1;
+  min-width: 280px;
 }
 
 .search-box__icon {
@@ -54,7 +57,7 @@
 
 .search-box__input {
   width: 100%;
-  padding: 14px 40px 14px 46px;
+  padding: 10px 40px 10px 42px;
   background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
@@ -83,78 +86,112 @@
   border-radius: 4px;
 }
 
-.search-box__clear:hover {
-  background: rgba(255,255,255,0.05);
-  color: #fff;
-}
-
-/* ── Filters ── */
-.filters-row {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.filter-group__label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--clr-text-muted);
-}
-
-.filter-tags {
+/* ── Dropdowns ── */
+.recipes-filters {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
-.filter-tag {
-  padding: 6px 14px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+.dropdown {
+  position: relative;
+}
+
+.dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
+  border-radius: 10px;
   color: var(--clr-text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dropdown__trigger:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.dropdown__trigger--active {
+  border-color: var(--clr-accent-1);
+  color: var(--clr-accent-1);
+  background: rgba(0, 245, 160, 0.05);
+}
+
+.dropdown__trigger-content {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.sort-icon-inline {
-  display: flex;
-  align-items: center;
-  color: inherit;
-  opacity: 0.8;
+.dropdown__arrow {
+  transition: transform 0.2s ease;
+  opacity: 0.6;
 }
 
-.filter-tag:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+.dropdown__arrow--open {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.dropdown__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 180px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  z-index: 100;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdown__item {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--clr-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dropdown__item:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
-.filter-tag--active {
-  background: var(--clr-accent-1);
-  color: #000;
-  border-color: var(--clr-accent-1);
-  box-shadow: 0 4px 12px rgba(0, 245, 160, 0.2);
+.dropdown__item--active {
+  color: var(--clr-accent-1);
+  background: rgba(0, 245, 160, 0.1);
+}
+
+.sort-indicator {
+  display: flex;
+  color: var(--clr-accent-2);
 }
 
 /* ── Recipes Grid ── */
 .recipes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  gap: 12px;
   min-height: 200px;
 }
 
@@ -162,9 +199,9 @@
   background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 12px; /* Меньше паддинг */
   display: flex;
-  gap: 16px;
+  gap: 12px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
