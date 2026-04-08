@@ -321,10 +321,6 @@ export default function RecipesPage() {
                     <Flame size={12} /> {recipe.nutrition.calories} ккал
                   </div>
                 </div>
-
-                <div className="recipe-card-alt__footer">
-                  <span className="recipe-card-alt__more">Посмотреть <ChevronRight size={14} /></span>
-                </div>
               </div>
             </motion.div>
           ))}
