@@ -30,9 +30,7 @@ const SORT_OPTIONS = [
   { id: 'time', label: 'По времени' },
 ];
 
-const DAY_NAMES_FULL = [
-  'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'
-];
+const DAY_NAMES_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 const MEAL_LABELS = {
   breakfast: 'Завтрак',
@@ -377,14 +375,13 @@ export default function RecipesPage() {
                     <div className="modal-section">
                       <label className="modal-label">День недели:</label>
                       <div className="modal-grid-days">
-                        {DAY_NAMES_FULL.map((name, idx) => (
+                        {DAY_NAMES_SHORT.map((name, idx) => (
                           <button 
                             key={idx}
                             className={`modal-grid-btn ${targetDay === idx ? 'active' : ''}`}
                             onClick={() => setTargetDay(idx)}
                           >
-                            <span className="day-short">{['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'][idx]}</span>
-                            <span className="day-full">{name}</span>
+                            <span className="day-short">{name}</span>
                           </button>
                         ))}
                       </div>
