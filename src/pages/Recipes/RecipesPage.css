@@ -158,6 +158,11 @@
   gap: 2px;
 }
 
+.dropdown__icon-fav {
+  color: var(--clr-accent-1);
+  flex-shrink: 0;
+}
+
 .dropdown__item {
   width: 100%;
   text-align: left;
@@ -170,6 +175,9 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .dropdown__item:hover {

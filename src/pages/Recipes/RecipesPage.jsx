@@ -10,7 +10,7 @@ import './RecipesPage.css';
 
 const CATEGORIES = [
   { id: 'all', label: 'Все' },
-  { id: 'favs', label: '❤️ Избранное' },
+  { id: 'favs', label: 'Избранное' },
   { id: 'breakfast', label: 'Завтраки' },
   { id: 'lunch', label: 'Обеды' },
   { id: 'dinner', label: 'Ужины' },
@@ -187,7 +187,10 @@ export default function RecipesPage() {
               className={`dropdown__trigger ${activeCategory !== 'all' ? 'dropdown__trigger--active' : ''}`}
               onClick={() => toggleDropdown('category')}
             >
-              <span>{CATEGORIES.find(c => c.id === activeCategory)?.label}</span>
+              <div className="dropdown__trigger-content">
+                {activeCategory === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
+                <span>{CATEGORIES.find(c => c.id === activeCategory)?.label}</span>
+              </div>
               <ChevronDown size={14} className={`dropdown__arrow ${activeDropdown === 'category' ? 'dropdown__arrow--open' : ''}`} />
             </button>
             <AnimatePresence>
@@ -204,6 +207,7 @@ export default function RecipesPage() {
                       className={`dropdown__item ${activeCategory === cat.id ? 'dropdown__item--active' : ''}`}
                       onClick={() => { setActiveCategory(cat.id); setActiveDropdown(null); }}
                     >
+                      {cat.id === 'favs' && <Heart size={14} className="dropdown__icon-fav" fill="currentColor" />}
                       {cat.label}
                     </button>
                   ))}
