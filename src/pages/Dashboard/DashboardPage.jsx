@@ -436,10 +436,25 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
           />
         </div>
       </div>
+
+      {/* Десктоп: кольца справа от статистики */}
       <div className="macro-rings">
         <MacroRing key={`p-${selectedIndex}-${period}`} label="Белки" value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
         <MacroRing key={`f-${selectedIndex}-${period}`} label="Жиры" value={totals.fact.fat} max={totals.target.fat} color="#f59e0b" />
         <MacroRing key={`c-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs} max={totals.target.carbs} color="#a78bfa" />
+      </div>
+
+      {/* Мобиль: кольца под статами — вторая строка таблицы */}
+      <div className="day-summary__rings-row">
+        <div className="day-summary__ring-cell">
+          <MacroRing key={`mp-${selectedIndex}-${period}`} label="Белки" value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
+        </div>
+        <div className="day-summary__ring-cell">
+          <MacroRing key={`mf-${selectedIndex}-${period}`} label="Жиры" value={totals.fact.fat} max={totals.target.fat} color="#f59e0b" />
+        </div>
+        <div className="day-summary__ring-cell">
+          <MacroRing key={`mc-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs} max={totals.target.carbs} color="#a78bfa" />
+        </div>
       </div>
     </div>
   );
