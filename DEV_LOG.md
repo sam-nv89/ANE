@@ -1,3 +1,9 @@
+## [2026-04-09] — Removal of "Custom Meal" functionality (Antigravity Assistant)
+- **UI Cleanup:** Полностью удалена кнопка и форма «+ Свой продукт» из колонки дня на Дашборде.
+- **Logic Cleanup:** Удалена отрисовка кастомных блюд, их учет в статистике (день/неделя) и в текстовом экспорте рациона.
+- **Code Hygiene:** Очищены неиспользуемые пропсы в `DayColumn`, обработчики в `DashboardPage` и соответствующие CSS правила.
+- **Verification:** `npm run lint` — OK.
+
 ## [2026-04-09] — Auto-Swap Fix & Code Hygiene (Antigravity Assistant)
 - **Bug Fix:** Исправлена критическая ошибка `ReferenceError: safeRecipes is not defined` в `generator.js`, блокировавшая кнопку «Автоматически» на Дашборде.
 - **Improved Logic:** Добавлен автоматический fallback в `generateSingleMeal` для подбора блюд, если настройки времени в профиле слишком строгие.

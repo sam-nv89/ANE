@@ -186,19 +186,7 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
 }
 
 /* ── Day column ── */
-function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, onAddCustom, onRemoveCustom, targetCalories, highlightCoords }) {
-  const [isAdding, setIsAdding] = React.useState(false);
-  const [customName, setCustomName] = React.useState('');
-  const [customCal, setCustomCal] = React.useState('');
-
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (!customName || !customCal) return;
-    onAddCustom(day.dayIndex, { name: customName, calories: parseInt(customCal, 10) });
-    setCustomName('');
-    setCustomCal('');
-    setIsAdding(false);
-  };
+function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSwap, completed, onToggle, targetCalories, highlightCoords }) {
   const today = new Date().getDay();
   const todayIndex = (today + 6) % 7;
   const isActualToday = day.dayIndex === todayIndex;
@@ -263,67 +251,8 @@ function DayColumn({ day, navigate, isSelected, onSelect, order, isLoading, onSw
         />
       ))}
 
-      {day.customMeals?.map(m => {
-        const isMCompleted = completed.includes(`${day.dayIndex}:${m.id}`);
-        return (
-          <div key={m.id} className={`meal-card meal-card--custom ${isMCompleted ? 'meal-card--completed' : ''}`}>
-            <div className="meal-card__header">
-              <button
-                className="meal-card__done-btn"
-                onClick={() => onToggle(day.dayIndex, m.id)}
-                title={isMCompleted ? "Сбросить отметку" : "Отметить как съеденное"}
-              >
-                <div className={`check-circle ${isMCompleted ? 'check-circle--active' : ''}`}>
-                  {isMCompleted && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>✓</motion.div>}
-                </div>
-              </button>
-              <button className="meal-card__remove-btn" onClick={() => onRemoveCustom(day.dayIndex, m.id)}>×</button>
-            </div>
-            <div className="meal-card__type">Свой продукт</div>
-            <div className="meal-card__name">{m.name}</div>
-            <div className="meal-card__meta">
-              <span className="meal-card__cal">{fmtNum(m.calories)} ккал</span>
-            </div>
-          </div>
-        );
-      })}
 
-      {/* Add Custom Meal Form */}
-      {isAdding ? (
-        <motion.form
-          className="custom-meal-form"
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          onSubmit={handleAdd}
-        >
-          <input
-            autoFocus
-            type="text"
-            placeholder="Название..."
-            value={customName}
-            onChange={e => setCustomName(e.target.value)}
-            className="custom-meal-form__input"
-          />
-          <div className="custom-meal-form__row">
-            <input
-              type="number"
-              placeholder="Ккал"
-              value={customCal}
-              onChange={e => setCustomCal(e.target.value)}
-              className="custom-meal-form__input custom-meal-form__input--small"
-            />
-            <button type="submit" className="custom-meal-form__btn custom-meal-form__btn--add">OK</button>
-            <button type="button" onClick={() => setIsAdding(false)} className="custom-meal-form__btn">×</button>
-          </div>
-        </motion.form>
-      ) : (
-        <button
-          className="add-custom-btn"
-          onClick={() => setIsAdding(true)}
-        >
-          + Свой продукт
-        </button>
-      )}
+
     </div>
   );
 }
@@ -365,18 +294,7 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
         { calories: 0, protein: 0, fat: 0, carbs: 0, mealsCount: 0 }
       );
 
-      if (day.customMeals && day.customMeals.length > 0) {
-        day.customMeals.forEach(m => {
-          planSum.mealsCount += 1;
-          if (completed.includes(`${selectedIndex}:${m.id}`)) {
-            factSum.calories += m.calories || 0;
-            factSum.protein += m.protein || 0;
-            factSum.fat += m.fat || 0;
-            factSum.carbs += m.carbs || 0;
-            factSum.mealsCount += 1;
-          }
-        });
-      }
+
 
       return { plan: planSum, fact: factSum, target: nutrition };
     } else {
@@ -401,19 +319,6 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
             totalFact.mealsCount += 1;
           }
         });
-
-        if (day.customMeals) {
-          day.customMeals.forEach(m => {
-            totalPlan.mealsCount += 1;
-            if (completed.includes(`${dIdx}:${m.id}`)) {
-              totalFact.calories += m.calories || 0;
-              totalFact.protein += m.protein || 0;
-              totalFact.fat += m.fat || 0;
-              totalFact.carbs += m.carbs || 0;
-              totalFact.mealsCount += 1;
-            }
-          });
-        }
       });
 
       return {
@@ -537,7 +442,7 @@ export default function DashboardPage() {
   const [highlightCoords, setHighlightCoords] = React.useState(null);
 
   const { profile, nutrition } = useUserStore();
-  const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted, addCustomMeal, removeCustomMeal } = usePlanStore();
+  const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted } = usePlanStore();
   const [summaryPeriod, setSummaryPeriod] = React.useState('day');
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
@@ -680,13 +585,7 @@ export default function DashboardPage() {
         }
       });
 
-      if (day.customMeals && day.customMeals.length > 0) {
-        dayText += `ДОПОЛНИТЕЛЬНО:\n`;
-        day.customMeals.forEach(m => {
-          dailyTotal += m.calories;
-          dayText += `- ${m.name} (${fmtNum(m.calories)} ккал)\n`;
-        });
-      }
+
 
       dayText += `--------------------------------\n`;
       dayText += `ИТОГО ЗА ДЕНЬ: ${fmtNum(dailyTotal)} ккал\n`;
@@ -878,8 +777,6 @@ export default function DashboardPage() {
             onSwap={handleSwapMeal}
             completed={completed}
             onToggle={toggleCompleted}
-            onAddCustom={addCustomMeal}
-            onRemoveCustom={removeCustomMeal}
             targetCalories={nutrition?.targetCalories}
             highlightCoords={highlightCoords}
           />
