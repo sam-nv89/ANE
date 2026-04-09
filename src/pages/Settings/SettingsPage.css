@@ -37,29 +37,12 @@
 }
 
 .settings__grid {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 32px;
-  align-items: stretch; /* Важно для работы sticky в колонке */
-  padding-bottom: 40px;
-}
-
-.settings__sidebar {
-  position: sticky;
-  top: 32px; /* Выравнивание с учетом padding shell__main */
-  height: fit-content;
-  align-self: flex-start; /* Чтобы липкость работала, контейнер не должен растягиваться */
-  z-index: 10;
-}
-
-
-
-
-@media (max-width: 1024px) {
-  .settings__grid {
-    grid-template-columns: 1fr;
-    padding-bottom: 220px;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 900px; /* Центрируем и ограничиваем ширину для лучшей читаемости */
+  margin: 0 auto;
+  padding-bottom: 60px;
 }
 
 /* ── Sections ── */
@@ -363,74 +346,26 @@
   backdrop-filter: blur(16px);
 }
 
-.stg-card--sticky {
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  padding: 16px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
+/* ── Footer Actions ── */
+
+.settings__footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 40px 0;
+  border-top: 1px solid var(--glass-border);
 }
 
-.stg-card--sticky:hover {
-  background: rgba(15, 23, 42, 0.8);
-  border-color: var(--accent-primary);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+.settings__save-btn {
+  min-width: 320px;
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
 }
 
-.stg-card--sticky .stg-card__title,
-.stg-card--sticky .stg-card__text {
-  display: none !important; /* Убираем текст глобально для этой карточки */
-}
-
-.stg-card--sticky .btn-primary {
-  margin-top: 0 !important; /* Принудительно убираем отступ, который был в JSX */
-}
-
-@media (max-width: 1024px) {
-  .stg-card--sticky {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    top: auto !important;
-    border-radius: 28px 28px 0 0;
-    background: rgba(15, 23, 42, 0.75); /* Настоящий Glassmorphism */
-    backdrop-filter: blur(24px) saturate(160%);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 20px 24px;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 20px));
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Центрируем кнопку */
-    z-index: 9999;
+@media (max-width: 600px) {
+  .settings__save-btn {
+    min-width: 100%;
   }
-  
-  .stg-card--sticky .stg-card__title,
-  .stg-card--sticky .stg-card__text {
-    display: none; /* Убираем текст по просьбе пользователя */
-  }
-
-  .stg-card--sticky .btn-primary {
-    margin-top: 0 !important; /* Убираем лишний отступ на мобильных */
-    max-width: 400px; /* Чтобы кнопка не была слишком растянутой на широких экранах */
-  }
-}
-
-.stg-card__title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--text-1);
-}
-
-.stg-card__text {
-  font-size: 0.95rem;
-  color: var(--text-2);
-  line-height: 1.5;
-  margin-bottom: 20px;
 }
 
 /* Option Card Small (for grid inside settings) */

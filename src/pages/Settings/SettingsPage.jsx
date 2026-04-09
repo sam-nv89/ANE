@@ -600,24 +600,16 @@ export default function SettingsPage() {
               />
             </div>
           </Section>
-        </div>
-
-        <aside className="settings__sidebar">
-          <div className="stg-card stg-card--sticky">
-             <div className="stg-card__title">Действие</div>
-             <p className="stg-card__text">
-               Изменение этих настроек приведет к полному перерасчету вашего рациона на текущую неделю.
-             </p>
-             <button 
-              className="btn-primary btn-primary--large"
-              onClick={handleSave}
-              style={{ width: '100%', marginTop: 16 }}
-             >
-                <Save size={18} />
-                {saved ? '✅ Сохранено!' : 'Сохранить и обновить'}
-             </button>
-          </div>
-        </aside>
+      </div>
+      
+      <div className="settings__footer">
+        <button 
+          className="btn-primary btn-primary--large settings__save-btn"
+          onClick={handleSave}
+        >
+          <Save size={18} />
+          {saved ? '✅ Сохранено!' : 'Сохранить и обновить'}
+        </button>
       </div>
     </div>
   );
