@@ -128,16 +128,15 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  align-items: flex-start;      /* числа выравнены влево */
-  text-align: left;
-  padding: 0 24px 0 0;
+  align-items: center;          /* центрирование по горизонтали */
+  text-align: center;
+  padding: 0 16px;
 }
 
-/* Разделитель между колонками через border-left у 2-й и 3-й */
+/* Разделитель между колонками */
 .day-summary__group:nth-child(2),
 .day-summary__group:nth-child(3) {
   border-left: 1px solid var(--clr-border);
-  padding-left: 24px;
 }
 
 .day-summary__sublabel {
@@ -187,65 +186,64 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
   border-top: 1px solid var(--clr-border);
-  padding: 20px 28px;
+  padding: 20px 0;
 }
 
 .macro-rings .macro-ring {
-  align-items: flex-start;       /* подпись слева, как у статов выше */
-  flex-direction: row;
-  gap: 16px;
-  padding-right: 24px;
+  flex-direction: column;        /* вертикальный макет: кольцо → подпись */
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
 }
 
 /* Вертикальные разделители между кольцами */
 .macro-rings .macro-ring:nth-child(2),
 .macro-rings .macro-ring:nth-child(3) {
   border-left: 1px solid var(--clr-border);
-  padding-left: 24px;
 }
 
-/* Инфо рядом с кольцом */
+/* Инфо под кольцом — по центру */
 .macro-rings .macro-ring__info {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 2px;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
 }
 
 .macro-rings .macro-ring__label {
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   color: var(--clr-text-muted);
   font-weight: 700;
 }
 
 .macro-rings .macro-ring__current {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--clr-text-muted);
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .macro-rings .macro-ring__curr-num { color: var(--clr-text-primary); font-weight: 700; }
 .macro-rings .macro-ring__separator { opacity: 0.4; }
 
-/* Кольца немного меньше, чтобы не занимать лишнее вертикальное пространство */
+/* Кольца 88px — заметнее и крупнее */
 .macro-rings .macro-ring__container {
-  width: 64px;
-  height: 64px;
+  width: 88px;
+  height: 88px;
   flex-shrink: 0;
 }
 
 .macro-rings .macro-ring__container svg {
-  width: 64px;
-  height: 64px;
+  width: 88px;
+  height: 88px;
 }
 
-.macro-rings .macro-ring__val-num { font-size: 13px; }
+.macro-rings .macro-ring__val-num { font-size: 15px; }
 
 
 
