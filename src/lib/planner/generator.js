@@ -243,9 +243,7 @@ function filterRecipesForProfile(allRecipes, profile) {
     likedProteins,
     likedVeg,
     likedDairy,
-    likedGrains,
-    cookTimeWindows,
-    preferLazy
+    likedGrains
   } = profile;
 
   // 1. Аллергены
@@ -395,6 +393,8 @@ export function generatePlan(allRecipes, profile, nutrition) {
  * Генерирует замену для ОДНОГО приёма пищи.
  */
 export function generateSingleMeal(allRecipes, profile, nutrition, mealType, selectedSoFar = [], currentMealId = null) {
+  // 1. Предварительная фильтрация по профилю
+  let safeRecipes = filterRecipesForProfile(allRecipes, profile);
 
   // Исключаем текущее блюдо
   if (currentMealId) {
@@ -407,6 +407,11 @@ export function generateSingleMeal(allRecipes, profile, nutrition, mealType, sel
   const rawCategory = mealType.startsWith('snack') ? 'snack' : mealType;
   
   let pool = baseFiltered.filter((r) => r.category === rawCategory);
+
+  // Fallback по времени (если слишком строгие рамки)
+  if (pool.length === 0) {
+    pool = safeRecipes.filter((r) => r.category === rawCategory);
+  }
 
   // 3. Calorie target
   const { distribution } = getCalorieDistribution(mealFrequency, mealSpecifics);

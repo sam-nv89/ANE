@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, Flame, ChevronRight, Filter, X, ArrowUpDown, ArrowUp, ArrowDown, Heart, ChevronDown, Plus } from 'lucide-react';
@@ -68,22 +68,17 @@ export default function RecipesPage() {
     }));
   }, [plan]);
 
-  // Устанавливаем подходящую трапезу при открытии модалки на основе категории рецепта
-  useEffect(() => {
-    if (addingToPlan && mealTypes.length > 0) {
-      const recipeCategory = addingToPlan.category;
-      
-      // Ищем точное совпадение (завтрак, обед, ужин)
+  const handleOpenAddModal = (recipe) => {
+    setAddingToPlan(recipe);
+    if (mealTypes.length > 0) {
+      const recipeCategory = recipe.category;
       let matched = mealTypes.find(mt => mt.id === recipeCategory);
-      
-      // Если это перекус, ищем первый доступный вариант перекуса
       if (recipeCategory === 'snack') {
         matched = mealTypes.find(mt => mt.id.includes('snack'));
       }
-      
       setTargetMealType(matched ? matched.id : mealTypes[0].id);
     }
-  }, [addingToPlan, mealTypes]);
+  };
 
   const handleSortChange = (key) => {
     if (sortBy === key) {
@@ -328,7 +323,7 @@ export default function RecipesPage() {
                     className="recipe-card-alt__add-inline"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setAddingToPlan(recipe);
+                      handleOpenAddModal(recipe);
                     }}
                     title="Добавить в рацион"
                   >
