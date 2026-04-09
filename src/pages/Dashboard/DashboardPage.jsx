@@ -412,12 +412,9 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
         вместо него рендерится day-summary__mobile-table.
       */}
       <div className="day-summary__info">
-        {/* Заголовок: дата + бейдж выполнения */}
+        {/* Заголовок: только дата */}
         <div className="day-summary__header-row">
           <span className="day-summary__day-name">{periodLabel}</span>
-          <span className="day-summary__compliance-badge">
-            {Math.round((totals.fact.calories / totals.target.targetCalories) * 100)}%
-          </span>
         </div>
 
         {/* Три стат-колонки */}
