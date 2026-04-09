@@ -77,103 +77,103 @@
   align-items: center;
 }
 
-/* ── Mobile: Tabular summary layout ── */
+/* ── Mobile: Unified tabular summary ── */
+
+/* На десктопе мобильная таблица скрыта */
+.day-summary__mobile-table { display: none; }
+
 @media (max-width: 768px) {
-  /* Карточка теперь единый блок без разделения info/rings */
+  /* Карточка: flex-column, убираем desktop grid */
   .day-summary {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 16px;
   }
 
-  /* Три колонки по ширине — как таблица */
-  .day-summary__row {
+  /* Скрываем десктоп-блоки */
+  .day-summary__info  { display: none !important; }
+  .macro-rings        { display: none !important; }
+
+  /* === Единая 6-ячеечная таблица 3×2 === */
+  .day-summary__mobile-table {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0;
-    align-items: start;
+    grid-template-columns: 1fr 1fr 1fr;   /* 3 строго-равные колонки */
     border: 1px solid var(--clr-border);
-    border-bottom: none;          /* нижняя граница — через rings-row */
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    border-radius: var(--radius-md);
     overflow: hidden;
   }
 
-  .day-summary__group {
+  /* Общие стили ячеек */
+  .dsmt-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 4px 4px;
-    gap: 2px;
+    justify-content: center;
+    text-align: center;
+    /* Вертикальный разделитель между колонками */
     border-right: 1px solid var(--clr-border);
     min-width: 0;
+    overflow: hidden;
   }
 
-  .day-summary__group:last-child {
-    border-right: none;
+  .dsmt-cell:nth-child(3),
+  .dsmt-cell:nth-child(6) {
+    border-right: none;  /* правая граница у 3-й и 6-й ячейки не нужна */
   }
 
-  .day-summary__sublabel {
-    font-size: 8px;
+  /* Строка 1 — статы (съедено / цель / выполнение) */
+  .dsmt-cell--stat {
+    padding: 10px 6px 8px;
+    gap: 3px;
+    /* Горизонтальный разделитель между строками */
+    border-bottom: 1px solid var(--clr-border);
+  }
+
+  .dsmt-cell--stat .day-summary__sublabel {
+    font-size: 7px;
     letter-spacing: 0.04em;
-    white-space: normal;
     text-align: center;
     line-height: 1.3;
     padding: 0 2px;
   }
 
-  .day-summary__val {
-    font-size: 18px;
+  .dsmt-cell--stat .day-summary__val {
+    font-size: 19px;
+    line-height: 1.1;
   }
 
-  /* Кольца встраиваются прямо в ту же таблицу под числами */
-  .macro-rings {
-    /* На мобиле rings встраиваются внутрь row через JS — скрываем отдельный блок */
-    display: none;
+  /* Строка 2 — кольца макронутриентов */
+  .dsmt-cell--ring {
+    padding: 12px 4px 10px;
   }
 
-  /* Ряд с кольцами — отдельная строка таблицы с разделителем */
-  .day-summary__rings-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0;
-    border: 1px solid var(--clr-border);
-    border-top: 1px solid var(--clr-border); /* разделитель между строками таблицы */
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    overflow: hidden;
+  /* Кольца: 72px — чуть крупнее предыдущих 64px */
+  .dsmt-cell--ring .macro-ring__container,
+  .dsmt-cell--ring .macro-ring__container svg {
+    width: 72px;
+    height: 72px;
   }
 
-  .day-summary__ring-cell {
+  .dsmt-cell--ring .macro-ring__val-num {
+    font-size: 12px;
+  }
+
+  /* Подпись (БЕЛКИ/ЖИРЫ/УГЛЕВОДЫ) и числа под кольцом — видимы */
+  .dsmt-cell--ring .macro-ring__info {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px 4px 12px;
-    border-right: 1px solid var(--clr-border);
+    margin-top: 2px;
   }
 
-  .day-summary__ring-cell:last-child {
-    border-right: none;
+  .dsmt-cell--ring .macro-ring__label {
+    font-size: 9px;
   }
 
-  /* Уменьшаем кольца для мобиля */
-  .macro-ring__container {
-    width: 64px;
-    height: 64px;
-  }
-
-  .macro-ring__container svg {
-    width: 64px;
-    height: 64px;
-  }
-
-  .macro-ring__val-num {
-    font-size: 11px;
-  }
-
-  .macro-ring__info {
-    display: none; /* Подпись под кольцом скрыта — она уже есть в ячейке таблицы выше */
+  .dsmt-cell--ring .macro-ring__current {
+    font-size: 10px;
   }
 }
+
 
 .day-summary__info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 
@@ -243,9 +243,6 @@
 .day-summary__progress-fg { height: 100%; background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2)); border-radius: 99px; }
 
 .macro-rings { display: flex; gap: 20px; flex-wrap: wrap; }
-
-/* Мобильная строка с кольцами — на десктопе скрыта */
-.day-summary__rings-row { display: none; }
 
 .macro-ring {
   display: flex;

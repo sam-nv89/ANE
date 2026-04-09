@@ -406,10 +406,13 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
 
   return (
     <div className="day-summary">
+      {/* Дата / период */}
+      <div className="day-summary__label-row">
+        <span className="day-summary__day-name">{periodLabel}</span>
+      </div>
+
+      {/* Десктоп: стат-строка слева */}
       <div className="day-summary__info">
-        <div className="day-summary__label-row">
-          <span className="day-summary__day-name">{periodLabel}</span>
-        </div>
         <div className="day-summary__row">
           <div className="day-summary__group">
             <span className="day-summary__sublabel">{period === 'day' ? 'Съедено, ккал.' : 'Итого за неделю, ккал.'}</span>
@@ -437,22 +440,42 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
         </div>
       </div>
 
-      {/* Десктоп: кольца справа от статистики */}
+      {/* Десктоп: кольца справа */}
       <div className="macro-rings">
         <MacroRing key={`p-${selectedIndex}-${period}`} label="Белки" value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
         <MacroRing key={`f-${selectedIndex}-${period}`} label="Жиры" value={totals.fact.fat} max={totals.target.fat} color="#f59e0b" />
         <MacroRing key={`c-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs} max={totals.target.carbs} color="#a78bfa" />
       </div>
 
-      {/* Мобиль: кольца под статами — вторая строка таблицы */}
-      <div className="day-summary__rings-row">
-        <div className="day-summary__ring-cell">
+      {/*
+        Мобиль: единая 6-ячеечная таблица.
+        3 стат-ячейки (строка 1) + 3 ячейки с кольцами (строка 2).
+        Все 6 — прямые дети одного grid-контейнера → идеальное выравнивание.
+      */}
+      <div className="day-summary__mobile-table">
+        {/* Строка 1: статы */}
+        <div className="dsmt-cell dsmt-cell--stat">
+          <span className="day-summary__sublabel">{period === 'day' ? 'Съедено' : 'Итого'}</span>
+          <span className="day-summary__val day-summary__val--current">{fmtNum(totals.fact.calories)}</span>
+        </div>
+        <div className="dsmt-cell dsmt-cell--stat">
+          <span className="day-summary__sublabel">{period === 'day' ? 'Цель дня' : 'Цель нед.'}</span>
+          <span className="day-summary__val day-summary__val--target">{fmtNum(totals.target.targetCalories)}</span>
+        </div>
+        <div className="dsmt-cell dsmt-cell--stat">
+          <span className="day-summary__sublabel">Выполнение</span>
+          <span className="day-summary__val day-summary__val--compliance">
+            {Math.round((totals.fact.calories / totals.target.targetCalories) * 100)}%
+          </span>
+        </div>
+        {/* Строка 2: кольца — строго под своими колонками */}
+        <div className="dsmt-cell dsmt-cell--ring">
           <MacroRing key={`mp-${selectedIndex}-${period}`} label="Белки" value={totals.fact.protein} max={totals.target.protein} color="#00d4ff" />
         </div>
-        <div className="day-summary__ring-cell">
+        <div className="dsmt-cell dsmt-cell--ring">
           <MacroRing key={`mf-${selectedIndex}-${period}`} label="Жиры" value={totals.fact.fat} max={totals.target.fat} color="#f59e0b" />
         </div>
-        <div className="day-summary__ring-cell">
+        <div className="dsmt-cell dsmt-cell--ring">
           <MacroRing key={`mc-${selectedIndex}-${period}`} label="Углеводы" value={totals.fact.carbs} max={totals.target.carbs} color="#a78bfa" />
         </div>
       </div>
