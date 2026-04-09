@@ -55,6 +55,151 @@
   font-size: 11px; color: var(--clr-text-muted); margin-top: 4px;
 }
 
+/* ── Goal Summary Redesign ── */
+.goal-summary {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 640px) {
+  .goal-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.goal-summary__progress-card,
+.goal-summary__bmi-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--clr-border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.goal-summary__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.goal-stats__main {
+  margin-bottom: 20px;
+}
+
+.goal-stats__val {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--clr-text-primary);
+  line-height: 1;
+}
+
+.goal-stats__label {
+  font-size: 14px;
+  color: var(--clr-text-muted);
+  margin-top: 4px;
+}
+
+.goal-stats__bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.goal-stats__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2));
+  border-radius: 4px;
+}
+
+.goal-stats__markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+
+.goal-stats__forecast {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  color: var(--clr-text-primary);
+}
+
+.goal-stats__forecast strong {
+  color: var(--clr-accent-1);
+}
+
+/* BMI Card */
+.goal-summary__bmi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.bmi-val {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.bmi-val__num {
+  font-family: var(--font-heading);
+  font-size: 44px;
+  font-weight: 900;
+}
+
+.bmi-val__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--clr-text-muted);
+  letter-spacing: 2px;
+  margin-top: -4px;
+}
+
+.bmi-status {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.bmi-note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  line-height: 1.4;
+}
+
+/* Tooltip adjustment */
+.weight-chart__tooltip {
+  position: absolute;
+  background: var(--clr-surface-card);
+  border: 1px solid var(--clr-border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: var(--shadow-xl);
+  transform: translate(-50%, -100%);
+  min-width: 80px;
+  text-align: center;
+}
+
 .progress__empty-chart {
   padding: 20px; text-align: center; font-size: 14px; color: var(--clr-text-muted);
   border: 1.5px dashed var(--clr-border); border-radius: var(--radius-md);

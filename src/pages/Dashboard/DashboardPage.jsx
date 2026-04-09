@@ -61,25 +61,36 @@ function TimeColumn({ order }) {
 
 /* ── Macro progress ring ── */
 function MacroRing({ label, value, max, color }) {
-  const R = 28;
+  const R = 33;
   const CIRC = 2 * Math.PI * R;
-  const ratio = Math.min(value / max, 1);
+  const ratio = max > 0 ? Math.min(value / max, 1) : 0;
   const offset = CIRC * (1 - ratio);
 
   return (
     <div className="macro-ring">
-      <svg width={70} height={70} className="macro-ring__svg" viewBox="0 0 70 70">
-        <circle cx={35} cy={35} r={R} className="macro-ring__circle-bg" />
-        <circle
-          cx={35} cy={35} r={R}
-          className="macro-ring__circle-fg"
-          stroke={color}
-          strokeDasharray={CIRC}
-          strokeDashoffset={offset}
-        />
-      </svg>
-      <div className="macro-ring__value">{value}</div>
-      <div className="macro-ring__label">{label}</div>
+      <div className="macro-ring__container">
+        <svg width={80} height={80} className="macro-ring__svg" viewBox="0 0 80 80">
+          <circle cx={40} cy={40} r={R} className="macro-ring__circle-bg" />
+          <circle
+            cx={40} cy={40} r={R}
+            className="macro-ring__circle-fg"
+            stroke={color}
+            strokeDasharray={CIRC}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        <div className="macro-ring__value">
+          <span className="macro-ring__val-num">{fmtNum(Math.round(max))}</span>
+        </div>
+      </div>
+      <div className="macro-ring__info">
+        <div className="macro-ring__label">{label}</div>
+        <div className="macro-ring__current">
+          <span className="macro-ring__curr-num">{fmtNum(Math.round(value))}</span>
+          <span className="macro-ring__separator">/</span>
+          <span>{fmtNum(Math.round(max))}</span>
+        </div>
+      </div>
     </div>
   );
 }

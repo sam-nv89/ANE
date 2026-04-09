@@ -245,7 +245,7 @@ export default function ProgressPage() {
         {/* Chart */}
         {weightLog.length >= 2 ? (
           <div className="weight-chart">
-            <WeightChart entries={weightLog} targetWeight={profile?.goal !== 'maintain' ? undefined : profile?.weightKg} />
+            <WeightChart entries={weightLog} targetWeight={profile?.targetWeightKg} />
             <div className="weight-chart__dates">
               <span>{weightLog[0]?.date}</span>
               <span>{weightLog[weightLog.length - 1]?.date}</span>
@@ -257,23 +257,92 @@ export default function ProgressPage() {
           </div>
         )}
 
-        {/* Last entry */}
-        {weightLog.length > 0 && (
-          <div className="weight-last-redesign">
-            {nutrition && (
-              <div className="weight-last-redesign__row">
-                <Target size={14} color="var(--clr-text-muted)" />
-                <span className="weight-last-redesign__label">Цель: {nutrition.targetCalories} ккал/день</span>
+        {/* Goal Progress Summary */}
+        {weightLog.length > 0 && profile && (
+          <div className="goal-summary">
+            {profile.targetWeightKg && (
+              <div className="goal-summary__progress-card">
+                <div className="goal-summary__header">
+                  <Target size={16} color="var(--clr-accent-2)" />
+                  <span>Путь к цели ({profile.targetWeightKg} кг)</span>
+                </div>
+                
+                {(() => {
+                  const current = weightLog[weightLog.length - 1].weightKg;
+                  const target = profile.targetWeightKg;
+                  const initial = weightLog[0].weightKg;
+                  const diff = Math.abs(current - target);
+                  
+                  // Progress % from start to target
+                  const totalDiff = Math.abs(initial - target);
+                  const currentDiff = Math.abs(initial - current);
+                  const progress = totalDiff > 0 ? Math.min(Math.round((currentDiff / totalDiff) * 100), 100) : 0;
+                  
+                  const weeksLeft = profile.goalRate && Math.abs(profile.goalRate) > 0 
+                    ? Math.ceil(diff / Math.abs(profile.goalRate)) 
+                    : null;
+
+                  return (
+                    <div className="goal-stats">
+                      <div className="goal-stats__main">
+                        <div className="goal-stats__val">
+                          {diff > 0 ? `${diff.toFixed(1)} кг` : 'Цель достигнута! 🎉'}
+                        </div>
+                        <div className="goal-stats__label">{diff > 0 ? 'Осталось до цели' : 'Поздравляем!'}</div>
+                      </div>
+                      
+                      <div className="goal-stats__visual">
+                        <div className="goal-stats__bar">
+                          <motion.div 
+                            className="goal-stats__fill" 
+                            initial={{ width: 0 }} 
+                            animate={{ width: `${progress}%` }} 
+                            transition={{ duration: 1, ease: "easeOut" }}
+                          />
+                        </div>
+                        <div className="goal-stats__markers">
+                          <span>Старт: {initial}</span>
+                          <span>{progress}%</span>
+                          <span>Цель: {target}</span>
+                        </div>
+                      </div>
+
+                      {weeksLeft && diff > 0 && (
+                        <div className="goal-stats__forecast">
+                          🗓 Прогноз: <strong>~{weeksLeft} нед.</strong> при текущем темпе
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             )}
-            <div className="weight-last-redesign__row">
-               <span className="weight-last-redesign__label">Последний замер — {(() => {
-                 const [y, m, d] = weightLog[weightLog.length - 1].date.split('-');
-                 return `${d}.${m}.${y}`;
-               })()} — </span>
-               <span className="weight-last-redesign__value gradient-text">
-                 {weightLog[weightLog.length - 1].weightKg} кг
-               </span>
+
+            {/* BMI Section */}
+            <div className="goal-summary__bmi-card">
+              {(() => {
+                const weight = weightLog[weightLog.length - 1].weightKg;
+                const height = profile.heightCm;
+                const bmiNum = (weight / Math.pow(height / 100, 2)).toFixed(1);
+                
+                let bmiStatus = { label: 'Норма', color: 'var(--clr-accent-1)' };
+                if (bmiNum < 18.5) bmiStatus = { label: 'Дефицит веса', color: '#60a5fa' };
+                else if (bmiNum >= 25 && bmiNum < 30) bmiStatus = { label: 'Избыточный вес', color: '#f59e0b' };
+                else if (bmiNum >= 30) bmiStatus = { label: 'Ожирение', color: '#ef4444' };
+
+                return (
+                  <>
+                    <div className="bmi-val">
+                      <span className="bmi-val__num" style={{ color: bmiStatus.color }}>{bmiNum}</span>
+                      <span className="bmi-val__label">ИМТ</span>
+                    </div>
+                    <div className="bmi-status" style={{ backgroundColor: `${bmiStatus.color}15`, color: bmiStatus.color }}>
+                      {bmiStatus.label}
+                    </div>
+                    <p className="bmi-note">Индекс массы тела на основе вашего роста ({height} см)</p>
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}

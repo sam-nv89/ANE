@@ -9,19 +9,29 @@ import { calcBMR, calcTDEE, calcTargetCalories } from '../../lib/nutrition/tdee'
 import { calcMacros } from '../../lib/nutrition/macros';
 import { generatePlan } from '../../lib/planner/generator';
 import recipes from '../../data/recipes.json';
+import CustomSelect from '../../components/Common/CustomSelect';
 
 import './ProfilePage.css';
 
 const ACTIVITY_OPTIONS = [
-  { value: 'sedentary', label: 'Сидячий' }, { value: 'light', label: 'Лёгкий' },
-  { value: 'moderate',  label: 'Умеренный' }, { value: 'active', label: 'Активный' },
-  { value: 'veryActive',label: 'Очень активный' },
+  { value: '1.2', label: 'Сидячий', emoji: '🪑' },
+  { value: '1.375', label: 'Лёгкий', emoji: '🚶' },
+  { value: '1.55', label: 'Умеренный', emoji: '🏃' },
+  { value: '1.725', label: 'Активный', emoji: '🏋️' },
+  { value: '1.9', label: 'Очень активный', emoji: '🔥' },
 ];
 const GOAL_OPTIONS = [
-  { value: 'lose', label: 'Похудение' }, { value: 'maintain', label: 'Поддержание' },
-  { value: 'gain', label: 'Набор массы' },
+  { value: 'lose', label: 'Похудение', emoji: '📉' },
+  { value: 'maintain', label: 'Поддержание', emoji: '⚖️' },
+  { value: 'gain', label: 'Набор массы', emoji: '📈' },
+];
+const GENDER_OPTIONS = [
+  { value: 'female', label: 'Женский', emoji: '👩' },
+  { value: 'male', label: 'Мужской', emoji: '👨' },
 ];
 const GOAL_LABELS = { lose: 'Похудение', maintain: 'Поддержание', gain: 'Набор массы' };
+
+const fmtNum = (num) => num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -79,11 +89,12 @@ export default function ProfilePage() {
             <input id="prf-age" className="field__input" type="number" min={14} max={100} value={local.age} onChange={(e) => update({ age: parseInt(e.target.value) || local.age })} />
           </div>
           <div className="field">
-            <label className="field__label" htmlFor="prf-gender">Пол</label>
-            <select id="prf-gender" className="field__select" value={local.gender} onChange={(e) => update({ gender: e.target.value })}>
-              <option value="female">Женский</option>
-              <option value="male">Мужской</option>
-            </select>
+            <label className="field__label">Пол</label>
+            <CustomSelect 
+              options={GENDER_OPTIONS} 
+              value={local.gender} 
+              onChange={(val) => update({ gender: val })} 
+            />
           </div>
         </div>
 
@@ -93,9 +104,14 @@ export default function ProfilePage() {
             <input type="range" className="field__slider" min={140} max={210} value={local.heightCm} onChange={(e) => update({ heightCm: parseInt(e.target.value) })} />
           </div>
           <div className="field">
-            <label className="field__label">Вес: {local.weightKg} кг</label>
+            <label className="field__label">Текущий вес: {local.weightKg} кг</label>
             <input type="range" className="field__slider" min={40} max={200} step={0.5} value={local.weightKg} onChange={(e) => update({ weightKg: parseFloat(e.target.value) })} />
           </div>
+        </div>
+
+        <div className="field">
+           <label className="field__label">Целевой вес: {local.targetWeightKg || local.weightKg} кг</label>
+           <input type="range" className="field__slider" min={40} max={200} step={0.5} value={local.targetWeightKg || local.weightKg} onChange={(e) => update({ targetWeightKg: parseFloat(e.target.value) })} />
         </div>
       </div>
 
@@ -104,16 +120,20 @@ export default function ProfilePage() {
         <div className="profile__section-title">Цель и активность</div>
         <div className="field__row">
           <div className="field">
-            <label className="field__label" htmlFor="prf-goal">Цель</label>
-            <select id="prf-goal" className="field__select" value={local.goal} onChange={(e) => update({ goal: e.target.value })}>
-              {GOAL_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
-            </select>
+            <label className="field__label">Цель</label>
+            <CustomSelect 
+              options={GOAL_OPTIONS} 
+              value={local.goal} 
+              onChange={(val) => update({ goal: val })} 
+            />
           </div>
           <div className="field">
-            <label className="field__label" htmlFor="prf-activity">Активность</label>
-            <select id="prf-activity" className="field__select" value={local.activityLevel} onChange={(e) => update({ activityLevel: e.target.value })}>
-              {ACTIVITY_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
-            </select>
+            <label className="field__label">Активность</label>
+            <CustomSelect 
+              options={ACTIVITY_OPTIONS} 
+              value={local.activityLevel} 
+              onChange={(val) => update({ activityLevel: val })} 
+            />
           </div>
         </div>
       </div>
@@ -124,13 +144,15 @@ export default function ProfilePage() {
           <div className="profile__section-title">Текущие показатели</div>
           <div className="profile__nutrition-grid">
             {[
-              { label: 'Калории',   value: nutrition.targetCalories, unit: 'ккал', color: 'var(--clr-accent-1)' },
-              { label: 'Белки',     value: nutrition.protein,         unit: 'г',   color: 'var(--clr-accent-2)' },
-              { label: 'Жиры',      value: nutrition.fat,             unit: 'г',   color: '#f59e0b' },
-              { label: 'Углеводы',  value: nutrition.carbs,           unit: 'г',   color: '#a78bfa' },
+              { label: 'КАЛОРИИ',     value: nutrition.targetCalories, unit: '',     color: 'var(--clr-accent-1)' },
+              { label: 'БЕЛКИ, г.',   value: nutrition.protein,         unit: '',     color: 'var(--clr-accent-2)' },
+              { label: 'ЖИРЫ, г.',    value: nutrition.fat,             unit: '',     color: '#f59e0b' },
+              { label: 'УГЛЕВОДЫ, г.',value: nutrition.carbs,           unit: '',     color: '#a78bfa' },
             ].map(({ label, value, unit, color }) => (
               <div key={label} className="profile__nutrition-cell">
-                <div className="profile__nutrition-value" style={{ color }}>{value} <span>{unit}</span></div>
+                <div className="profile__nutrition-value" style={{ color }}>
+                  {fmtNum(value)} {unit && <span>{unit}</span>}
+                </div>
                 <div className="profile__nutrition-label">{label}</div>
               </div>
             ))}

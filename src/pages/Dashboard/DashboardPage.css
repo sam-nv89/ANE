@@ -148,11 +148,33 @@
 
 .macro-rings { display: flex; gap: 20px; flex-wrap: wrap; }
 
-.macro-ring { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.macro-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 
-.macro-ring__svg { --r: 28; transform: rotate(-90deg); }
+.macro-ring__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+}
 
-.macro-ring__circle-bg { fill: none; stroke: var(--clr-border); stroke-width: 5; }
+.macro-ring__svg {
+  --r: 33;
+  transform: rotate(-90deg);
+}
+
+.macro-ring__circle-bg {
+  fill: none;
+  stroke: var(--clr-border);
+  stroke-width: 5;
+}
+
 .macro-ring__circle-fg {
   fill: none;
   stroke-width: 5;
@@ -160,8 +182,58 @@
   transition: stroke-dashoffset 1s var(--ease-out);
 }
 
-.macro-ring__label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--clr-text-muted); font-weight: 600; }
-.macro-ring__value { font-family: var(--font-heading); font-size: 13px; font-weight: 800; color: var(--clr-text-primary); }
+.macro-ring__value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.macro-ring__val-num {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--clr-text-primary);
+  white-space: nowrap;
+}
+
+.macro-ring__info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.macro-ring__label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--clr-text-muted);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.macro-ring__current {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.macro-ring__separator {
+  margin: 0 3px;
+  opacity: 0.4;
+}
+
+.macro-ring__curr-num {
+  color: var(--clr-text-primary);
+  font-weight: 700;
+}
 
 /* ── Weekly plan ── */
 .week-grid {

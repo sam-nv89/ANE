@@ -1,5 +1,11 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import CustomSelect from '../../../components/Common/CustomSelect';
+
+const GENDER_OPTIONS = [
+  { value: 'female', label: 'Женский', emoji: '👩' },
+  { value: 'male', label: 'Мужской', emoji: '👨' },
+];
 
 const ACTIVITY_OPTIONS = [
   { value: 'sedentary',  emoji: '🪑', label: 'Сидячий',      sub: 'Нет спорта, офис' },
@@ -47,16 +53,12 @@ export default function BiometricStep({ form, update, onNext, onBack }) {
           />
         </div>
         <div className="field">
-          <label className="field__label" htmlFor="onb-gender">Пол</label>
-          <select
-            id="onb-gender"
-            className="field__select"
-            value={form.gender}
-            onChange={(e) => update({ gender: e.target.value })}
-          >
-            <option value="female">Женский</option>
-            <option value="male">Мужской</option>
-          </select>
+          <label className="field__label">Пол</label>
+          <CustomSelect 
+            options={GENDER_OPTIONS} 
+            value={form.gender} 
+            onChange={(val) => update({ gender: val })} 
+          />
         </div>
       </div>
 
@@ -78,7 +80,7 @@ export default function BiometricStep({ form, update, onNext, onBack }) {
 
       {/* Weight */}
       <div className="field">
-        <label className="field__label">Вес</label>
+        <label className="field__label">Текущий вес</label>
         <div className="field__slider-value">
           {form.weightKg} <span className="field__slider-unit">кг</span>
         </div>
@@ -87,9 +89,24 @@ export default function BiometricStep({ form, update, onNext, onBack }) {
           min={40} max={200} step={0.5}
           value={form.weightKg}
           onChange={(e) => update({ weightKg: parseFloat(e.target.value) })}
-          aria-label="Вес"
+          aria-label="Текущий вес"
         />
-        <div className="field__hint">40 кг — 200 кг</div>
+      </div>
+
+      {/* Target Weight */}
+      <div className="field">
+        <label className="field__label">Целевой вес</label>
+        <div className="field__slider-value">
+          {form.targetWeightKg || form.weightKg} <span className="field__slider-unit">кг</span>
+        </div>
+        <input
+          type="range" className="field__slider"
+          min={40} max={200} step={0.5}
+          value={form.targetWeightKg || form.weightKg}
+          onChange={(e) => update({ targetWeightKg: parseFloat(e.target.value) })}
+          aria-label="Целевой вес"
+        />
+        <div className="field__hint">Тот вес, к которому вы стремитесь</div>
       </div>
 
       {/* Activity */}
