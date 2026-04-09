@@ -5,7 +5,8 @@ import { persist } from 'zustand/middleware';
  * Вспомогательная функция для "умного" форматирования количества.
  * Реализует логику ROUND UP для штук и RANGES (вилки) для веса.
  */
-function formatSmartAmount(amount, unit) {
+export function formatSmartAmount(amount, unit) {
+  if (amount === undefined || amount === null || isNaN(amount)) return '0';
   const u = unit?.toLowerCase() || '';
 
   // 1. Штучные товары (яйца, фрукты, порции) - всегда Ceiling
@@ -28,7 +29,7 @@ function formatSmartAmount(amount, unit) {
     // Для маленьких весов ( < 50) просто показываем 50
     if (amount < 50) return '50';
 
-    return `${min}–${max}`;
+    return `${min} – ${max}`;
   }
 
   // 3. Ложки и прочее - округляем до 0.5

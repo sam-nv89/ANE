@@ -1,9 +1,9 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import './AppShell.css';
 import {
   LayoutDashboard, ShoppingCart, TrendingUp, User,
-  ChevronRight, Zap, LogOut, BookOpen, RefreshCw
+  ChevronRight, Zap, LogOut, BookOpen, RefreshCw, Sliders
 } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { usePlanStore } from '../store/usePlanStore';
@@ -17,10 +17,12 @@ const NAV_ITEMS = [
   { to: '/app/shopping',  icon: ShoppingCart,    label: 'Покупки' },
   { to: '/app/progress',  icon: TrendingUp,       label: 'Прогресс' },
   { to: '/app/profile',   icon: User,             label: 'Профиль' },
+  { to: '/app/settings',  icon: Sliders,          label: 'Настройки' },
 ];
 
 export default function AppShell() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile, nutrition, resetProfile } = useUserStore();
   const { setPlan, setLoading } = usePlanStore();
 
@@ -129,7 +131,9 @@ export default function AppShell() {
 
         {/* Page outlet */}
         <main className="shell__main" id="main-content">
-          <Outlet />
+          <div className="shell__content">
+            <Outlet key={location.pathname} />
+          </div>
         </main>
       </div>
     </div>

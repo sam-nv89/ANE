@@ -15,6 +15,7 @@ import MealDetailPage from './pages/MealDetail/MealDetailPage';
 import ShoppingListPage from './pages/ShoppingList/ShoppingListPage';
 import ProgressPage from './pages/Progress/ProgressPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import SettingsPage from './pages/Settings/SettingsPage';
 import RecipesPage from './pages/Recipes/RecipesPage';
 
 // Guard — redirect to onboarding if no profile yet
@@ -51,11 +52,16 @@ export const router = createBrowserRouter([
       { path: 'shopping',   element: <ShoppingListPage /> },
       { path: 'progress',   element: <ProgressPage /> },
       { path: 'profile',    element: <ProfilePage /> },
+      { path: 'settings',   element: <SettingsPage /> },
       { path: 'recipes',    element: <RecipesPage /> },
     ],
   },
 
   // ─── Fallback ───
+  {
+    path: '/settings',
+    element: <Navigate to="/app/settings" replace />,
+  },
   {
     path: '*',
     element: <Navigate to="/" replace />,

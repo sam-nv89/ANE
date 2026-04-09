@@ -94,6 +94,7 @@ export default function ProfilePage() {
               options={GENDER_OPTIONS} 
               value={local.gender} 
               onChange={(val) => update({ gender: val })} 
+              active={true}
             />
           </div>
         </div>
@@ -125,6 +126,7 @@ export default function ProfilePage() {
               options={GOAL_OPTIONS} 
               value={local.goal} 
               onChange={(val) => update({ goal: val })} 
+              active={true}
             />
           </div>
           <div className="field">
@@ -133,6 +135,7 @@ export default function ProfilePage() {
               options={ACTIVITY_OPTIONS} 
               value={local.activityLevel} 
               onChange={(val) => update({ activityLevel: val })} 
+              active={true}
             />
           </div>
         </div>

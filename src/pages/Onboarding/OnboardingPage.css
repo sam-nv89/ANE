@@ -343,7 +343,9 @@
   cursor: pointer;
   transition: background var(--dur-fast);
   gap: 12px;
+  text-align: left;
 }
+
 
 .toggle-row:hover {
   background: rgba(255,255,255,0.04);

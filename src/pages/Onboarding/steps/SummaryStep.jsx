@@ -26,6 +26,11 @@ export default function SummaryStep({ form, nutrition, onFinish, onBack }) {
     );
   }
 
+  const formatNumber = (num) => {
+    if (num === undefined || num === null) return '';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
   const goalMeta = GOAL_META[form.goal];
   const tags = [
     `${form.age} лет`, `${form.heightCm} см`, `${form.weightKg} кг`,
@@ -67,44 +72,45 @@ export default function SummaryStep({ form, nutrition, onFinish, onBack }) {
           transition={{ delay: 0.1 }}
         >
           <div className="summary-box__value">
-            {nutrition.targetCalories}
-            <span className="summary-box__unit">ккал</span>
+            {formatNumber(nutrition.targetCalories)}
           </div>
           <div className="summary-box__label">Целевые калории / день</div>
         </motion.div>
 
+
         {/* Protein */}
         <motion.div className="summary-box" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="summary-box__value" style={{ color: 'var(--clr-accent-2)' }}>
-            {nutrition.protein}<span className="summary-box__unit">г</span>
+            {formatNumber(nutrition.protein)}
           </div>
-          <div className="summary-box__label">Белки</div>
+          <div className="summary-box__label">Белки, г</div>
         </motion.div>
 
         {/* Fat */}
         <motion.div className="summary-box" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <div className="summary-box__value" style={{ color: '#f59e0b' }}>
-            {nutrition.fat}<span className="summary-box__unit">г</span>
+            {formatNumber(nutrition.fat)}
           </div>
-          <div className="summary-box__label">Жиры</div>
+          <div className="summary-box__label">Жиры, г</div>
         </motion.div>
 
         {/* Carbs */}
         <motion.div className="summary-box" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <div className="summary-box__value" style={{ color: '#a78bfa' }}>
-            {nutrition.carbs}<span className="summary-box__unit">г</span>
+            {formatNumber(nutrition.carbs)}
           </div>
-          <div className="summary-box__label">Углеводы</div>
+          <div className="summary-box__label">Углеводы, г</div>
         </motion.div>
 
         {/* TDEE */}
         <motion.div className="summary-box" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
           <div className="summary-box__value" style={{ color: 'var(--clr-text-secondary)', fontSize: 22 }}>
-            {nutrition.tdee}
+            {formatNumber(nutrition.tdee)}
           </div>
           <div className="summary-box__label">TDEE (поддержание)</div>
         </motion.div>
       </div>
+
 
       {/* Profile tags */}
       <div className="summary-profile">

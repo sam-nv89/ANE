@@ -6,7 +6,7 @@ import { jsPDF } from 'jspdf';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
-import { useShoppingStore } from '../../store/useShoppingStore';
+import { useShoppingStore, formatSmartAmount } from '../../store/useShoppingStore';
 import recipes from '../../data/recipes.json';
 
 import './ShoppingListPage.css';
@@ -27,9 +27,13 @@ export default function ShoppingListPage() {
   const [isExporting, setIsExporting] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  // Auto-build from plan if items empty
+  // Auto-build from plan if items empty or legacy (missing displayAmount)
   useEffect(() => {
-    if (plan && Object.keys(items).length === 0) {
+    const hasItems = Object.keys(items).length > 0;
+    const firstItem = hasItems ? Object.values(items)[0] : null;
+    const isLegacy = hasItems && firstItem && !('displayAmount' in firstItem);
+
+    if (plan && (!hasItems || isLegacy)) {
       buildList(plan, recipes);
     }
   }, [plan, buildList, items]);
@@ -77,7 +81,7 @@ export default function ShoppingListPage() {
       .map(([cat, config]) => {
         const catItems = Object.values(items).filter(i => (i.category || 'other') === cat);
         if (catItems.length === 0) return '';
-        return `--- ${config.label} ---\n` + catItems.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.name}: ${i.displayAmount} ${i.unit}`).join('\n');
+        return `--- ${config.label} ---\n` + catItems.map(i => `${i.checked ? '[x]' : '[ ]'} ${i.name}: ${formatSmartAmount(i.rawAmount, i.unit)} ${i.unit}`).join('\n');
       })
       .filter(Boolean)
       .join('\n\n');
@@ -182,7 +186,7 @@ export default function ShoppingListPage() {
             <AnimatePresence>
               {isMenuOpen && (
                 <motion.div 
-                  className="download-dropdown__menu"
+                  className="download-dropdown__menu download-dropdown__menu--left"
                   initial={{ opacity: 0, y: 8, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
@@ -255,7 +259,7 @@ export default function ShoppingListPage() {
                   </div>
                   <span className="shopping__item-name">{item.name}</span>
                   <span className="shopping__item-amount">
-                    {item.displayAmount} {item.unit}
+                    {formatSmartAmount(item.rawAmount, item.unit)} {item.unit}
                   </span>
                 </button>
               ))}
@@ -298,7 +302,7 @@ export default function ShoppingListPage() {
                       <span className="pdf-shop-item__name">{item.name}</span>
                       <div className="pdf-shop-item__spacer" />
                       <span className="pdf-shop-item__amount">
-                        {item.totalAmount % 1 === 0 ? item.totalAmount : item.totalAmount.toFixed(1)} {item.unit}
+                        {formatSmartAmount(item.rawAmount, item.unit)} {item.unit}
                       </span>
                     </div>
                   ))}

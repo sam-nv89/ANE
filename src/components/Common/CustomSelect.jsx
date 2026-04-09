@@ -40,7 +40,7 @@ export default function CustomSelect({ options, value, onChange, placeholder = '
     <div className="custom-select" ref={containerRef}>
       <button
         type="button"
-        className={`custom-select__trigger ${isOpen ? 'custom-select__trigger--open' : ''} ${selectedOption || active ? 'custom-select__trigger--active' : ''}`}
+        className={`custom-select__trigger ${isOpen ? 'custom-select__trigger--open' : ''} ${active ? 'custom-select__trigger--active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="custom-select__trigger-content">

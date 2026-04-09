@@ -58,6 +58,7 @@ export default function BiometricStep({ form, update, onNext, onBack }) {
             options={GENDER_OPTIONS} 
             value={form.gender} 
             onChange={(val) => update({ gender: val })} 
+            active={!!form.gender}
           />
         </div>
       </div>

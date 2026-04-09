@@ -6,11 +6,12 @@
 
 .custom-select__trigger {
   width: 100%;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 0 16px;
   background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
   border-radius: 12px;

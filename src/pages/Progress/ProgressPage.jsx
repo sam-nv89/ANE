@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Plus, Target } from 'lucide-react';
+import { TrendingUp, Plus, Target, Info } from 'lucide-react';
 
 import { useProgressStore } from '../../store/useProgressStore';
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
+import CustomDatePicker from '../../components/Common/CustomDatePicker';
 
 import './ProgressPage.css';
 
@@ -14,13 +15,26 @@ function WeightChart({ entries, targetWeight }) {
 
   if (entries.length < 2) return null;
 
-  const W = 600; const H = 160; const PAD = 20;
-  const weights = entries.map((e) => e.weightKg);
-  const minW = Math.min(...weights, targetWeight ?? Infinity) - 2;
-  const maxW = Math.max(...weights) + 2;
+  const W = 600; 
+  const H = 160;
+  const PAD_L = 45; 
+  const PAD_R = 20;
+  const PAD_T = 20;
+  const PAD_B = 25;
 
-  const toX = (i) => PAD + (i / (entries.length - 1)) * (W - PAD * 2);
-  const toY = (w) => H - PAD - ((w - minW) / (maxW - minW)) * (H - PAD * 2);
+  const weights = entries.map((e) => e.weightKg);
+  const minW = Math.min(...weights, targetWeight ?? Infinity) - 5;
+  const maxW = Math.max(...weights) + 5;
+
+  const toX = (i) => PAD_L + (i / (entries.length - 1)) * (W - PAD_L - PAD_R);
+  const toY = (w) => H - PAD_B - ((w - minW) / (maxW - minW)) * (H - PAD_T - PAD_B);
+
+  // Generate Y-axis ticks (every 10kg)
+  const ticks = [];
+  const startTick = Math.ceil(minW / 10) * 10;
+  for (let t = startTick; t <= maxW; t += 10) {
+    ticks.push(t);
+  }
 
   const pathD = entries.map((e, i) => `${i === 0 ? 'M' : 'L'}${toX(i).toFixed(1)},${toY(e.weightKg).toFixed(1)}`).join(' ');
 
@@ -32,20 +46,34 @@ function WeightChart({ entries, targetWeight }) {
   return (
     <div className="weight-chart-container">
       <svg viewBox={`0 0 ${W} ${H}`} className="weight-chart__svg" aria-label="График веса">
-        {/* Grid */}
-        {[0.25, 0.5, 0.75].map((r) => (
-          <line key={r} x1={PAD} y1={H * r} x2={W - PAD} y2={H * r} stroke="rgba(255,255,255,0.04)" strokeWidth={1} />
+        {/* Y-Axis Labels & Grid */}
+        {ticks.map((t) => (
+          <g key={t}>
+            <line 
+              x1={PAD_L} y1={toY(t)} x2={W - PAD_R} y2={toY(t)} 
+              stroke="rgba(255,255,255,0.05)" strokeWidth={1} 
+            />
+            <text 
+              x={PAD_L - 10} y={toY(t) + 4} 
+              textAnchor="end" 
+              fill="var(--clr-text-muted)" 
+              style={{ fontSize: 10, fontWeight: 600, fontFamily: 'var(--font-heading)' }}
+            >
+              {t}
+            </text>
+          </g>
         ))}
+
         {/* Target weight line */}
         {targetWeight && (
           <line
-            x1={PAD} y1={toY(targetWeight)} x2={W - PAD} y2={toY(targetWeight)}
-            stroke="rgba(0,245,160,0.25)" strokeWidth={1.5} strokeDasharray="6,4"
+            x1={PAD_L} y1={toY(targetWeight)} x2={W - PAD_R} y2={toY(targetWeight)}
+            stroke="rgba(0,245,160,0.3)" strokeWidth={1.5} strokeDasharray="6,4"
           />
         )}
         {/* Area fill */}
         <path
-          d={`${pathD} L${toX(entries.length - 1)},${H - PAD} L${toX(0)},${H - PAD} Z`}
+          d={`${pathD} L${toX(entries.length - 1)},${H - PAD_B} L${toX(0)},${H - PAD_B} Z`}
           fill="url(#weight-grad)" opacity={0.2}
         />
         {/* Line */}
@@ -54,7 +82,6 @@ function WeightChart({ entries, targetWeight }) {
         {/* Points - Hoverable */}
         {entries.map((e, i) => (
           <g key={i} className="weight-point" onMouseMove={() => setHoveredEntry({ ...e, x: toX(i), y: toY(e.weightKg) })} onMouseLeave={() => setHoveredEntry(null)}>
-            {/* Invisible larger hit area for touch/hover */}
             <circle cx={toX(i)} cy={toY(e.weightKg)} r={12} fill="transparent" style={{ cursor: 'pointer' }} />
             <motion.circle
               cx={toX(i)} cy={toY(e.weightKg)}
@@ -78,7 +105,6 @@ function WeightChart({ entries, targetWeight }) {
         </defs>
       </svg>
 
-      {/* Tooltip */}
       <AnimatePresence>
         {hoveredEntry && (
           <motion.div
@@ -97,7 +123,6 @@ function WeightChart({ entries, targetWeight }) {
           >
             <div className="tooltip-weight">{hoveredEntry.weightKg} кг</div>
             <div className="tooltip-date">{formatDate(hoveredEntry.date)}</div>
-            {/* Arrow */}
             <div className={`tooltip-arrow ${hoveredEntry.y < 50 ? 'tooltip-arrow--top' : 'tooltip-arrow--bottom'}`} />
           </motion.div>
         )}
@@ -106,7 +131,6 @@ function WeightChart({ entries, targetWeight }) {
   );
 }
 
-/* ── Compliance bar ── */
 function ComplianceBar({ rate }) {
   return (
     <div className="compliance-bar" aria-label={`Compliance ${rate}%`}>
@@ -117,34 +141,26 @@ function ComplianceBar({ rate }) {
 
 export default function ProgressPage() {
   const { weightLog, logWeight, dailyCompliance, syncCompliance } = useProgressStore();
-  const { profile, nutrition } = useUserStore();
+  const { profile } = useUserStore();
   const { plan, completed, generatedAt } = usePlanStore();
 
   const [weightInput, setWeightInput] = useState('');
   const [dateInput, setDateInput] = useState(new Date().toISOString().slice(0, 10));
 
-  // Auto-sync compliance data whenever plan or completion status changes
   useEffect(() => {
     if (!plan || !generatedAt) return;
-
     const baseDate = new Date(generatedAt);
     const updates = {};
-
     plan.forEach((day, idx) => {
-      // Calculate calendar date for this plan day
       const d = new Date(baseDate);
       d.setDate(baseDate.getDate() + idx);
       const dateStr = d.toISOString().slice(0, 10);
-
       const planned = Object.values(day.meals || {}).filter(Boolean).length;
-      // Filter completed keys for this dayIndex
       const done = completed.filter((k) => k.startsWith(`${idx}:`)).length;
-
       if (planned > 0) {
         updates[dateStr] = { planned, done };
       }
     });
-
     if (Object.keys(updates).length > 0) {
       syncCompliance(updates);
     }
@@ -158,7 +174,6 @@ export default function ProgressPage() {
     }
   };
 
-  // Compliance for last 7 days
   const complianceData = useMemo(() => {
     const days = Object.entries(dailyCompliance)
       .sort(([a], [b]) => a.localeCompare(b))
@@ -172,77 +187,63 @@ export default function ProgressPage() {
     return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length);
   }, [complianceData]);
 
-  // Streak calculation: working backwards from the latest marked success
   const streak = useMemo(() => {
-    // Get entries with at least 50% compliance, sorted latest first
     const successes = Object.entries(dailyCompliance)
       .filter(([, v]) => v.planned > 0 && v.done / v.planned >= 0.5)
       .sort(([a], [b]) => b.localeCompare(a));
-
     if (successes.length === 0) return 0;
-
     let count = 0;
-    // Start checking from the most recent successful date
     let checkDate = new Date(successes[0][0]);
-
     for (let i = 0; i < 365; i++) {
       const dateStr = checkDate.toISOString().slice(0, 10);
       const entry = dailyCompliance[dateStr];
-
       if (entry && entry.planned > 0 && entry.done / entry.planned >= 0.5) {
         count++;
       } else {
-        // Gap in dates or low compliance breaks the chain
         break;
       }
-
-      // Move to previous day
       checkDate.setDate(checkDate.getDate() - 1);
     }
-
     return count;
   }, [dailyCompliance]);
 
   return (
     <div className="progress">
       <h1 className="progress__title">Прогресс</h1>
-      <p className="progress__subtitle">Данные о веса и выполнении рациона</p>
+      <p className="progress__subtitle">Данные о весе и выполнении рациона</p>
 
-      {/* Weight logging */}
       <div className="progress__card">
         <div className="progress__card-header">
           <TrendingUp size={18} color="var(--clr-accent-1)" />
           <span>Динамика веса</span>
         </div>
 
-        {/* Log input */}
-        <div className="weight-input">
-          <input
-            type="number"
-            className="field__input"
-            placeholder={`Вес (кг)`}
-            value={weightInput}
-            onChange={(e) => setWeightInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleLogWeight()}
-            min={30} max={300} step={0.1}
-            style={{ maxWidth: 110 }}
-            aria-label="Ввод текущего веса"
-          />
-          <input
-            type="date"
-            className="field__input"
-            value={dateInput}
-            onChange={(e) => setDateInput(e.target.value)}
-            max={new Date().toISOString().slice(0, 10)}
-            style={{ maxWidth: 160 }}
-            aria-label="Выбор даты замера"
-          />
-          <button className="btn-primary" onClick={handleLogWeight} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, padding: '10px 16px' }}>
-            <Plus size={14} /> Записать
+        <div className="weight-input-group">
+          <div className="weight-input-field">
+            <input
+              type="number"
+              className="weight-input-field__input"
+              placeholder="Вес (кг)"
+              value={weightInput}
+              onChange={(e) => setWeightInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleLogWeight()}
+              min={30} max={300} step={0.1}
+              aria-label="Ввод текущего веса"
+            />
+          </div>
+          <div className="weight-input-date">
+            <CustomDatePicker
+              value={dateInput}
+              onChange={setDateInput}
+              maxDate={new Date().toISOString().slice(0, 10)}
+            />
+          </div>
+          <button className="weight-input-btn" onClick={handleLogWeight}>
+            <Plus size={18} /> <span>Записать</span>
           </button>
         </div>
 
-        {/* Chart */}
+
         {weightLog.length >= 2 ? (
           <div className="weight-chart">
             <WeightChart entries={weightLog} targetWeight={profile?.targetWeightKg} />
@@ -257,14 +258,14 @@ export default function ProgressPage() {
           </div>
         )}
 
-        {/* Goal Progress Summary */}
         {weightLog.length > 0 && profile && (
           <div className="goal-summary">
-            {profile.targetWeightKg && (
+            {profile.targetWeightKg ? (
               <div className="goal-summary__progress-card">
                 <div className="goal-summary__header">
-                  <Target size={16} color="var(--clr-accent-2)" />
-                  <span>Путь к цели ({profile.targetWeightKg} кг)</span>
+                  <div className="goal-summary__header-title">
+                    <Target size={14} /> <span>Путь к цели</span>
+                  </div>
                 </div>
                 
                 {(() => {
@@ -273,73 +274,156 @@ export default function ProgressPage() {
                   const initial = weightLog[0].weightKg;
                   const diff = Math.abs(current - target);
                   
-                  // Progress % from start to target
                   const totalDiff = Math.abs(initial - target);
                   const currentDiff = Math.abs(initial - current);
                   const progress = totalDiff > 0 ? Math.min(Math.round((currentDiff / totalDiff) * 100), 100) : 0;
                   
                   const weeksLeft = profile.goalRate && Math.abs(profile.goalRate) > 0 
-                    ? Math.ceil(diff / Math.abs(profile.goalRate)) 
+                    ? Math.ceil(Math.abs(diff) / Math.abs(profile.goalRate)) 
                     : null;
 
                   return (
                     <div className="goal-stats">
                       <div className="goal-stats__main">
-                        <div className="goal-stats__val">
-                          {diff > 0 ? `${diff.toFixed(1)} кг` : 'Цель достигнута! 🎉'}
+                        <div className="goal-stats__label">
+                          {current === target ? 'Поздравляем! 🎉' : (current > target ? 'Осталось сбросить' : 'Осталось набрать')}
                         </div>
-                        <div className="goal-stats__label">{diff > 0 ? 'Осталось до цели' : 'Поздравляем!'}</div>
+                        <div className="goal-stats__val">
+                          {current === target ? (
+                            <span className="goal-stats__number">Цель достигнута!</span>
+                          ) : (
+                            <>
+                              <span className="goal-stats__number">{diff.toFixed(1)}</span>
+                              <span className="goal-stats__unit"> кг</span>
+                            </>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="goal-stats__visual">
-                        <div className="goal-stats__bar">
-                          <motion.div 
-                            className="goal-stats__fill" 
-                            initial={{ width: 0 }} 
-                            animate={{ width: `${progress}%` }} 
-                            transition={{ duration: 1, ease: "easeOut" }}
-                          />
+                        <div className="goal-stats__bar-container">
+                          <div className="goal-stats__bar">
+                            <motion.div 
+                              className="goal-stats__fill" 
+                              initial={{ width: 0 }} 
+                              animate={{ width: `${progress}%` }} 
+                              transition={{ duration: 1.2, ease: "circOut" }}
+                            />
+                            {progress > 0 && progress < 100 && (
+                              <motion.div 
+                                className="goal-stats__pulse"
+                                style={{ left: `${progress}%` }}
+                                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
+                                transition={{ repeat: Infinity, duration: 2 }}
+                              />
+                            )}
+                          </div>
                         </div>
                         <div className="goal-stats__markers">
-                          <span>Старт: {initial}</span>
-                          <span>{progress}%</span>
-                          <span>Цель: {target}</span>
+                          <div className="marker-item">
+                            <span className="marker-label">Старт</span>
+                            <span className="marker-val">{initial}</span>
+                          </div>
+                          <div className="marker-item marker-item--center">
+                            <span className="marker-pct">{progress}%</span>
+                          </div>
+                          <div className="marker-item marker-item--end">
+                            <span className="marker-label">Цель</span>
+                            <span className="marker-val">{target}</span>
+                          </div>
                         </div>
                       </div>
 
-                      {weeksLeft && diff > 0 && (
+                      {weeksLeft && diff > 0.1 && (
                         <div className="goal-stats__forecast">
-                          🗓 Прогноз: <strong>~{weeksLeft} нед.</strong> при текущем темпе
+                          <span className="forecast-icon">🗓</span>
+                          <span>Прогноз: <strong>~{weeksLeft} нед.</strong> при текущем темпе</span>
                         </div>
                       )}
                     </div>
                   );
                 })()}
               </div>
+            ) : (
+              <div className="goal-summary__progress-card goal-summary__progress-card--empty">
+                <div className="goal-summary__header">
+                  <div className="goal-summary__header-title">
+                    <Target size={14} /> <span>Путь к цели</span>
+                  </div>
+                </div>
+                <div className="goal-empty-state">
+                  <div className="goal-empty-state__icon">🎯</div>
+                  <p>Цель не установлена</p>
+                  <button className="btn-secondary btn-small" onClick={() => window.location.href = '/app/profile'}>
+                    Установить цель
+                  </button>
+                </div>
+              </div>
             )}
 
-            {/* BMI Section */}
             <div className="goal-summary__bmi-card">
               {(() => {
                 const weight = weightLog[weightLog.length - 1].weightKg;
                 const height = profile.heightCm;
-                const bmiNum = (weight / Math.pow(height / 100, 2)).toFixed(1);
+                const bmiNum = parseFloat((weight / Math.pow(height / 100, 2)).toFixed(1));
                 
-                let bmiStatus = { label: 'Норма', color: 'var(--clr-accent-1)' };
-                if (bmiNum < 18.5) bmiStatus = { label: 'Дефицит веса', color: '#60a5fa' };
-                else if (bmiNum >= 25 && bmiNum < 30) bmiStatus = { label: 'Избыточный вес', color: '#f59e0b' };
-                else if (bmiNum >= 30) bmiStatus = { label: 'Ожирение', color: '#ef4444' };
+                let bmiStatus = { label: 'Норма', color: '#10b981' }; 
+                if (bmiNum < 18.5) bmiStatus = { label: 'Дефицит веса', color: '#3b82f6' };
+                else if (bmiNum >= 25 && bmiNum < 30) bmiStatus = { label: 'Избыточный вес', color: '#f59e0b' }; 
+                else if (bmiNum >= 30) bmiStatus = { label: 'Ожирение', color: '#ef4444' }; 
+
+                const minScale = 15;
+                const maxScale = 35;
+                const pos = Math.min(Math.max(((bmiNum - minScale) / (maxScale - minScale)) * 100, 0), 100);
 
                 return (
                   <>
-                    <div className="bmi-val">
-                      <span className="bmi-val__num" style={{ color: bmiStatus.color }}>{bmiNum}</span>
-                      <span className="bmi-val__label">ИМТ</span>
+                    <div className="goal-summary__header">
+                      <div className="goal-summary__header-title">
+                        <span>⚖️ ИМТ</span>
+                        <div className="bmi-info-trigger">
+                          <Info size={14} />
+                          <div className="bmi-info-tooltip">
+                            <strong>Расчет ИМТ:</strong><br/>
+                            Вес (кг) / Рост² (м²). <br/>
+                            Позволяет оценить соответствие массы тела и роста.
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bmi-badge" style={{ backgroundColor: `${bmiStatus.color}15`, color: bmiStatus.color }}>
+                        {bmiStatus.label}
+                      </div>
                     </div>
-                    <div className="bmi-status" style={{ backgroundColor: `${bmiStatus.color}15`, color: bmiStatus.color }}>
-                      {bmiStatus.label}
+                    
+                    <div className="bmi-card-content">
+                      <div className="bmi-val">
+                        <span className="bmi-val__num">{bmiNum}</span>
+                      </div>
+
+                      <div className="bmi-gauge">
+                        <div className="bmi-gauge__track">
+                          <div className="bmi-gauge__segment bmi-gauge__segment--under" />
+                          <div className="bmi-gauge__segment bmi-gauge__segment--normal" />
+                          <div className="bmi-gauge__segment bmi-gauge__segment--over" />
+                          <div className="bmi-gauge__segment bmi-gauge__segment--obese" />
+                          <motion.div 
+                            className="bmi-gauge__marker"
+                            initial={{ left: 0 }}
+                            animate={{ left: `${pos}%` }}
+                            transition={{ type: 'spring', stiffness: 50, damping: 15, delay: 0.5 }}
+                          >
+                            <div className="marker-dot" style={{ backgroundColor: bmiStatus.color }} />
+                            <div className="marker-arrow" style={{ borderBottomColor: bmiStatus.color }} />
+                          </motion.div>
+                        </div>
+                        <div className="bmi-gauge__labels">
+                          <span>18.5</span>
+                          <span>25</span>
+                          <span>30</span>
+                        </div>
+                      </div>
+                      <p className="bmi-note">На основе вашего роста: <strong>{height} см</strong></p>
                     </div>
-                    <p className="bmi-note">Индекс массы тела на основе вашего роста ({height} см)</p>
                   </>
                 );
               })()}
@@ -348,7 +432,6 @@ export default function ProgressPage() {
         )}
       </div>
 
-      {/* Compliance */}
       <div className="progress__card">
         <div className="progress__card-header">
           <span>📊</span>

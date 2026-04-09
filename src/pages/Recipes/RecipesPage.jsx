@@ -80,14 +80,6 @@ export default function RecipesPage() {
     }
   };
 
-  const handleSortChange = (key) => {
-    if (sortBy === key) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(key);
-      setSortOrder('asc');
-    }
-  };
 
   const filteredRecipes = useMemo(() => {
     let result = recipes.filter((r) => {
@@ -186,7 +178,7 @@ export default function RecipesPage() {
             active={limitTime !== 0}
           />
 
-          <div className="sort-wrapper" style={{ display: 'flex', gap: '8px' }}>
+          <div className="sort-wrapper">
             <CustomSelect 
               options={SORT_OPTIONS} 
               value={sortBy} 
@@ -203,17 +195,7 @@ export default function RecipesPage() {
             <button 
               className="sort-direction-btn"
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              style={{
-                background: 'var(--clr-bg-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '10px',
-                width: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--clr-accent-1)',
-                cursor: 'pointer'
-              }}
+              title={sortOrder === 'asc' ? 'По возрастанию' : 'По убыванию'}
             >
               {sortOrder === 'asc' ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
             </button>
