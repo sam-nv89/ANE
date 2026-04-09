@@ -65,22 +65,189 @@
   z-index: 1;
 }
 
-/* ── Today summary ── */
+/* ── Today summary — Desktop ── */
 .day-summary {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 20px;
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;                           /* Секции разделены явными border/padding */
+  padding: 0;
   background: var(--clr-bg-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-lg);
-  align-items: center;
+  overflow: hidden;
 }
 
-/* ── Mobile: Unified tabular summary ── */
-
-/* На десктопе мобильная таблица скрыта */
+/* Мобильная таблица скрыта на десктопе */
 .day-summary__mobile-table { display: none; }
+
+/* Вся десктопная часть внутри .info */
+.day-summary__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 24px 28px 20px;
+}
+
+/* Заголовок: дата слева, бейдж-выполнение справа */
+.day-summary__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.day-summary__day-name {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--clr-accent-1);
+}
+
+/* Компактный бейдж с выполнением — в правом углу заголовка */
+.day-summary__compliance-badge {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--clr-accent-1);
+  background: rgba(0, 245, 160, 0.08);
+  border: 1px solid rgba(0, 245, 160, 0.25);
+  border-radius: 99px;
+  padding: 4px 14px;
+  letter-spacing: 0.04em;
+}
+
+/* Три стат-колонки */
+.day-summary__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: end;
+  gap: 0;
+}
+
+.day-summary__group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;      /* числа выравнены влево */
+  text-align: left;
+  padding: 0 24px 0 0;
+}
+
+/* Разделитель между колонками через border-left у 2-й и 3-й */
+.day-summary__group:nth-child(2),
+.day-summary__group:nth-child(3) {
+  border-left: 1px solid var(--clr-border);
+  padding-left: 24px;
+}
+
+.day-summary__sublabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--clr-text-muted);
+}
+
+/* Большие числа — доминирующий элемент */
+.day-summary__val {
+  font-family: var(--font-heading);
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.day-summary__val--current   { color: var(--clr-text-primary); }
+.day-summary__val--target    { color: var(--clr-accent-2); }
+.day-summary__val--target small { font-size: 14px; font-weight: 600; opacity: 0.6; }
+.day-summary__val--compliance { color: var(--clr-accent-1); }
+.day-summary__val--compliance small {
+  font-size: 14px; font-weight: 600; opacity: 0.6; margin-left: 4px;
+}
+
+/* Прогресс-бар */
+.day-summary__progress-bg {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 20px;
+}
+
+.day-summary__progress-fg {
+  height: 100%;
+  background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2));
+  border-radius: 99px;
+}
+
+/* Кольца — отдельная секция под тонким разделителем */
+.macro-rings {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--clr-border);
+  padding: 20px 28px;
+}
+
+.macro-rings .macro-ring {
+  align-items: flex-start;       /* подпись слева, как у статов выше */
+  flex-direction: row;
+  gap: 16px;
+  padding-right: 24px;
+}
+
+/* Вертикальные разделители между кольцами */
+.macro-rings .macro-ring:nth-child(2),
+.macro-rings .macro-ring:nth-child(3) {
+  border-left: 1px solid var(--clr-border);
+  padding-left: 24px;
+}
+
+/* Инфо рядом с кольцом */
+.macro-rings .macro-ring__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+}
+
+.macro-rings .macro-ring__label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--clr-text-muted);
+  font-weight: 700;
+}
+
+.macro-rings .macro-ring__current {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.macro-rings .macro-ring__curr-num { color: var(--clr-text-primary); font-weight: 700; }
+.macro-rings .macro-ring__separator { opacity: 0.4; }
+
+/* Кольца немного меньше, чтобы не занимать лишнее вертикальное пространство */
+.macro-rings .macro-ring__container {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.macro-rings .macro-ring__container svg {
+  width: 64px;
+  height: 64px;
+}
+
+.macro-rings .macro-ring__val-num { font-size: 13px; }
+
+
 
 @media (max-width: 768px) {
   /* Карточка: flex-column, убираем desktop grid */
@@ -175,75 +342,7 @@
 }
 
 
-.day-summary__info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-
-.day-summary__label-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 2px; }
-
-.day-summary__day-name { font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: var(--clr-accent-1); text-transform: none; }
-
-.day-summary__status { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--clr-text-muted); opacity: 0.8; }
-
-.day-summary__row { 
-  display: flex; 
-  align-items: flex-end; 
-  justify-content: space-between; 
-  gap: 16px; 
-  width: 100%; 
-}
-
-.day-summary__group { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 2px; 
-  align-items: center; 
-  flex: 1; 
-  text-align: center;
-}
-
-.day-summary__sublabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--clr-text-muted); }
-
-.day-summary__val { font-family: var(--font-heading); font-size: 24px; font-weight: 900; line-height: 1; }
-
-.day-summary__val--current { color: var(--clr-text-primary); }
-
-.day-summary__val--target { color: var(--clr-accent-2); }
-.day-summary__val--target small { font-size: 13px; font-weight: 600; opacity: 0.6; }
-
-.day-summary__divider { font-size: 18px; color: var(--clr-border); font-weight: 300; padding-bottom: 2px; }
-
-.day-summary__plan-info {
-  margin-top: 12px;
-  font-size: 11px;
-  color: var(--clr-text-muted);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-
-.day-summary__val--compliance {
-  color: var(--clr-accent-1);
-}
-
-.day-summary__val--compliance small {
-  font-size: 13px;
-  font-weight: 600;
-  opacity: 0.6;
-  margin-left: 4px;
-}
-
-
-.day-summary__progress-bg { 
-  height: 10px; 
-  background: rgba(255,255,255,0.05); 
-  border-radius: 99px; 
-  overflow: hidden; 
-  position: relative; 
-  margin-top: 12px;
-}
-
-.day-summary__progress-fg { height: 100%; background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2)); border-radius: 99px; }
-
-.macro-rings { display: flex; gap: 20px; flex-wrap: wrap; }
-
+/* ── Macro ring base styles ── */
 .macro-ring {
   display: flex;
   flex-direction: column;
