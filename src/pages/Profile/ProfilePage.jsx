@@ -175,7 +175,8 @@ export default function ProfilePage() {
           whileTap={{ scale: 0.98 }}
           style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
-          <Save size={16} />
+          {/* Иконка скрывается после сохранения — чекмарк в тексте является индикатором */}
+          {!saved && <Save size={16} />}
           {saved ? '✅ Сохранено!' : 'Сохранить и пересчитать'}
         </motion.button>
 

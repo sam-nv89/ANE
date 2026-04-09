@@ -608,8 +608,9 @@ export default function SettingsPage() {
           className="btn-primary btn-primary--large settings__save-btn"
           onClick={handleSave}
         >
-          <Save size={18} />
-          {saved ? '✅ Сохранено!' : 'Сохранить и обновить'}
+          {/* Иконка скрывается после сохранения — чекмарк в тексте уже является индикатором */}
+          {!saved && <Save size={18} />}
+          {saved ? '✅ Сохранено!' : 'Сохранить и обновить!'}
         </button>
       </div>
     </div>
