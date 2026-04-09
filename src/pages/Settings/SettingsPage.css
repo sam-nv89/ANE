@@ -376,30 +376,27 @@
     left: 0 !important;
     right: 0 !important;
     top: auto !important;
-    border-radius: 24px 24px 0 0;
-    background: rgba(15, 23, 42, 0.98);
-    backdrop-filter: blur(24px);
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 24px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom, 20px));
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 28px 28px 0 0;
+    background: rgba(15, 23, 42, 0.75); /* Настоящий Glassmorphism */
+    backdrop-filter: blur(24px) saturate(160%);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 20px 24px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 20px));
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
+    justify-content: center; /* Центрируем кнопку */
     z-index: 9999;
   }
   
-  .stg-card--sticky .stg-card__title {
-    display: none;
-  }
-  
+  .stg-card--sticky .stg-card__title,
   .stg-card--sticky .stg-card__text {
-    margin-bottom: 0;
-    font-size: 0.85rem;
-    max-width: 60%;
-    color: var(--text-1);
-    display: block;
+    display: none; /* Убираем текст по просьбе пользователя */
+  }
+
+  .stg-card--sticky .btn-primary {
+    margin-top: 0 !important; /* Убираем лишний отступ на мобильных */
+    max-width: 400px; /* Чтобы кнопка не была слишком растянутой на широких экранах */
   }
 }
 
