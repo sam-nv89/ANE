@@ -601,6 +601,7 @@ export default function SettingsPage() {
             </div>
           </Section>
       </div>
+      </div>
       
       <div className="settings__footer">
         <button 
