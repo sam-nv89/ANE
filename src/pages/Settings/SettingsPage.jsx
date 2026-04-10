@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Save, ArrowLeft, Sliders, Clock, Heart, 
-  ShieldAlert, Sparkles, ChevronDown, Check, X 
+  ShieldAlert, Sparkles, ChevronDown, Check, X,
+  Activity, Calendar
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
@@ -14,6 +14,7 @@ import { calcMacros } from '../../lib/nutrition/macros';
 import recipes from '../../data/recipes.json';
 import CustomSelect from '../../components/Common/CustomSelect';
 
+import CustomDatePicker from '../../components/Common/CustomDatePicker';
 import './SettingsPage.css';
 
 /* ── Constants ── */
@@ -600,6 +601,48 @@ export default function SettingsPage() {
               />
             </div>
           </Section>
+
+          {/* Женское здоровье */}
+          {local.gender === 'female' && (
+            <Section title="Женское здоровье" icon={Calendar}>
+              <Toggle 
+                value={local.cycleTracking?.enabled || false}
+                onChange={(v) => update({ 
+                  cycleTracking: { 
+                    ...(local.cycleTracking || { cycleLength: 28, periodLength: 5, lastPeriodDate: '' }), 
+                    enabled: v 
+                  } 
+                })}
+                title="Адаптировать план под цикл"
+                desc="Динамически изменять рацион по фазам цикла (менструальная, фолликулярная, овуляторная, лютеиновая). Добавляется 150 ккал в лютеиновую фазу, блюда с железом и магнием — в период спада."
+              />
+              
+              {local.cycleTracking?.enabled && (
+                <div style={{ marginTop: 16 }}>
+                  <div className="stg-field">
+                    <label className="stg-label" style={{ paddingLeft: '16px' }}>Дата начала последних месячных</label>
+                    <CustomDatePicker
+                      value={local.cycleTracking.lastPeriodDate}
+                      onChange={(val) => update({ cycleTracking: { ...local.cycleTracking, lastPeriodDate: val } })}
+                      maxDate={new Date().toISOString().slice(0, 10)}
+                    />
+                  </div>
+                  
+                  <div className="stg-field">
+                    <label className="stg-label" style={{ paddingLeft: '16px' }}>Длительность цикла (дней)</label>
+                    <input 
+                      type="number" 
+                      className="stg-input" 
+                      value={local.cycleTracking?.cycleLength || 28}
+                      min={21} max={38}
+                      onChange={(e) => update({ cycleTracking: { ...local.cycleTracking, cycleLength: Number(e.target.value) } })}
+                    />
+                  </div>
+                </div>
+              )}
+            </Section>
+          )}
+
       </div>
       </div>
       

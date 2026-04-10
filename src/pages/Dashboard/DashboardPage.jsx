@@ -6,6 +6,7 @@ import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, File
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
 import { generatePlan, generateSingleMeal, getFilteredPoolForMeal } from '../../lib/planner/generator';
+import { getCyclePhase, getPhaseModifiers } from '../../lib/nutrition/cycleSync';
 import recipes from '../../data/recipes.json';
 
 import html2canvas from 'html2canvas';
@@ -487,6 +488,39 @@ function TodaySummary({ plan, nutrition, selectedIndex, isLoading, completed, pe
   );
 }
 
+/* ── Cycle Widget ── */
+function CycleWidget({ profile }) {
+  if (profile?.gender !== 'female' || !profile?.cycleTracking?.enabled || !profile?.cycleTracking?.lastPeriodDate) return null;
+
+  const phaseData = getCyclePhase(profile.cycleTracking.lastPeriodDate, profile.cycleTracking.cycleLength, new Date());
+  if (!phaseData) return null;
+
+  const modifiers = getPhaseModifiers(phaseData.phase);
+
+  const phaseNames = {
+    menstrual: 'Менструальная',
+    follicular: 'Фолликулярная',
+    ovulatory: 'Овуляторная',
+    luteal: 'Лютеиновая'
+  };
+
+  return (
+    <div className="cycle-widget" style={{ marginTop: 24, marginBottom: 8, padding: '12px 16px', background: 'rgba(255, 105, 180, 0.1)', border: '1px solid rgba(255, 105, 180, 0.3)', borderRadius: 16, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+      <div style={{ background: 'rgba(255, 105, 180, 0.2)', padding: 8, borderRadius: '50%', color: '#ff69b4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Calendar size={20} />
+      </div>
+      <div>
+        <div style={{ fontSize: 14, fontWeight: 600, color: '#ff69b4', marginBottom: 2 }}>
+          {phaseNames[phaseData.phase]} фаза (День {phaseData.day})
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+          {modifiers.info}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main page ── */
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -782,6 +816,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      <CycleWidget profile={profile} />
 
       {/* Summary Period Tabs */}
       <div className="period-selector">

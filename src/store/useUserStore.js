@@ -34,6 +34,12 @@ export const useUserStore = create(
           allergens: string[],
           medicalRestrictions: string[],
           dietaryStyles: string[],
+          cycleTracking: {           // <- NEW
+            enabled: boolean,
+            cycleLength: number,
+            periodLength: number,
+            lastPeriodDate: string,
+          }
         }
       */
 

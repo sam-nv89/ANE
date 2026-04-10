@@ -63,6 +63,14 @@ const INITIAL = {
   includeSugary: false,
   sugaryFrequency: 'few',
   allowRepeatMeals: false,
+  
+  // Cycle Syncing
+  cycleTracking: {
+    enabled: false,
+    cycleLength: 28,
+    periodLength: 5,
+    lastPeriodDate: '', // YYYY-MM-DD
+  },
 };
 
 /* ── Animation variants ── */

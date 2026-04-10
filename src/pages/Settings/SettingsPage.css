@@ -54,8 +54,9 @@
   border-radius: 20px;
   backdrop-filter: blur(12px);
   margin-bottom: 20px;
-  overflow: hidden;
+  /* overflow: hidden удален для предотвращения обрезки выпадающих списков */
   transition: border-color 0.3s ease;
+  position: relative;
 }
 
 .stg-section:hover {
@@ -67,6 +68,7 @@
 .stg-section--open {
   /* Открытая секция: нейтральная чуть ярче стандартной рамки, без акцента */
   border-color: rgba(255, 255, 255, 0.14);
+  z-index: 10;
 }
 
 .stg-section__header {
@@ -79,6 +81,7 @@
   border: none;
   cursor: pointer;
   color: var(--text-1);
+  border-radius: 20px; /* Добавлено скругление, так как родитель не клипает */
 }
 
 .stg-section__title {
@@ -104,7 +107,8 @@
 }
 
 .stg-section__content {
-  overflow: hidden;
+  /* overflow: visible позволяет выпадающим спискам (календарю) отображаться за пределами секции */
+  overflow: visible;
 }
 
 .stg-section__inner {
@@ -195,7 +199,7 @@
   /* Fix: фон с зеленым оттенком */
   background: rgba(0, 245, 160, 0.1);
   border: 1.5px solid var(--accent-primary);
-  color: var(--text-1);
+  color: #fff;
   font-weight: 600;
   box-shadow: 0 0 15px rgba(0, 245, 160, 0.12);
 }
@@ -428,4 +432,14 @@
     gap: 10px;
     padding: 10px 14px;
     text-align: left;
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }

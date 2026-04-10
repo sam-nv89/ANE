@@ -21,6 +21,7 @@ import { filterSafeRecipes } from '../nutrition/allergens';
 import { filterByTimeWindow, sortByBatchPriority } from './timeFilter';
 import { canAddWithoutMonotony } from './monotonyIndex';
 import { getCalorieDistribution } from '../nutrition/distribution';
+import { getCyclePhase, getPhaseModifiers } from '../nutrition/cycleSync';
 
 const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -35,6 +36,22 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+/**
+ * Перемешивает массив, но дает приоритет рецептам с нужными тегами (Cycle Syncing).
+ */
+function shuffleAndBoost(arr, boostedTags) {
+  const shuffled = shuffle(arr);
+  if (!boostedTags || boostedTags.length === 0) return shuffled;
+
+  return shuffled.sort((a, b) => {
+    const aTags = a.microTags || a.tags || [];
+    const bTags = b.microTags || b.tags || [];
+    const aBoost = aTags.filter(t => boostedTags.includes(t)).length;
+    const bBoost = bTags.filter(t => boostedTags.includes(t)).length;
+    return bBoost - aBoost;
+  });
 }
 
 /**
@@ -78,12 +95,13 @@ function toRef(recipe, targetCal) {
  * @param {number}   targetCal      — целевые ккал для этого слота
  * @param {boolean}  allowRepeat
  * @param {string}   mealType       — 'breakfast'|'lunch'|'dinner'|'snack'
+ * @param {string[]} boostedTags    — префреренс по микронутриентам
  * @returns {object}  RecipeRef (никогда не null при непустом пуле)
  */
-function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType) {
+function pickRecipe(pool, selectedSoFar, targetCal, allowRepeat, mealType, boostedTags = []) {
   if (pool.length === 0) return null;
 
-  const shuffled = shuffle(pool);
+  const shuffled = shuffleAndBoost(pool, boostedTags);
 
   // Уровень 1: Адекватный скейлинг (к-т от 0.4 до 3.0) + контроль монотонности
   const lvl1 = shuffled.filter((r) => {
@@ -361,18 +379,35 @@ export function generatePlan(allRecipes, profile, nutrition) {
   const selectedPerType = {};
   currentMealTypes.forEach(m => selectedPerType[m] = []);
 
+  const today = new Date();
+
   for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
     const meals = {};
+    let currentTargetCalories = targetCalories;
+    let boostedTags = [];
+
+    // Cycle Syncing Integration
+    if (profile.gender === 'female' && profile.cycleTracking?.enabled && profile.cycleTracking.lastPeriodDate) {
+      const targetDate = new Date(today);
+      targetDate.setDate(targetDate.getDate() + dayIndex);
+      const phaseData = getCyclePhase(profile.cycleTracking.lastPeriodDate, profile.cycleTracking.cycleLength, targetDate);
+      if (phaseData) {
+        const modifiers = getPhaseModifiers(phaseData.phase);
+        currentTargetCalories += modifiers.kcalModifier;
+        boostedTags = modifiers.boostedTags;
+      }
+    }
 
     for (const mealType of currentMealTypes) {
-      const calorieTarget = Math.round(targetCalories * CALORIE_DISTRIBUTION[mealType]);
+      const calorieTarget = Math.round(currentTargetCalories * CALORIE_DISTRIBUTION[mealType]);
 
       const picked = pickRecipe(
         pools[mealType],
         selectedPerType[mealType],
         calorieTarget,
         allowRepeatMeals,
-        mealType
+        mealType,
+        boostedTags
       );
 
       meals[mealType] = picked;
@@ -413,12 +448,23 @@ export function generateSingleMeal(allRecipes, profile, nutrition, mealType, sel
     pool = safeRecipes.filter((r) => r.category === rawCategory);
   }
 
-  // 3. Calorie target
+  // 3. Calorie target & Cycle Syncing
   const { distribution } = getCalorieDistribution(mealFrequency, mealSpecifics);
-  const targetCals = (nutrition?.targetCalories || 2000);
+  let targetCals = (nutrition?.targetCalories || 2000);
+  let boostedTags = [];
+
+  if (profile.gender === 'female' && profile.cycleTracking?.enabled && profile.cycleTracking.lastPeriodDate) {
+    const phaseData = getCyclePhase(profile.cycleTracking.lastPeriodDate, profile.cycleTracking.cycleLength, new Date());
+    if (phaseData) {
+      const modifiers = getPhaseModifiers(phaseData.phase);
+      targetCals += modifiers.kcalModifier;
+      boostedTags = modifiers.boostedTags;
+    }
+  }
+
   const calorieTarget = Math.round(targetCals * (distribution[mealType] || 0.1));
 
-  const result = pickRecipe(pool, selectedSoFar, calorieTarget, allowRepeatMeals, mealType);
+  const result = pickRecipe(pool, selectedSoFar, calorieTarget, allowRepeatMeals, mealType, boostedTags);
   return result;
 }
 
@@ -442,9 +488,18 @@ export function getFilteredPoolForMeal(allRecipes, profile, nutrition, mealType)
     pool = safeRecipes.filter((r) => r.category === rawCategory);
   }
 
-  // 3. Скейлинг под калории (чтобы в списке сразу видеть реальные цифры)
+  // 3. Скейлинг под калории & Cycle Syncing
   const { distribution } = getCalorieDistribution(mealFrequency, mealSpecifics);
-  const targetCalsBase = (nutrition?.targetCalories || 2000);
+  let targetCalsBase = (nutrition?.targetCalories || 2000);
+
+  if (profile.gender === 'female' && profile.cycleTracking?.enabled && profile.cycleTracking.lastPeriodDate) {
+    const phaseData = getCyclePhase(profile.cycleTracking.lastPeriodDate, profile.cycleTracking.cycleLength, new Date());
+    if (phaseData) {
+      const modifiers = getPhaseModifiers(phaseData.phase);
+      targetCalsBase += modifiers.kcalModifier;
+    }
+  }
+
   const calorieTarget = Math.round(targetCalsBase * (distribution[mealType] || 0.1));
 
   // Превращаем в Ref-объекты со скейлингом

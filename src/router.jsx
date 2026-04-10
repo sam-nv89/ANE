@@ -63,6 +63,10 @@ export const router = createBrowserRouter([
     element: <Navigate to="/app/settings" replace />,
   },
   {
+    path: '*/settings',
+    element: <Navigate to="/app/settings" replace />,
+  },
+  {
     path: '*',
     element: <Navigate to="/" replace />,
   },
