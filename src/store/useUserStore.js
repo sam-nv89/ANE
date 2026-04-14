@@ -1,63 +1,17 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 /**
  * useUserStore — хранит профиль пользователя и рассчитанные КБЖУ.
- * Персистентность через localStorage (ключ 'ane-user').
  */
 export const useUserStore = create(
   persist(
-    (set) => ({
-      // Флаг завершения онбординга
+    immer((set) => ({
       profileComplete: false,
-
-      // Данные профиля
       profile: null,
-      /*
-        profile shape:
-        {
-          name: string,
-          age: number,
-          gender: 'male' | 'female',
-          heightCm: number,
-          weightKg: number,
-          activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'veryActive',
-          goal: 'lose' | 'maintain' | 'gain',
-          goalLabel: string,
-          goalRate: number,          // кг/неделю (отриц. для похудения)
-          cookTimeWindow: 15 | 30 | 60 | 120,  // минут
-          cookFrequency: 'daily' | 'alternate' | 'few' | 'batch',
-          preferLazy: boolean,
-          tasteCategories: string[], // ['meat', 'fish', 'poultry', 'vegetarian']
-          dislikedIngredients: string[],
-          allowRepeatMeals: boolean,
-          allergens: string[],
-          medicalRestrictions: string[],
-          dietaryStyles: string[],
-          cycleTracking: {           // <- NEW
-            enabled: boolean,
-            cycleLength: number,
-            periodLength: number,
-            lastPeriodDate: string,
-          }
-        }
-      */
-
-      // Рассчитанные показатели (заполняются на SummaryStep)
       nutrition: null,
-      /*
-        nutrition shape:
-        {
-          bmr: number,       // базовый обмен (ккал)
-          tdee: number,      // с учётом активности
-          targetCalories: number,
-          protein: number,   // г/день
-          fat: number,
-          carbs: number,
-        }
-      */
 
-      // Actions
       setProfile: (data) => set({ profile: data }),
 
       setNutrition: (data) => set({ nutrition: data }),
@@ -70,13 +24,15 @@ export const useUserStore = create(
         }),
 
       updateProfile: (partial) =>
-        set((state) => ({
-          profile: { ...state.profile, ...partial },
-        })),
+        set((state) => {
+          if (state.profile) {
+            Object.assign(state.profile, partial);
+          }
+        }),
 
       resetProfile: () =>
         set({ profile: null, nutrition: null, profileComplete: false }),
-    }),
+    })),
     {
       name: 'ane-user',
       partialize: (state) => ({
@@ -87,3 +43,4 @@ export const useUserStore = create(
     }
   )
 );
+

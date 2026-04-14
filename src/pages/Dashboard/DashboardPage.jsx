@@ -1,7 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useTransition } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, RefreshCw, Play, Zap, Calendar, ChevronLeft, ChevronRight, FileText, Layout, ChevronDown, Download, ExternalLink, X, Search, ArrowLeft, ArrowUp, ArrowDown } from 'lucide-react';
+import { pageFade, slideUp, staggerContainer, staggerItem, modalBackdrop, modalContent, dropdownDown, dropdownUp, highlightAttention, cardHover, tapScale, pulse } from '../../lib/animations';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
@@ -122,23 +125,9 @@ function MealCard({ meal, mealType, dayIndex, navigate, isLoading, onSwap, isCom
     <motion.div
       className={`meal-card ${isCompleted ? 'meal-card--completed' : ''} ${isHighlighted ? 'meal-card--highlighted' : ''}`}
       onClick={() => onToggle(dayIndex, mealType)}
-      whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)' }}
-      whileTap={{ scale: 0.96 }}
-      initial={isHighlighted ? { scale: 0.95, opacity: 0.8 } : false}
-      animate={isHighlighted ? {
-        scale: [1, 1.03, 1],
-        opacity: 1,
-        boxShadow: [
-          '0 0 0px rgba(0, 245, 160, 0)',
-          '0 0 20px rgba(0, 245, 160, 0.4)',
-          '0 0 0px rgba(0, 245, 160, 0)'
-        ]
-      } : { opacity: 1, scale: 1 }}
-      transition={isHighlighted ? {
-        duration: 0.8,
-        repeat: 3,
-        ease: "easeInOut"
-      } : { duration: 0.2 }}
+      {...cardHover}
+      {...tapScale}
+      {...(isHighlighted ? highlightAttention : {})}
       style={{ cursor: 'pointer' }}
       id={`meal-${dayIndex}-${mealType}`}
     >
@@ -528,8 +517,17 @@ export default function DashboardPage() {
   const highlightParam = searchParams.get('highlight');
   const [highlightCoords, setHighlightCoords] = React.useState(null);
 
-  const { profile, nutrition } = useUserStore();
-  const { plan, setPlan, isLoading, setLoading, replaceMeal, completed, toggleCompleted } = usePlanStore();
+  const profile = useUserStore(s => s.profile);
+  const nutrition = useUserStore(s => s.nutrition);
+  
+  const { setPlan, replaceMeal, toggleCompleted } = usePlanStore(
+    useShallow(s => ({ setPlan: s.setPlan, replaceMeal: s.replaceMeal, toggleCompleted: s.toggleCompleted }))
+  );
+  
+  const plan = usePlanStore(s => s.plan);
+  const completed = usePlanStore(s => s.completed);
+
+  const [isPending, startTransition] = useTransition();
   const [summaryPeriod, setSummaryPeriod] = React.useState('day');
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
@@ -743,14 +741,15 @@ export default function DashboardPage() {
   }, [plan]);
 
   const handleRegenerate = () => {
-    setLoading(true);
-    setTimeout(() => {
+    startTransition(async () => {
+      // Yield to paint isPending
+      await new Promise(r => setTimeout(r, 0));
       const newPlan = generatePlan(recipes, profile, nutrition);
       setPlan(newPlan);
-    }, 1200);
+    });
   };
 
-  if (!plan && !isLoading) {
+  if (!plan && !isPending) {
     return (
       <div className="dashboard" ref={dashboardRef}>
         <div className="plan-empty">
@@ -793,10 +792,7 @@ export default function DashboardPage() {
               {isMenuOpen && (
                 <motion.div
                   className="download-dropdown__menu download-dropdown__menu--right"
-                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                  transition={{ duration: 0.1, ease: 'easeOut' }}
+                  {...dropdownDown}
                 >
                   <button className="download-dropdown__item" onClick={() => { handleExportPDF(); setIsMenuOpen(false); }}>
                     <div className="download-dropdown__item-icon" style={{ color: '#ff4d4d' }}><FileText size={16} /></div>
@@ -841,16 +837,14 @@ export default function DashboardPage() {
         plan={displayPlan}
         nutrition={nutrition}
         selectedIndex={selectedDayIndex}
-        isLoading={isLoading}
+        isLoading={isPending}
         completed={completed}
         period={summaryPeriod}
       />
 
       <motion.div
         className="week-grid"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        {...slideUp}
         style={{ '--meal-count': displayOrder.length }}
       >
         <TimeColumn order={displayOrder} />
@@ -862,7 +856,7 @@ export default function DashboardPage() {
             isSelected={selectedDayIndex === day.dayIndex}
             onSelect={setSelectedDayIndex}
             order={displayOrder}
-            isLoading={isLoading}
+            isLoading={isPending}
             onSwap={handleSwapMeal}
             completed={completed}
             onToggle={toggleCompleted}
@@ -880,16 +874,12 @@ export default function DashboardPage() {
         {showSwapChoice && (
           <motion.div
             className="swap-dialog-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            {...modalBackdrop}
             onClick={() => setShowSwapChoice(false)}
           >
             <motion.div
               className="swap-dialog"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              {...modalContent}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="swap-dialog__header">
@@ -923,16 +913,11 @@ export default function DashboardPage() {
         {showPicker && (
           <motion.div
             className="picker-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            {...modalBackdrop}
           >
             <motion.div
               className="picker"
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              {...modalContent}
             >
               <div className="picker__header">
                 <div className="picker__header-left">
@@ -960,9 +945,7 @@ export default function DashboardPage() {
                       <AnimatePresence>
                         {activeDropdown === 'sort' && (
                           <motion.div 
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 8 }}
+                            {...dropdownDown}
                             className="dropdown__menu"
                           >
                             <button 
@@ -1005,8 +988,8 @@ export default function DashboardPage() {
                       <motion.div
                         key={recipe.id}
                         className="picker-card"
-                        whileHover={{ y: -4 }}
-                        whileTap={{ scale: 0.98 }}
+                        {...cardHover}
+                        {...tapScale}
                         onClick={() => handleSelectFromPicker(recipe)}
                       >
                         <div className="picker-card__icon">{recipe.imageEmoji}</div>

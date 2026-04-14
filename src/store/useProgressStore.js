@@ -1,52 +1,39 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 /**
  * useProgressStore — отслеживает вес и compliance за каждый день.
  */
 export const useProgressStore = create(
   persist(
-    (set) => ({
-      // weightLog: Array<{ date: ISO string, weightKg: number }>
+    immer((set) => ({
       weightLog: [],
-
-      // dailyCompliance: Record<dateStr, { planned: number, done: number }>
       dailyCompliance: {},
-
-      // Actions
 
       /** Добавить/обновить замер веса за указанную дату */
       logWeight: (weightKg, customDate) => {
         const date = customDate || new Date().toISOString().slice(0, 10);
         set((state) => {
-          const existing = state.weightLog.findIndex((e) => e.date === date);
-          let newLog;
-          if (existing >= 0) {
-            newLog = [...state.weightLog];
-            newLog[existing] = { date, weightKg };
+          const index = state.weightLog.findIndex((e) => e.date === date);
+          if (index >= 0) {
+            state.weightLog[index].weightKg = weightKg;
           } else {
-            newLog = [...state.weightLog, { date, weightKg }];
+            state.weightLog.push({ date, weightKg });
           }
-          
-          // Сортируем по дате, чтобы график и список были корректными
-          newLog.sort((a, b) => a.date.localeCompare(b.date));
-          
-          return { weightLog: newLog };
+          state.weightLog.sort((a, b) => a.date.localeCompare(b.date));
         });
       },
 
-      /** Обновить данные compliance из внешнего источника (например, после маппинга плана на даты) */
+      /** Обновить данные compliance */
       syncCompliance: (dailyData) => {
-        set((state) => ({
-          dailyCompliance: {
-            ...state.dailyCompliance,
-            ...dailyData,
-          },
-        }));
+        set((state) => {
+          Object.assign(state.dailyCompliance, dailyData);
+        });
       },
 
       clearProgress: () => set({ weightLog: [], dailyCompliance: {} }),
-    }),
+    })),
     {
       name: 'ane-progress',
       partialize: (state) => ({
@@ -56,3 +43,4 @@ export const useProgressStore = create(
     }
   )
 );
+

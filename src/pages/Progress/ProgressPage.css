@@ -111,44 +111,87 @@
 }
 
 
-.weight-chart-container { position: relative; padding-top: 10px; margin: 0; }
-.weight-chart { overflow: visible; }
-.weight-chart__svg { width: 100%; height: auto; min-width: 300px; display: block; }
-.weight-chart__tooltip {
-  position: absolute;
-  transform: translateX(-50%);
+.weight-chart-container { position: relative; padding-top: 10px; margin: 0; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.weight-chart { 
+  overflow: visible; 
+  width: 100%; 
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.weight-chart__header {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.weight-range-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--clr-border);
+}
+
+.range-sep {
+  color: var(--clr-text-muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.weight-range-picker .custom-datepicker__trigger {
+  padding: 6px 12px;
+  font-size: 11px;
+  background: transparent;
+  border: none;
+  min-width: 90px;
+}
+
+.weight-range-picker .custom-datepicker__trigger:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 600px) {
+  .weight-chart__header {
+    justify-content: center;
+  }
+  .weight-range-picker {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.weight-chart__tooltip-recharts {
   background: rgba(20, 25, 40, 0.9);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
   padding: 8px 12px;
-  pointer-events: none;
-  z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
-.tooltip-weight { font-weight: 800; color: var(--clr-accent-1); font-size: 14px; }
-.tooltip-date { font-size: 10px; color: var(--clr-text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-
-.tooltip-arrow {
-  position: absolute; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
-}
-.tooltip-arrow--bottom {
-  bottom: -6px; left: 50%; transform: translateX(-50%);
-  border-top: 6px solid rgba(20, 25, 40, 0.9);
-}
-.tooltip-arrow--top {
-  top: -6px; left: 50%; transform: translateX(-50%);
-  border-bottom: 6px solid rgba(20, 25, 40, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
 }
 
-
-.weight-chart__dates {
-  display: flex; justify-content: space-between;
-  font-size: 11px; color: var(--clr-text-muted); margin-top: 4px;
+.tooltip-weight {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clr-text-main);
 }
+
+.tooltip-date {
+  font-size: 10px;
+  color: var(--clr-text-muted);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 
 /* ── Goal Summary Redesign ── */
 .goal-summary {
@@ -369,20 +412,7 @@
 .bmi-info-trigger:hover .bmi-info-tooltip { opacity: 1; transform: translateY(0); }
 .bmi-info-tooltip strong { color: var(--clr-accent-1); display: block; margin-bottom: 4px; }
 
-/* Tooltip adjustment */
-.weight-chart__tooltip {
-  position: absolute;
-  background: var(--clr-surface-card);
-  border: 1px solid var(--clr-border);
-  padding: 8px 12px;
-  border-radius: 8px;
-  pointer-events: none;
-  z-index: 10;
-  box-shadow: var(--shadow-xl);
-  transform: translate(-50%, -100%);
-  min-width: 80px;
-  text-align: center;
-}
+
 
 .progress__empty-chart {
   padding: 20px; text-align: center; font-size: 14px; color: var(--clr-text-muted);
@@ -424,3 +454,34 @@
   background: linear-gradient(90deg, var(--clr-accent-1), var(--clr-accent-2));
   transition: width 0.6s var(--ease-out);
 }
+
+/* PFC Analytics Styling */
+.pfc-analytics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.pfc-analytics__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--clr-text-primary);
+}
+
+.pfc-chart-container {
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 16px;
+  padding: 16px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.progress__card-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--clr-border), transparent);
+  margin: 20px 0;
+}
+
