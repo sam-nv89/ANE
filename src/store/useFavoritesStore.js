@@ -23,6 +23,8 @@ export const useFavoritesStore = create(
       isFavorite: (id) => {
         return get().favorites.includes(id);
       },
+
+      clearFavorites: () => set({ favorites: [] }),
     }),
     {
       name: 'ane-favorites',

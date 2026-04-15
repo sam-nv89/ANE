@@ -7,6 +7,10 @@ import {
 } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { usePlanStore } from '../store/usePlanStore';
+import { useShoppingStore } from '../store/useShoppingStore';
+import { useProgressStore } from '../store/useProgressStore';
+import { useFavoritesStore } from '../store/useFavoritesStore';
+import { usePDFLayoutStore } from '../store/usePDFLayoutStore';
 import { generatePlan } from '../lib/planner/generator';
 import recipes from '../data/recipes.json';
 
@@ -24,10 +28,19 @@ export default function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const { profile, nutrition, resetProfile } = useUserStore();
-  const { setPlan, setLoading } = usePlanStore();
+  const { setPlan, setLoading, clearPlan } = usePlanStore();
+  const { clearList } = useShoppingStore();
+  const { clearProgress } = useProgressStore();
+  const { clearFavorites } = useFavoritesStore();
+  const { resetLayouts } = usePDFLayoutStore();
 
   const handleLogout = () => {
     resetProfile();
+    clearPlan();
+    clearList();
+    clearProgress();
+    clearFavorites();
+    resetLayouts();
     navigate('/');
   };
 

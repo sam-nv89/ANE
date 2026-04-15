@@ -5,6 +5,10 @@ import { Save, LogOut, AlertTriangle } from 'lucide-react';
 
 import { useUserStore } from '../../store/useUserStore';
 import { usePlanStore } from '../../store/usePlanStore';
+import { useShoppingStore } from '../../store/useShoppingStore';
+import { useProgressStore } from '../../store/useProgressStore';
+import { useFavoritesStore } from '../../store/useFavoritesStore';
+import { usePDFLayoutStore } from '../../store/usePDFLayoutStore';
 import { calcBMR, calcTDEE, calcTargetCalories } from '../../lib/nutrition/tdee';
 import { calcMacros } from '../../lib/nutrition/macros';
 import { generatePlan } from '../../lib/planner/generator';
@@ -36,7 +40,11 @@ const fmtNum = (num) => num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { profile, nutrition, updateProfile, setNutrition, resetProfile } = useUserStore();
-  const { setPlan } = usePlanStore();
+  const { clearPlan } = usePlanStore();
+  const { clearList } = useShoppingStore();
+  const { clearProgress } = useProgressStore();
+  const { clearFavorites } = useFavoritesStore();
+  const { resetLayouts } = usePDFLayoutStore();
 
   const [local, setLocal] = useState({ ...profile });
   const [saved, setSaved] = useState(false);
@@ -64,6 +72,11 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     resetProfile();
+    clearPlan();
+    clearList();
+    clearProgress();
+    clearFavorites();
+    resetLayouts();
     navigate('/');
   };
 
